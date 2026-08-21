@@ -1,0 +1,37 @@
+{
+  "name": "gestcare_back",
+  "version": "1.0.0",
+  "description": "Backend do TCC",
+  "homepage": "https://github.com/Alef-A-Santos/gestCare_back#readme",
+  "bugs": {
+    "url": "https://github.com/Alef-A-Santos/gestCare_back/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alef-A-Santos/gestCare_back.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.3.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.11.0",
+    "mysql2": "^3.23.3",
+    "nodemailer": "^9.0.5",
+    "otpauth": "^9.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
