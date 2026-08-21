@@ -1,7 +1,7 @@
 function Logo({ img, alt }) {
     return (
         <div>
-            <img className="w-18 h-18" src={img} alt={alt} />
+            <img className="w-30 h-28" src={img} alt={alt} />
         </div>
 
     )
