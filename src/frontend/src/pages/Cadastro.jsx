@@ -35,9 +35,6 @@ function Cadastro() {
               <h2 className="font-body text-center text-4xl font-bold text-white ">
                 Crie sua conta
               </h2>
-              <p className="font-body text-sm text-center text-white font-bold">
-                Leva menos de um minuto
-              </p>
 
               <InputCadastro />
               <div className="flex gap-1 m-2">
