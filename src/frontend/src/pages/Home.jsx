@@ -9,7 +9,7 @@ function Home() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="m-4 flex w-20 md:w-35 h-1/2 absolute">
+        <div className="m-7 flex w-20 md:w-35 h-1/2 absolute">
           <Logo img={logoRosa} />
         </div>
 
