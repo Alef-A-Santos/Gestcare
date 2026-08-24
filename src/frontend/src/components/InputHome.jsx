@@ -7,7 +7,7 @@ function InputHome() {
       </label>
 
       <input
-        className="border p-2 text-center rounded-lg bg-white border-red-300 w-full max-w-100 focus:outline-none"
+        className="border p-2 text-center rounded-lg bg-white border-red-300 w-100 outline-none  focus:border-red-400 focus:border-2 "
         type="email"
         placeholder="Digite seu email aqui"
         required
@@ -18,7 +18,7 @@ function InputHome() {
       </label>
 
       <input
-        className="border p-2 text-center rounded-lg bg-white border-red-300 w-full max-w-100 focus:outline-none"
+        className="border p-2 text-center rounded-lg bg-white border-red-300 w-100 outline-none  focus:border-red-400 focus:border-2"
         type="password"
         placeholder="Digite sua senha aqui"
         required
