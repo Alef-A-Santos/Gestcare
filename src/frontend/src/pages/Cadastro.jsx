@@ -25,10 +25,10 @@ function Cadastro() {
           {/* LADO DIREITO */}
 
           <main
-            className="w-full md:w-2/5  min-h-screen flex items-center justify-center px-6 sm:px-10 bg-cover bg-center"
+            className="w-full md:w-2/5  min-h-screen flex items-center justify-center px-6 sm:px-8 bg-cover bg-center"
             style={{ backgroundImage: `url("${fundoForm}")` }}
           >
-            <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center mb-5 px-4">
+            <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center mb-5 px-8">
               <p className="font-body text-sm text-white  text-center mt-10 font-bold">
                 Primeiro Acesso
               </p>
@@ -37,22 +37,21 @@ function Cadastro() {
               </h2>
 
               <InputCadastro />
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start">
                 <div className="flex flex-col text-center p-1">
-                  <Labels desc="META JEJUM (MG/DL)" className="font-bold text-center text-white" />
-                  <Inputs tipoDado="number" placeName="95" className="border p-2 text-center rounded-lg bg-white border-red-300 w-50 outline-none  focus:border-red-400 focus:border-2 text-center mt-2" />
+                  <Labels desc="Meta jejum (mg/dl)" className="font-bold text-center text-white " />
+                  <Inputs tipoDado="number" placeName="95" className="border p-2 text-center rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
                 </div>
                 <div className="flex flex-col text-center p-1">
-                  <Labels desc="META PÓS-PRADIAL" className="font-bold text-center text-white" />
-                  <Inputs tipoDado="number" placeName="140" className="border p-2 text-center rounded-lg bg-white border-red-300 w-50 outline-none  focus:border-red-400 focus:border-2 text-center mt-2" />
+                  <Labels desc="Meta pós-pradial" className="font-bold text-center text-white" />
+                  <Inputs tipoDado="number" placeName="140" className="border p-2 text-center rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
                 </div>
               </div>
 
 
-
               <Botao
                 className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
-             rounded-lg py-3 m-2 w-100"
+             rounded-lg py-3 m-2 w-full sm:w-100  px-10 "
                 nome={"Cadastrar"}
               />
 
