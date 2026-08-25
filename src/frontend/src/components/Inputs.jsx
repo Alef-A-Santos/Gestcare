@@ -1,6 +1,7 @@
-function Inputs({placeName, tipoDado, className}){
+function Inputs({icone, placeName, tipoDado, className}){
     return(
-        <div className="flex flex-col gap-1">
+        <div className="relative flex flex-col gap-1">
+            {icone}
             <input className={className} type={tipoDado} placeholder={placeName} required />
         </div>
     )
