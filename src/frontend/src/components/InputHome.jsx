@@ -1,7 +1,14 @@
-import { FaLock } from "react-icons/fa";
+import { FaLock,FaEyeSlash } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { IoEyeSharp } from "react-icons/io5";
+import Botao from "./Botao";
+import { useState } from "react";
 
 function InputHome() {
+  const [
+    isSenha, setIsSenha
+
+  ] = useState (false)
   return (
     <div className="w-full flex flex-col gap-1 justify-center items-center px-4">
 
@@ -12,7 +19,7 @@ function InputHome() {
       <div className="relative w-100">
          <MdEmail className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-500" />
         <input
-          className="border p-2 pl-10 text-center ro  unded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2"
+         className="border p-2 pl-10 text-center rounded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2"
           type="email"
           placeholder="Digite seu email aqui"
           required
@@ -24,15 +31,16 @@ function InputHome() {
       </label>
 
    
-      <div className="relative w-100">
+      <div className="relative w-100 flex">
         <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-500" />
 
         <input
           className="border p-2 pl-10 text-center rounded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2"
-          type="password"
+          type={ isSenha? "password" : "text"}
           placeholder="Digite sua senha aqui"
           required
         />
+      <Botao nome={ isSenha ? <IoEyeSharp/>: <FaEyeSlash />} className={"cursor-pointer text-teal-500 absolute right-3"} clickHandler={()=> setIsSenha (!isSenha)} />
       </div>
 
     </div>
