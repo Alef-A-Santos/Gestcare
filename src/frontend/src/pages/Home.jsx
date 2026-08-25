@@ -23,7 +23,7 @@ function Home() {
         {/* LADO DIREITO */}
 
         <main
-          className="w-dvw  lg:w-1/2 min-h-dvh flex items-center justify-center bg-[#f7cccc] p-4 object-cover"
+          className="w-dvw  lg:w-1/2 min-h-dvh flex items-center justify-center bg-[#f7cccc] p-10 object-cover"
           style={{
             backgroundImage: `url("${fundoRosa}")`,
             backgroundSize: "cover",

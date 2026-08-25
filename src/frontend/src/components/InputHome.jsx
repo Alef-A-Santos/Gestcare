@@ -16,8 +16,8 @@ function InputHome() {
         Email:
       </label>
 
-      <div className="relative w-100">
-         <MdEmail className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-500" />
+      <div className="relative lg:w-100 w-80">
+         <MdEmail className="absolute left-3 top-2/4 -translate-y-1/2 text-teal-500" />
         <input
          className="border p-2 pl-10 text-center rounded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2"
           type="email"
@@ -31,8 +31,8 @@ function InputHome() {
       </label>
 
    
-      <div className="relative w-100 flex">
-        <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-500" />
+      <div className="relative lg:w-100 w-80">
+        <FaLock className="absolute left-3 top-2/4 -translate-y-1/2 text-teal-500" />
 
         <input
           className="border p-2 pl-10 text-center rounded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2"
@@ -40,7 +40,7 @@ function InputHome() {
           placeholder="Digite sua senha aqui"
           required
         />
-      <Botao nome={ isSenha ? <IoEyeSharp/>: <FaEyeSlash />} className={"cursor-pointer text-teal-500 absolute right-3"} clickHandler={()=> setIsSenha (!isSenha)} />
+      <Botao nome={ isSenha ? <IoEyeSharp/>: <FaEyeSlash />} className={"cursor-pointer text-teal-500 absolute right-4 top-2/4 -translate-y-1/2"} clickHandler={()=> setIsSenha (!isSenha)} />
       </div>
 
     </div>
