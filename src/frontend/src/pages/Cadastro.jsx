@@ -17,8 +17,8 @@ function Cadastro() {
             className=" hidden md:flex md:w-4/6 min-h-screen p-8 text-white bg-cover bg-left"
             style={{ backgroundImage: `url("${fundo}")` }}
           >
-            <div className="m-2 flex w-35 h-80">
-              <Logo img="src\assets\logos\logo-1.png" alt="Mulheres gravidas" />
+            <div className=" flex w-35 h-80">
+              <Logo img="src\assets\logos\logo-1.png" alt="Mulher gravida" />
             </div>
           </div>
 
