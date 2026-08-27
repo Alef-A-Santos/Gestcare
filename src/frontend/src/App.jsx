@@ -3,7 +3,7 @@ import Cadastro from "./pages/Cadastro";
 
 function App() {
   return (
-    <div>
+    <div >
       {/* <Home/> */}
       <Cadastro/>
 

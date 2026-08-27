@@ -10,34 +10,37 @@ function Cadastro() {
   return (
     <div>
       <div>
-        <div className="min-h-screen flex flex-col md:flex-row ">
+        <div className="min-h-screen flex flex-col md:flex-row relative">
           {/* LADO ESQUERDO */}
+          <div className="flex w-20 h-20  absolute m-5 md:w-full ">
+              <Logo img="src\assets\logos\logo-1.png" alt="Logo" />
+            </div>
 
           <div
-            className=" hidden md:flex md:w-4/6 min-h-screen p-8 text-white bg-cover bg-left"
+            className="hidden lg:flex md:w-4/6 min-h-screen p-8 text-white bg-cover bg-left"
             style={{ backgroundImage: `url("${fundo}")` }}
           >
-            <div className=" flex w-35 h-80">
-              <Logo img="src\assets\logos\logo-1.png" alt="Mulher gravida" />
-            </div>
           </div>
 
           {/* LADO DIREITO */}
 
           <main
-            className="w-full md:w-2/5  min-h-screen flex items-center justify-center px-6 sm:px-8 bg-cover bg-center"
+            className="w-full lg:w-2/5  min-h-screen flex items-center justify-center flex-col px-6 sm:px-8 bg-cover bg-center "
             style={{ backgroundImage: `url("${fundoForm}")`}}
           >
-            <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
-              <p className="font-body text-sm:3xl text-white text-center mt-10 p-2 font-bold">
+            <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
+              <p className="font-body text-sm:3xl text-white text-center mt-4 p-2 font-bold text-[20px]">
                 Primeiro Acesso
               </p>
               <h2 className="font-body text-center text-4xl font-bold text-white ">
                 Crie sua conta
               </h2>
+              <p className="font-body text-sm:3xl text-white text-center p-2 font-bold text-[20px]">
+                Leva menos de um minuto 
+              </p>
 
               <InputCadastro />
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start ">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start">
                 <div className="flex flex-col text-center p-1">
                   <Labels desc="Meta jejum (mg/dl)" className="font-bold text-center text-white" />
                   <Inputs tipoDado="number" placeName="95" className="border-2 p-2  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
@@ -51,7 +54,7 @@ function Cadastro() {
 
               <Botao
                 className="text-center bg-teal-500 hover:bg-teal-400 font-bold text-white
-             rounded-lg py-3 m-2 w-full sm:w-100 transition duration-300 px-10 "
+             rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3"
                 nome={"Cadastrar"}
               />
 
