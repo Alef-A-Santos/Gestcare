@@ -10,11 +10,11 @@ function Cadastro() {
   return (
     <div>
       <div>
-        <div className="min-h-screen flex flex-col md:flex-row relative">
+        <div className="min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
           {/* LADO ESQUERDO */}
           <div className="flex w-20 h-20  absolute m-5 md:w-full ">
-              <Logo img="src\assets\logos\logo-1.png" alt="Logo" />
-            </div>
+            <Logo img="src\assets\logos\logo-1.png" alt="Logo" />
+          </div>
 
           <div
             className="hidden lg:flex md:w-4/6 min-h-screen p-8 text-white bg-cover bg-left"
@@ -26,7 +26,7 @@ function Cadastro() {
 
           <main
             className="w-full lg:w-2/5  min-h-screen flex items-center justify-center flex-col px-6 sm:px-8 bg-cover bg-center "
-            style={{ backgroundImage: `url("${fundoForm}")`}}
+            style={{ backgroundImage: `url("${fundoForm}")` }}
           >
             <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
               <p className="font-body text-sm:3xl text-white text-center mt-4 p-2 font-bold text-[20px]">
@@ -36,7 +36,7 @@ function Cadastro() {
                 Crie sua conta
               </h2>
               <p className="font-body text-sm:3xl text-white text-center p-2 font-bold text-[20px]">
-                Leva menos de um minuto 
+                Leva menos de um minuto
               </p>
 
               <InputCadastro />
