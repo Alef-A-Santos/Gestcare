@@ -5,6 +5,8 @@ import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestCare.png";
 import Inputs from "../components/Inputs";
 import Labels from "../components/Labels";
+import { Link } from 'react-router-dom';
+
 
 function Cadastro() {
   return (
@@ -13,7 +15,7 @@ function Cadastro() {
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
           {/* LADO ESQUERDO */}
           <div className="flex w-20 h-20  absolute m-5 md:w-full ">
-            <Logo img="src\assets\logos\logo-1.png" alt="Logo" />
+            <Logo img="src\assets\logos\logo_rosa.png" alt="Logo" />
           </div>
 
           <div
@@ -59,13 +61,13 @@ function Cadastro() {
               />
 
               <div className="text-center font-mono">
-                <h3 className="text-[18px]">
-                  <b className="text-white">
-                    Já tem conta ?{" "}
-                    <a className="underline text-teal-400 font-bold" href="#">
-                      <b className=" hover:text-teal-200 transition duration-300">Entrar</b>
-                    </a>
+                <h3 className="text-[22px]">
+                  <b className="text-white font-body">
+                       Já tem conta ?{" "}
                   </b>
+                  <Link className="underline text-teal-400 font bold" to="/">
+                   <b className="hover:text-teal-200 transition duration-300 font-body">Entrar</b>
+                  </Link>
                 </h3>
 
               </div>

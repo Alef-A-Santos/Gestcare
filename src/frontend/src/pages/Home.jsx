@@ -1,8 +1,9 @@
 import Botao from "../components/Botao";
 import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
-import fundo from "../assets/imagem/fundo2.png";
+import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/FundoRosa.png";
+import { Link } from 'react-router-dom';
 
 function Home() {
   return (
@@ -22,7 +23,7 @@ function Home() {
         {/* LADO DIREITO */}
 
         <main
-          className="w-full md:w-2/5 h-screen flex items-center justify-center px-6"
+          className="w-full md:w-2/5 h-screen flex items-center justify-center px-6 rounded-lg"
           style={{ backgroundImage: `url("${fundoForm}")` }}
         >
           <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center">
@@ -47,9 +48,7 @@ function Home() {
             <div className="text-center font-mono">
               <p>
                 Ainda não tem conta?{" "}
-                <a className="underline text-teal-500 font-bold" href="#">
-                  Cadastre-se
-                </a>
+               <Link className="underline text-teal-500 font bold" to="/Cadastro">Cadastre-se</Link>
               </p>
             </div>
           </div>
