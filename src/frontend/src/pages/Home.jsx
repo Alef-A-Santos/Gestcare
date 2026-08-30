@@ -12,7 +12,7 @@ function Home() {
         {/* LADO ESQUERDO */}
 
         <div
-          className="w-full md:w-3/5 h-screen p-8 text-white bg-cover bg-center"
+          className="w-full md:w-3/5 min-h-screen p-8 text-white bg-cover bg-left"
           style={{ backgroundImage: `url("${fundo}")` }}
         >
           <div className="m-2 flex w-35 h-80">
@@ -23,7 +23,7 @@ function Home() {
         {/* LADO DIREITO */}
 
         <main
-          className="w-full md:w-2/5 h-screen flex items-center justify-center px-6 rounded-lg"
+          className="w-full md:w-2/5 min-h-screen flex items-center justify-center px-6 rounded-lg"
           style={{ backgroundImage: `url("${fundoForm}")` }}
         >
           <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center">
@@ -48,7 +48,7 @@ function Home() {
             <div className="text-center font-mono">
               <p>
                 Ainda não tem conta?{" "}
-               <Link className="underline text-teal-500 font bold" to="/Cadastro">Cadastre-se</Link>
+                <Link className="underline text-teal-500 font bold" to="/cadastro">Cadastre-se</Link>
               </p>
             </div>
           </div>
