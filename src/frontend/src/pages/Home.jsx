@@ -29,7 +29,7 @@ function Home() {
             backgroundSize: "cover",
           }}
         >
-          <div className=" font-poppins w-full h-full flex flex-col justify-center gap-5">
+          <div className=" font[poppins] w-full h-full flex flex-col justify-center gap-5">
             <h2 className="text-center text-3xl  text-white mt-12">
               <b>Olá! Que bom ter você com a gente.</b>
 
