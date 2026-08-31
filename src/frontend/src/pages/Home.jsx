@@ -9,7 +9,7 @@ function Home() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="m-7 flex w-20 md:w-35 h-1/2 absolute">
+        <div className="m-7 flex w-25 md:w-38 h-1/2 absolute">
           <Logo img={logoRosa} />
         </div>
 
@@ -29,13 +29,11 @@ function Home() {
             backgroundSize: "cover",
           }}
         >
-          <div className="w-full h-full flex flex-col justify-center gap-5">
-            <h2 className="font-body text-center text-3xl  text-white mt-12">
-              <b>Entrar na sua conta:</b>
+          <div className=" font-poppins w-full h-full flex flex-col justify-center gap-5">
+            <h2 className="text-center text-3xl  text-white mt-12">
+              <b>Olá! Que bom ter você com a gente.</b>
 
-              <p className="font-body text-sm text-white font-bold">
-                Acompanhe sua gravidez com segurança
-              </p>
+             
             </h2>
 
             <InputHome />
