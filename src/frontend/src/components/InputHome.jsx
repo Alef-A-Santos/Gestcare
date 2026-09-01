@@ -1,7 +1,7 @@
 import { FaLock,FaEyeSlash } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { IoEyeSharp } from "react-icons/io5";
-import Botao from "./Botao";
+import Botao from "./BotaoHome";
 import { useState } from "react";
 
 function InputHome() {
@@ -12,22 +12,22 @@ function InputHome() {
   return (
     <div className="w-full flex flex-col gap-1 justify-center items-center px-4">
 
-      <label className="font-mono text-[15px] text-white font-bold">
-        Email:
+      <label className="font-Playfair Display text-[15px] text-white font-bold">
+        Email
       </label>
 
-      <div className="relative lg:w-100 w-80">
-         <MdEmail className="absolute left-3 top-2/4 -translate-y-1/2 text-teal-500" />
+      <div className="relative lg:w-100 w-80 ">
+         <MdEmail className="absolute left-3 top-2/4 -translate-y-1/2 text-teal-500 " />
         <input
-         className="border p-2 pl-10 text-center rounded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2"
+         className="border p-2 pl-10 text-center rounded-lg bg-white border-red-300 w-full outline-none focus:border-red-400 focus:border-2 "
           type="email"
           placeholder="Digite seu email aqui"
           required
         />
       </div>
 
-      <label className="font-mono text-[15px] mt-5 text-white font-bold">
-        Senha:
+      <label className="font-Playfair Display text-[15px] mt-5 text-white font-bold">
+        Senha
       </label>
 
    

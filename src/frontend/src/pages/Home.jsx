@@ -1,6 +1,6 @@
 import InputHome from "../components/InputHome";
 import Logo from "../components/Logo";
-import Botao from "../components/Botao";
+import Botao from "../components/BotaoHome";
 
 import fundo from "../assets/imagem/fundo2.png";
 import logoRosa from "../assets/logos/logo_rosa.png";
@@ -9,7 +9,7 @@ function Home() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="m-7 flex w-25 md:w-38 h-1/2 absolute">
+        <div className="m-7 flex w-25 absolute">
           <Logo img={logoRosa} />
         </div>
 
@@ -29,8 +29,8 @@ function Home() {
             backgroundSize: "cover",
           }}
         >
-          <div className=" font[poppins] w-full h-full flex flex-col justify-center gap-5">
-            <h2 className="text-center text-3xl  text-white mt-12">
+          <div className=" w-full h-full flex flex-col justify-center gap-5">
+            <h2 className=" font-Poppins text-center text-3xl  text-white mt-12">
               <b>Olá! Que bom ter você com a gente.</b>
 
              
@@ -39,11 +39,11 @@ function Home() {
             <InputHome />
 
             <Botao
-           className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer"
+           className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins"
               nome={"Entrar"}
             />
 
-            <div className="text-center font-mono text-white  ">
+            <div className="text-center font-Playfair Display font-bold text-white  ">
               <p>
                 Ainda não tem conta?{" "}
                 <a className="underline text-teal-500 font-bold" href="#">
