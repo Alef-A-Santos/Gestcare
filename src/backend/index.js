@@ -20,7 +20,11 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // Todas as requisições vindas para endpoint /api serão direcionadas para o index router
-app.use('/api', indexRoute);  
+app.use('/api', indexRoute);
+// Em caso do endpoint requisitado não corresponder com os registrados
+app.use((_, res)=>{
+  return res.status(404).send({erro:"Endpoint não encontrado!"});
+});
 
 const server = http.createServer(app);
 
