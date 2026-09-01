@@ -1,4 +1,4 @@
-import Botao from "../components/Botao";
+import Botao from "../components/BotaoCadastro";
 import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/fotoDireito.png";
@@ -30,7 +30,7 @@ function Home() {
             <b className="font-body text-sm text-zinc-700  text-center mt-10">
               Primeiro Acesso
             </b>
-            <h2 className="font-body text-center text-4xl font-bold text-zinc-700">
+            <h2 className="font-poppins text-center text-4xl font-bold text-zinc-700">
               Entre em sua conta
             </h2>
             <b className="font-body text-sm text-center text-zinc-700">
@@ -45,8 +45,8 @@ function Home() {
               nome={"Entrar"}
             />
 
-            <div className="text-center font-mono">
-              <p>
+            <div className="text-center">
+              <p className="font-poppins">
                 Ainda não tem conta?{" "}
                 <Link className="underline text-teal-500 font bold" to="/cadastro">Cadastre-se</Link>
               </p>
