@@ -12,7 +12,7 @@ function InputHome() {
   return (
     <div className="w-full flex flex-col gap-1 justify-center items-center px-4">
 
-      <label className="font-Playfair Display text-[15px] text-white font-bold">
+      <label className="font-poppins Display text-[15px] text-white font-bold">
         Email
       </label>
 
@@ -26,7 +26,7 @@ function InputHome() {
         />
       </div>
 
-      <label className="font-Playfair Display text-[15px] mt-5 text-white font-bold">
+      <label className="font-poppins text-[15px] mt-5 text-white font-bold">
         Senha
       </label>
 

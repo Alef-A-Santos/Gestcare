@@ -30,7 +30,7 @@ function Home() {
           }}
         >
           <div className=" w-full h-full flex flex-col justify-center gap-5">
-            <h2 className=" font-Poppins text-center text-3xl  text-white mt-12">
+            <h2 className=" font-playfair text-center text-3xl  text-white mt-12">
               <b>Olá! Que bom ter você com a gente.</b>
 
              
@@ -43,10 +43,10 @@ function Home() {
               nome={"Entrar"}
             />
 
-            <div className="text-center font-Playfair Display font-bold text-white  ">
+            <div className="text-center font-poppins  text-white  ">
               <p>
                 Ainda não tem conta?{" "}
-                <a className="underline text-teal-500 font-bold" href="#">
+                <a className="underline text-teal-400 font-bold" href="#">
                   Cadastre-se
                 </a>
               </p>
