@@ -10,13 +10,14 @@ export default class RelatoriosRepository {
 	          SELECT MAX(valor) as media, id_usuario 
             FROM registro_glicemia 
             WHERE id_usuario = ?  
+              AND data_hora BETWEEN ? AND ?
+              AND YEAR(data_hora) = ?
             GROUP BY id_usuario)
         SELECT registro_glicemia.id_glicemia,registro_glicemia.data_hora, max.media
-        FROM registro_glicemia, max
-        WHERE registro_glicemia.id_usuario = max.id_usuario 
-	      AND registro_glicemia.valor = max.media 
-        AND data_hora BETWEEN ? AND ?;`,
-        [user.id_usuario, dados.data_inicio, dados.data_fim],
+        FROM registro_glicemia INNER JOIN max ON registro_glicemia.id_usuario = max.id_usuario
+        WHERE registro_glicemia.valor = max.media;
+        `,
+        [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
 
       const [registros_mais_baixos] = await db.query(
@@ -24,36 +25,29 @@ export default class RelatoriosRepository {
 	          SELECT MIN(valor) as media, id_usuario 
             FROM registro_glicemia 
             WHERE id_usuario = ?  
+              AND data_hora BETWEEN ? AND ?
+              AND YEAR(data_hora) = ?
             GROUP BY id_usuario)
         SELECT registro_glicemia.id_glicemia,registro_glicemia.data_hora, min.media
-        FROM registro_glicemia, min
-        WHERE registro_glicemia.id_usuario = min.id_usuario 
-	      AND registro_glicemia.valor = min.media 
-        AND data_hora BETWEEN ? AND ?;`,
-        [user.id_usuario, dados.data_inicio, dados.data_fim],
+        FROM registro_glicemia INNER JOIN min ON registro_glicemia.id_usuario = min.id_usuario
+        WHERE registro_glicemia.valor = min.media ;`,
+        [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
 
       const [registros_periodo] = await db.query(
-        `SELECT id_glicemia, valor, data_hora, classificacao FROM registro_glicemia WHERE id_usuario = ?`,
-        [user.id_usuario],
+        `SELECT id_glicemia, valor, data_hora, classificacao 
+        FROM registro_glicemia 
+        WHERE id_usuario = ? 
+          AND YEAR(data_hora) = ?`,
+        [user.id_usuario, dados.ano],
       );
 
-      /* 
-      Busca do registro mais baixo/alto via reduce()
-      Acho que é mais lento do que a consulta SQL 
-      Confirmar com os professores
-
-      const registro_mais_baixo = registros_periodo.reduce((registroAnterior, registroAtual) => registroAnterior.valor < registroAtual.valor?registroAnterior:registroAtual,registros_periodo[0]);
-
-      const registro_mais_alto = registros_periodo.reduce((registroAnterior, registroAtual) => registroAnterior.valor > registroAtual.valor?registroAnterior:registroAtual,registros_periodo[0]);
-
-      console.log(registro_mais_baixo);
-      console.log(registro_mais_alto);
-      */
-
       const [[contagem_registros]] = await db.query(
-        `SELECT COUNT(id_glicemia) as qtd_registros FROM registro_glicemia WHERE id_usuario = ?`,
-        [user.id_usuario],
+        `SELECT COUNT(id_glicemia) as qtd_registros 
+          FROM registro_glicemia 
+          WHERE id_usuario = ?
+            AND YEAR(data_hora) = ?`,
+        [user.id_usuario, dados.ano],
       );
 
       const { media_periodo } = await this.CalcularMediaPeriodo(dados, user, db);
@@ -77,42 +71,44 @@ export default class RelatoriosRepository {
   }
   async CalcularMediaPeriodo(dados, user, db){
     try {
-      const [[result]] = await db.query(`SELECT AVG(valor) as media_periodo FROM registro_glicemia WHERE id_usuario = ? AND data_hora BETWEEN ? AND ?`, [user.id_usuario,dados.data_inicio, dados.data_fim]); 
-      console.log(result);
+      const [[result]] = await db.query(`
+        SELECT AVG(valor) as media_periodo 
+        FROM registro_glicemia 
+        WHERE id_usuario = ? 
+          AND data_hora BETWEEN ? AND ?
+          AND YEAR(data_hora) = ?
+        `, [user.id_usuario,dados.data_inicio, dados.data_fim, dados.ano]); 
 
       return result;
     }catch(error) {
-      console.error(error);
       throw error;
     }
   }
   async CalcularMediasSemanais(dados, user, db) {
     try {
-      const [[[result]]] = await db.query(`call CalcularMediaSemanal(?, ?, ?);`, [
+      const [[[result]]] = await db.query(`call CalcularMediaSemanal(?, ?, ?, ?);`, [
         dados.data_inicio,
         dados.data_fim,
+        dados.ano,
         user.id_usuario,
       ]);
-      console.log(result);
 
       return result;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
   async CalcularMediasMensais(dados, user, db) {
     try {
-      const [[[result]]] = await db.query(`call CalcularMediaMensal(?, ?, ?);`,[
+      const [[[result]]] = await db.query(`call CalcularMediaMensal(?, ?, ?, ?);`,[
         dados.data_inicio,
         dados.data_fim,
+        dados.ano,
         user.id_usuario,
       ]);
-      console.log(result);
 
       return result;
     }catch(error){
-      console.error(error);
       throw error;
     }
   }

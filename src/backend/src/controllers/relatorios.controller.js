@@ -12,10 +12,6 @@ export default class RelatoriosController {
             }catch(error) {
                 console.error(error);
                 return this.#VerificarErro(res, error);
-                // if(error.camposFaltando) {
-                //     return res.status(400).send({erro: error.message || "Data de inicio e fim são   obrigarórios!"});
-                // }
-                // return res.status(500).send({erro:"Falha ao gerar relatório."});
             }
         };
     }
@@ -28,10 +24,6 @@ export default class RelatoriosController {
             }catch(error){
                 console.error(error);
                 return this.#VerificarErro(res, error);
-                // if(error.camposFaltando) {
-                //     return res.status(400).send({erro: error.message || "Data de inicio e fim são   obrigarórios!"});
-                // }
-                // return res.status(500).send({erro:"Falha ao gerar relatório."});
             }
         }
     }
@@ -44,10 +36,6 @@ export default class RelatoriosController {
             }catch(error){
                 console.error(error);
                 return this.#VerificarErro(res, error);
-                // if(error.camposFaltando) {
-                //     return res.status(400).send({erro: error.message || "Data de inicio e fim são   obrigarórios!"});
-                // }
-                // return res.status(500).send({erro:"Falha ao gerar relatório."});
             }
         }
     }
@@ -60,10 +48,6 @@ export default class RelatoriosController {
             }catch(error){
                 console.error(error);
                 return this.#VerificarErro(res, error);
-                // if(error.camposFaltando) {
-                //     return res.status(400).send({erro: error.message || "Data de inicio e fim são   obrigarórios!"});
-                // }
-                // return res.status(500).send({erro:"Falha ao gerar relatório."});
             }
         }
     }
@@ -71,7 +55,7 @@ export default class RelatoriosController {
     // A hashtag(#) torna o método privado
     #VerificarErro(res, error){
         if(error.camposFaltando) {
-            return res.status(400).send({erro: error.message || "Data de inicio e fim são   obrigatórios!"});
+            return res.status(400).send({erro: error.message || "Data de inicio, fim e o ano  são   obrigatórios!"});
         }
         return res.status(500).send({erro:"Falha ao gerar relatório."});
     }

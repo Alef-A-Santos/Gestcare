@@ -2,7 +2,7 @@ import connectDB from "../database/db.js";
 import RelatoriosRepository from "../repository/relatorios.repository.js";
 
 const relatoriosRepository = new RelatoriosRepository();
-const camposObrigatorios = ["data_inicio", "data_fim"];
+const camposObrigatorios = ["data_inicio", "data_fim", "ano"];
 const error = new Error();
 
 export default class RelatoriosService {
@@ -15,7 +15,6 @@ export default class RelatoriosService {
         mensagem: "Relatório gerado com sucesso!",
       };
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
@@ -30,7 +29,6 @@ export default class RelatoriosService {
         mensagem: "Média calculada com sucesso!",
       };
     } catch (error) {
-      console.error(error);
       throw error;
     }finally{
       if(db) db.release();
@@ -47,7 +45,6 @@ export default class RelatoriosService {
         mensagem: "Médias semanais calculadas com sucesso!",
       };
     } catch (error) {
-      console.error(error);
       throw error;
     }finally{
       if(db) db.release();
@@ -64,7 +61,6 @@ export default class RelatoriosService {
         mensagem: "Médias mensais calculadas com sucesso!",
       };
     } catch (error) {
-      console.error(error);
       throw error;
     }finally{
       if(db) db.release();
