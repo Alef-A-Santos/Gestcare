@@ -1,24 +1,30 @@
 import Botao from "../components/BotaoCadastro";
-import InputCadastro from "../components/InputsCadastro";
+
 import Logo from "../Components/Logo";
-import fundo from "../assets/imagem/fotoDireito.png";
-import fundoForm from "../assets/imagem/FundoRosa.png";
+import fundo from "../assets/imagem/Fundo1.png";
+import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
 import { Link } from 'react-router-dom';
+import InputHome from "../components/InputHome";
+
+
+
+import logoRosa from "../assets/logos/logo_rosa.png";
 
 function Home() {
   return (
     <div>
-      <div className="h-screen flex flex-col md:flex-row">
+      <div className="min-h-screen flex flex-col md:flex-row">
+        <div className="m-7 flex w-25 absolute">
+          <Logo img={logoRosa} />
+        </div>
+
         {/* LADO ESQUERDO */}
 
         <div
-          className="w-full md:w-3/5 min-h-screen p-8 text-white bg-cover bg-left"
+          
+          className="w-full md:w-AUTO h-screen p-8 text-white  bg-cover bg-left hidden lg:flex"
           style={{ backgroundImage: `url("${fundo}")` }}
-        >
-          <div className="m-2 flex w-35 h-80">
-            <Logo img="src\assets\logos\logo-1.png" alt="Mulheres gravidas" />
-          </div>
-        </div>
+        ></div>
 
         {/* LADO DIREITO */}
 
@@ -26,29 +32,28 @@ function Home() {
           className="w-full md:w-2/5 min-h-screen flex items-center justify-center px-6 rounded-lg"
           style={{ backgroundImage: `url("${fundoForm}")` }}
         >
-          <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center">
-            <b className="font-body text-sm text-zinc-700  text-center mt-10">
-              Primeiro Acesso
-            </b>
-            <h2 className="font-poppins text-center text-4xl font-bold text-zinc-700">
-              Entre em sua conta
-            </h2>
-            <b className="font-body text-sm text-center text-zinc-700">
-              Acompanhe sua gravidez com segurança
-            </b>
+        
+          <div className=" w-full h-full flex flex-col justify-center gap-5">
+            <h2 className=" font-playfair text-center text-3xl  text-white mt-12">
+              <b>Olá! Que bom ter você com a gente.</b>
 
-            <InputCadastro />
+             
+            </h2>
+
+            <InputHome />
 
             <Botao
-              className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
-             rounded-lg py-3 m-2 w-100"
+           className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins"
               nome={"Entrar"}
             />
 
-            <div className="text-center">
-              <p className="font-poppins">
+         
+             
+             
+            <div className="text-center font-poppins  text-white text-[16px] ">
+              <p>
                 Ainda não tem conta?{" "}
-                <Link className="underline text-teal-500 font bold" to="/cadastro">Cadastre-se</Link>
+                  <Link className="underline text-white font-bold " to="/cadastro">Cadastre-se</Link>
               </p>
             </div>
           </div>
