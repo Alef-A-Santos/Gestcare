@@ -49,16 +49,13 @@ function InputHome() {
 
       <div className="w-96 flex flex-col justify-center lg:justify-start items-center">
         <Labels
-          desc="Data da última menstruação"
+          desc="Mês da última menstruação"
           className="text-white font-poppins font-bold m-1 flex justify-start items-center pl-2 mb-1"
         />
         <Inputs
-          tipoDado="date"
-          placeName="Digite aqui a data da última menstruação"
-          icone={
-            <MdCalendarMonth className="absolute text-teal-500 m-4 text-end" />
-          }
-          className="border-2 p-3  text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none  focus:border-red-400  focus:border-2    text-gray-500   pl-9 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+          tipoDado="month"
+          icone={<MdCalendarMonth className="absolute text-teal-500 m-4 text-end" />}
+          className="border-2 p-3  text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none  focus:border-red-400  focus:border-2 text-gray-500 pl-9 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
         />
       </div>
     </div>

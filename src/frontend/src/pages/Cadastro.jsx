@@ -57,11 +57,11 @@ function Cadastro() {
                 nome={"Cadastrar"}
               />
 
-              <div className="text-center font-poppins w-full flex justify-center items-center gap-2">
+              <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
               
-                  <p className="text-white font-poppins text-2xl">Já tem conta ?{" "}</p>
-                  <Link className="underline text-teal-400" to="/">
-                   <b className="font-poppins font-bold text-3xl">Entrar</b>
+                  <p className="text-white font-poppins">Já tem conta ?{" "}</p>
+                  <Link className="underline text-white" to="/">
+                   <b className="font-poppins font-bold">Entrar</b>
                   </Link>
               </div>
             </div>

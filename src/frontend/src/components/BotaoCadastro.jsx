@@ -1,4 +1,4 @@
-function Botao ({nome, className}){
+function Botao ({nome, className, }){
     return(
         <div className="flex justify-center items-center">
             <button className={className}>{nome}</button>
