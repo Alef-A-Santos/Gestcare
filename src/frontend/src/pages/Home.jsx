@@ -1,8 +1,9 @@
-import Botao from "../components/Botao";
+import Botao from "../components/BotaoCadastro";
 import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
-import fundo from "../assets/imagem/fundo2.png";
+import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/FundoRosa.png";
+import { Link } from 'react-router-dom';
 
 function Home() {
   return (
@@ -11,7 +12,7 @@ function Home() {
         {/* LADO ESQUERDO */}
 
         <div
-          className="w-full md:w-3/5 h-screen p-8 text-white bg-cover bg-center"
+          className="w-full md:w-3/5 min-h-screen p-8 text-white bg-cover bg-left"
           style={{ backgroundImage: `url("${fundo}")` }}
         >
           <div className="m-2 flex w-35 h-80">
@@ -22,14 +23,14 @@ function Home() {
         {/* LADO DIREITO */}
 
         <main
-          className="w-full md:w-2/5 h-screen flex items-center justify-center px-6"
+          className="w-full md:w-2/5 min-h-screen flex items-center justify-center px-6 rounded-lg"
           style={{ backgroundImage: `url("${fundoForm}")` }}
         >
           <div className="w-full max-w-sm flex flex-col gap-4 justify-center items-center">
             <b className="font-body text-sm text-zinc-700  text-center mt-10">
               Primeiro Acesso
             </b>
-            <h2 className="font-body text-center text-4xl font-bold text-zinc-700">
+            <h2 className="font-poppins text-center text-4xl font-bold text-zinc-700">
               Entre em sua conta
             </h2>
             <b className="font-body text-sm text-center text-zinc-700">
@@ -44,12 +45,10 @@ function Home() {
               nome={"Entrar"}
             />
 
-            <div className="text-center font-mono">
-              <p>
+            <div className="text-center">
+              <p className="font-poppins">
                 Ainda não tem conta?{" "}
-                <a className="underline text-teal-500 font-bold" href="#">
-                  Cadastre-se
-                </a>
+                <Link className="underline text-teal-500 font bold" to="/cadastro">Cadastre-se</Link>
               </p>
             </div>
           </div>
