@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 
 
 function Cadastro() {
+  
   return (
     <div>
       <div>
@@ -30,7 +31,8 @@ function Cadastro() {
             className="w-full lg:w-2/5  min-h-screen flex items-center justify-center flex-col px-6 sm:px-8 bg-cover"
             style={{ backgroundImage: `url("${fundoForm}")` }}
           >
-            <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
+            <form action="#" method="post">
+              <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
               <h2 className="font-playfair text-center text-6xl font-bold text-white ">
                 Crie sua conta
               </h2>
@@ -52,7 +54,8 @@ function Cadastro() {
               <Botao
                 className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
-                nome={"Cadastrar"}
+              tipoDado="submit"
+                nome="Cadastrar"
               />
 
               <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
@@ -63,6 +66,8 @@ function Cadastro() {
                   </Link>
               </div>
             </div>
+            </form>
+            
           </main>
         </div>
       </div>
