@@ -1,3 +1,5 @@
+
+
 import Botao from "../components/BotaoCadastro";
 import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
@@ -13,7 +15,7 @@ function Cadastro() {
     <div>
       <div>
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
-          {/* LADO ESQUERDO */}
+          {/* LADO ESQUERDO */ }
           <div className="flex w-20 h-20  absolute m-7 md:w-full ">
             <Logo img="src\assets\logos\logo_rosa.png" alt="Logo" />
           </div>
