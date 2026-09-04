@@ -41,27 +41,25 @@ function Cadastro() {
               <InputCadastro />
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start">
                 <div className="flex flex-col text-center p-1">
-                  <Labels desc="Meta jejum (mg/dl)" className="font-poppins text-center text-white" />
+                  <Labels desc="Meta jejum (mg/dl)" className="font-poppins font-bold text-center text-white" />
                   <Inputs tipoDado="number" placeName="95" className="border-2 p-3   rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
                 </div>
                 <div className="flex flex-col text-center p-1">
-                  <Labels desc="Meta pós-pradial" className="font-poppins text-center text-white" />
+                  <Labels desc="Meta pós-pradial" className="font-poppins font-bold text-center text-white" />
                   <Inputs tipoDado="number" placeName="140" className="border-2 p-3  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
                 </div>
               </div>
-
-
               <Botao
-                className="font-poppins  text-center bg-teal-500 hover:bg-teal-400 font-bold text-white
-             rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3"
+                className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
+             rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
                 nome={"Cadastrar"}
               />
 
-              <div className="text-center font-poppins w-full flex justify-center items-center gap-2">
+              <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
               
-                  <p className="text-white font-poppins text-2xl">Já tem conta ?{" "}</p>
-                  <Link className="underline text-teal-400" to="/">
-                   <b className="font-poppins font-bold text-3xl">Entrar</b>
+                  <p className="text-white font-poppins">Já tem conta ?{" "}</p>
+                  <Link className="underline text-white" to="/">
+                   <b className="font-poppins font-bold">Entrar</b>
                   </Link>
               </div>
             </div>

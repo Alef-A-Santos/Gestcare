@@ -46,10 +46,6 @@ function Home() {
            className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins"
               nome={"Entrar"}
             />
-
-         
-             
-             
             <div className="text-center font-poppins  text-white text-[16px] ">
               <p>
                 Ainda não tem conta?{" "}
