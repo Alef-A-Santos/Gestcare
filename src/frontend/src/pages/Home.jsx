@@ -1,34 +1,38 @@
-import InputHome from "../components/InputHome";
-import Logo from "../components/Logo";
 import Botao from "../components/BotaoHome";
 
+import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/fundo2.png";
+import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
+import { Link } from 'react-router-dom';
+import InputHome from "../components/InputHome";
+
+
+
 import logoRosa from "../assets/logos/logo_rosa.png";
-import fundoRosa from "../assets/imagem/fotoMelhoradaGestcare.png";
+
 function Home() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="flex w-20 h-20  absolute m-7 md:w-full">
+        <div className="m-7 flex w-25 absolute">
           <Logo img={logoRosa} />
         </div>
 
         {/* LADO ESQUERDO */}
 
         <div
-          className="w-full md:w-AUTO h-screen p-8 text-white  bg-cover bg-right hidden lg:flex"
+          
+          className="w-full md:w-AUTO h-screen p-8 text-white  bg-cover bg-left hidden lg:flex"
           style={{ backgroundImage: `url("${fundo}")` }}
         ></div>
 
         {/* LADO DIREITO */}
 
         <main
-          className="w-dvw  lg:w-1/2 min-h-dvh flex items-center justify-center bg-[#f7cccc] p-10 object-cover"
-          style={{
-            backgroundImage: `url("${fundoRosa}")`,
-            backgroundSize: "cover",
-          }}
+          className="w-full md:w-2/5 min-h-screen flex items-center justify-center px-6 rounded-lg"
+          style={{ backgroundImage: `url("${fundoForm}")` }}
         >
+        
           <div className=" w-full h-full flex flex-col justify-center gap-5">
             <h2 className=" font-playfair text-center text-3xl  text-white mt-12">
               <b>Olá! Que bom ter você com a gente.</b>
@@ -43,12 +47,13 @@ function Home() {
               nome={"Entrar"}
             />
 
-            <div className="text-center font-poppins  text-white  ">
+         
+             
+             
+            <div className="text-center font-poppins  text-white text-[16px] ">
               <p>
                 Ainda não tem conta?{" "}
-                <a className="underline text-teal-400 font-bold" href="#">
-                  Cadastre-se
-                </a>
+                  <Link className="underline text-white font-bold " to="/cadastro">Cadastre-se</Link>
               </p>
             </div>
           </div>
