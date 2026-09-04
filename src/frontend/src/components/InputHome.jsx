@@ -31,7 +31,7 @@ function InputHome() {
       </label>
 
    
-      <div className="relative lg:w-100 w-80">
+          <div className="relative lg:w-100 w-80">
         <FaLock className="absolute left-3 top-2/4 -translate-y-1/2 text-teal-500" />
 
         <input
