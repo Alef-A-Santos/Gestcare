@@ -1,5 +1,5 @@
 import {Routes, Route} from 'react-router-dom';
-import Login from "./pages/Login";
+import Login from "./pages/login";
 import Cadastro from "./pages/Cadastro";
 
 function App() {
