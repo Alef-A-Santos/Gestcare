@@ -7,7 +7,6 @@ function App() {
       <Routes>
         <Route path= "/" element={<Login/>}/>
         <Route path= "/Cadastro" element={<Cadastro/>}/>
-        <Route path= "/Cadastro" element={<Cadastro/>}/>
       </Routes>
   )
 }

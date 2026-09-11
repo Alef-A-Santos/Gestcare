@@ -13,7 +13,7 @@ function Cadastro() {
   return (
     <div>
       <div>
-        <div className="min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
+        <div className="min-h-screen w-full  flex flex-col md:flex-row relative overflow-x-hidden">
           {/* LADO ESQUERDO */}
           <div className="flex w-20 h-20  absolute m-7 md:w-full ">
             <Logo img="src\assets\logos\logo_rosa.png" alt="Logo" />
@@ -31,7 +31,7 @@ function Cadastro() {
             className="w-full lg:w-2/5  min-h-screen flex items-center justify-center flex-col px-6 sm:px-8 bg-cover"
             style={{ backgroundImage: `url("${fundoForm}")` }}
           >
-            <form action="#" method="post">
+            <form  className="mt-30" action="#" method="post">
               <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
               <h2 className="font-playfair text-center text-6xl font-bold text-white ">
                 Crie sua conta
@@ -55,8 +55,9 @@ function Cadastro() {
                 className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
               tipoDado="submit"
-                nome="Cadastrar"
-              />
+                Component={<Link className="underline text-white" to="/Verificacao">Cadastrar</Link> }
+                />
+              
 
               <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
               

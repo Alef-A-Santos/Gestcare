@@ -51,7 +51,7 @@ const [
          tipoDado={isSenha ? "text" : "password"}
           placeName="Crie sua senha aqui"
           icone={<FaLock className="absolute  text-teal-500 m-5" />}
-          icone2={ <Botao nome={ isSenha ? <IoEyeSharp/>:<FaEyeSlash />} className={"cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"} clickHandler={()=> setIsSenha (!isSenha)} />}
+          icone2={ <Botao nome={ isSenha ? <IoEyeSharp/>:<FaEyeSlash />} className={"cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"} clickHandler={()=> setIsSenha (!isSenha)} tipoDado="button"/>}
          className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300  pl-11 pr-6"
         />
        </div>
