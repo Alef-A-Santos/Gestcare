@@ -2,6 +2,7 @@ import { Router } from "express";
 import UsuariosRoute from './usuarios.routes.js';
 import AcompanhantesRoute from './acompanhantes.routes.js';
 import AuthRoute from './auth.routes.js';
+import GlicemiaRoute from './glicemia.route.js';
 import { enviar } from "../utils/sendEmail.js";
 import { gerarCodigo, validarCodigo } from "../utils/codigoValidacao.js";
 const router = Router();
