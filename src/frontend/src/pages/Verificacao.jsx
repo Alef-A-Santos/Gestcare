@@ -60,7 +60,7 @@ function Verificacao() {
                 Não recebeu o código?{" "}
                 <a
                   className="underline text-white font-bold cursor-pointer"
-                  href="/cadastro"
+                  href="#"
                 >
                   Reenviar Código
                 </a>

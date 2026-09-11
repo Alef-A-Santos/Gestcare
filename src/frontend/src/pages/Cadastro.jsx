@@ -55,7 +55,8 @@ function Cadastro() {
                 className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
               tipoDado="submit"
-                nome="Cadastrar"
+                
+                Component={<Link className="underline text-white" to="/Cadastro/Verificacao">Cadastrar</Link>}
               />
 
               <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
