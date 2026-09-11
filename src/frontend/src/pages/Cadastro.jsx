@@ -15,7 +15,7 @@ function Cadastro() {
         <div className="min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
           {/* LADO ESQUERDO */}
           <div className="flex w-20 h-20  absolute m-7 md:w-full ">
-            <Logo img="src\assets\logos\Logo.png" alt="Logo" />
+            <Logo img="src\assets\logos\logo_rosa.png" alt="Logo" />
           </div>
 
           <div
