@@ -9,9 +9,21 @@ import { testarSenha } from "../utils/verificarSenha.js";
 import { gerarCodigo, tempoRestante, validarCodigo } from "../utils/codigoValidacao.js";
 import { enviarCodigo } from "../utils/sendEmail.js";
 import connectDB from "../database/db.js";
+import GestcaoRepository from "../repository/gestacao.repository.js";
 
 const authRepository = new AuthRepository();
 const usuariosRepository = new UsuariosRepository();
+const gestacaoRepository = new GestcaoRepository();
+
+const error = new Error();
+const camposObrigatoriosCadastroAcompanhante = [
+"email","nome","perfil","senha"
+]
+const camposObrigatoriosCadastroGestante = [
+  ...camposObrigatoriosCadastroAcompanhante,
+"data_ultima_menstruacao","meta_jejum", "meta_pos"
+]
+
 export default class AuthService {
   async Logar(dados) {
     try {
@@ -44,7 +56,7 @@ export default class AuthService {
 
       const token = await gerarToken(usuario[0]);
       if (token?.erro) throw new Error(JSON.stringify(token.erro));
-      const auth = await randomBytes(50).toString("hex");
+      const auth = randomBytes(50).toString("hex");
 
       const response = await authRepository.Logar(auth, email);
 
@@ -68,17 +80,27 @@ export default class AuthService {
   async Cadastrar(dados) {
     let db;
     try {
-      if (!dados.email 
-          || !dados.nome 
-          || !dados.perfil 
-          || !dados.senha
-      ) {
-        throw new Error(
-          JSON.stringify({ mensagem: "Preencha todos os campos!", status:400  })
-        );
+      let camposFaltando;
+      if(dados.perfil === "acompanhante") {
+        camposFaltando = camposObrigatoriosCadastroAcompanhante.some((campo) => !dados[campo]);
+      }else if (dados.perfil === "gestante"){
+        camposFaltando = camposObrigatoriosCadastroGestante.some((campo) => !dados[campo]);
+      } else {
+        error.hasMissinValues = true;
+        error.message = "O campo de perfil é obrigatório!";
+        throw error;
       }
 
-      const isInvalida = await testarSenha(dados.senha);
+      if (
+          !dados
+          || camposFaltando.length
+      ) {
+        error.hasMissinValues = true;
+        error.message = "Preencha os campos obrigatórios";
+        throw error;
+      }
+
+      const isInvalida = testarSenha(dados.senha);
       if (isInvalida) {
         throw new Error(JSON.stringify({ erro: isInvalida, status:400 }));
       }
@@ -100,21 +122,24 @@ export default class AuthService {
         await db.query("UPDATE usuarios SET codigo_validacao = null WHERE email = ?", [dados.email]);
       }, 30000);
 
-      const usuario = {
-        nome:dados.nome,
-        email:dados.email,
-        senha:await criptografar(dados.senha),
-        perfil:dados.perfil,
-      };
+      // const usuario = {
+      //   nome:dados.nome,
+      //   email:dados.email,
+      //   senha:await criptografar(dados.senha),
+      //   perfil:dados.perfil,
+      // };
 
-      const reponse = await authRepository.Cadastrar(codigoValidacao, usuario);
-      return {
-        mensagem:"Código de validação enviado para o email!",
-        dadosUsuario:{
-          nome:usuario.nome,
-          email:usuario.email,
-        }
-      }
+      // const response = await authRepository.Cadastrar(codigoValidacao, usuario);
+
+      // const responseGestacao = await gestacaoRepository.
+
+      // return {
+      //   mensagem:"Código de validação enviado para o email!",
+      //   dadosUsuario:{
+      //     nome:usuario.nome,
+      //     email:usuario.email,
+      //   }
+      // }
     } catch (error) {
       throw new Error(error.message);
     }finally{ 
