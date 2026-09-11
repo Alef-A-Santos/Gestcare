@@ -1,9 +1,12 @@
+import GlicemiaController
+ from "../controllers/glicemia.controller.js";
 import {
-    Router
+    Router 
 } from "express"
 const router = Router();
 
-router.post("/cadastrar-glicemia", )
+const glicemiaController = new GlicemiaController ()
 
+router.post("/cadastrar-glicemia", glicemiaController.Cadastrar());
 
-export default router
+export default router;
