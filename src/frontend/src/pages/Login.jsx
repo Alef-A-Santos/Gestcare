@@ -1,5 +1,4 @@
 import Botao from "../components/BotaoCadastro";
-
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/Fundo1.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
