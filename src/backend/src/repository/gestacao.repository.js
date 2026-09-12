@@ -90,7 +90,6 @@ export default class GestcaoRepository {
       db = await connectDB();
       const [[dadosAtuais]] = await db.query("SELECT data_prev_parto, meta_glicemia_jejum, meta_glicemia_pos FROM gestacao WHERE id_gestacao = ? AND id_usuario = ?", [id_gestacao, user.id_usuario]);
 
-      console.log(dadosAtuais);
 
       const [result] = await db.query(`UPDATE gestacao SET data_prev_parto = ?, meta_glicemia_jejum = ?, meta_glicemia_pos = ? WHERE id_gestacao = ? AND id_usuario = ?`, [
          novosDados.data_prev_parto || dadosAtuais.data_prev_parto, 

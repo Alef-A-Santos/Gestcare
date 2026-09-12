@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 export async function criptografar(dados) {
   try {
-    const salt = await bcrypt.genSalt(20);
+    const salt = await bcrypt.genSalt(15);
     const dadosCriptografado = await bcrypt.hash(dados,salt);
     return dadosCriptografado;
   }catch(err) {

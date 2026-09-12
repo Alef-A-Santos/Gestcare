@@ -14,15 +14,23 @@ export default class AuthController {
           httpOnly: true, // Não permite que o cookie seja acessado via js no front
           secure: true, // Só permite a transmissão de cookies via HTTP, ou conexões seguras
           maxAge: 60 * 60 * 24 * 30 * 1000, // Expira em 30 dias
+          path: "/",
         });
 
         return res.status(200).send({ mensagem, dadosUsuario });
       } catch (error) {
         console.error(error);
-        const { erro, status } = JSON.parse(error.message);
-        if (status) {
-          return res.status(status).send({ erro });
+        if (
+          error.hasMissingValues ||
+          error.inactiveUser ||
+          error.incorrectPasswd
+        ) {
+          return res.status(400).send({ erro: error.message });
         }
+        if (error.notFound) {
+          return res.status(404).send({ erro: error.message });
+        }
+
         return res.status(500).send({ erro: "Falha ao realizar login!" });
       }
     };
@@ -42,17 +50,21 @@ export default class AuthController {
 
         return res.status(201).send(response);
       } catch (error) {
-        console.error(error.message);
-        const { erro, status } = JSON.parse(error.message);
-        if (status) {
-          return res.status(status).send({ erro });
+        console.error(error);
+        // const { erro, status } = JSON.parse(error.messageCampo obrigatórios:);
+        if (error.hasMissingValues || error.invalidPasswd) {
+          return res.status(400).send({ erro: error.message });
         }
-        return res
-          .status(500)
-          .send({
-            mensagem:
-              "Ocorreu uma falha no cadastro!Tente novamente mais tarde.",
-          });
+
+        if (error.nonExistent) {
+          return res.status(404).send({ erro: error.message });
+        }
+
+        return res.status(500).send({
+          erro: error.emailNotSended
+            ? "Falha no servidor ao enviar email! Tente novamente mais tarde"
+            : "Ocorreu uma falha no cadastro!Tente novamente mais tarde.",
+        });
       }
     };
   }
@@ -67,14 +79,19 @@ export default class AuthController {
           httpOnly: true,
           secure: true,
           maxAge: 60 * 60 * 24 * 30 * 1000,
+          path: "/",
         });
         return res.status(200).send({ mensagem, usuario });
       } catch (error) {
         console.error(error);
-        const { erro, status } = JSON.parse(error.message);
-        if (status) {
-          return res.status(status).send({ erro });
+        if (error.hasMissingValues || error.expiredCode || error.invalidCode) {
+          return res.status(400).send({ erro: error.message });
         }
+
+        if (error.notFound) {
+          return res.status(404).send({ erro: error.message });
+        }
+
         return res.status(500).send({ mensagem: "Falha ao validar o código" });
       }
     };
@@ -87,12 +104,16 @@ export default class AuthController {
         res.status(200).send(response);
       } catch (error) {
         console.error(error);
-        const { erro, status } = JSON.parse(error.message);
-        if (status) {
-          return res.status(status).send({ erro });
+        if (error.hasMissingValues) {
+          return res.status(400).send({ erro: error.message });
         }
-        return res.status(500).send({ erro: "Falha no servidor" });
+
+        return res
+          .status(500)
+          .send({
+            erro: error.emailNotSended ? error.message : "Falha no servidor",
+          });
       }
-    }
+    };
   }
 }

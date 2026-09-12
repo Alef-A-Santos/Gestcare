@@ -49,14 +49,9 @@ export default class GestacaoService {
       }
 
       db = await connectDB();
-      if (dados.data_ultima_menstruacao) {
-        const [[result]] = await db.query(
-          `SELECT DATE_ADD(?,INTERVAL 9 MONTH) as data_prev_parto`,
-          [dados.data_ultima_menstruacao],
-        );
-        console.log(result);
-        dados.data_prev_parto = result.data_prev_parto;
-      }
+      // Métodos não estáticos não podem acessar métodos/campos estáticos
+      // Uma forma de acessá-los é utilizando CLASS_NAME.METHOD/FIELD 
+      dados.data_prev_parto = GestacaoService.getDataPrevParto();
 
       const dados_gestacao = await gestacaoRepository.CriarGestacao(
         dados,
@@ -145,5 +140,13 @@ export default class GestacaoService {
    }catch(error){
       throw error;
    }
+  }
+
+  static async getDataPrevParto(data_ultima_menstruacao, db) {
+    const [[result]] = await db.query(
+      `SELECT DATE_ADD(?,INTERVAL 9 MONTH) as data_prev_parto`,
+      [data_ultima_menstruacao],
+    );
+    return result.data_prev_parto;
   }
 }
