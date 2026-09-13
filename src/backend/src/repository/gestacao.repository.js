@@ -11,7 +11,6 @@ export default class GestcaoRepository {
       );
       return results;
     } catch (error) {
-      console.error(error);
       throw error;
     } finally {
       if (db) db.release();
@@ -28,7 +27,6 @@ export default class GestcaoRepository {
 
       return result;
     } catch (error) {
-      console.error(error);
       throw error;
     } finally {
       if (db) db.release();
@@ -62,7 +60,6 @@ export default class GestcaoRepository {
       );
       return result;
     } catch (error) {
-      console.error(error);
       throw error;
     } finally {
       if (db) db.release();
@@ -80,30 +77,35 @@ export default class GestcaoRepository {
       return result;
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
   async AlterarGestacao(id_gestacao, novosDados, user) {
-   let db;
-   try{
+    let db;
+    try {
       db = await connectDB();
-      const [[dadosAtuais]] = await db.query("SELECT data_prev_parto, meta_glicemia_jejum, meta_glicemia_pos FROM gestacao WHERE id_gestacao = ? AND id_usuario = ?", [id_gestacao, user.id_usuario]);
+      const [[dadosAtuais]] = await db.query(
+        "SELECT data_prev_parto, meta_glicemia_jejum, meta_glicemia_pos FROM gestacao WHERE id_gestacao = ? AND id_usuario = ?",
+        [id_gestacao, user.id_usuario],
+      );
 
-
-      const [result] = await db.query(`UPDATE gestacao SET data_prev_parto = ?, meta_glicemia_jejum = ?, meta_glicemia_pos = ? WHERE id_gestacao = ? AND id_usuario = ?`, [
-         novosDados.data_prev_parto || dadosAtuais.data_prev_parto, 
-         novosDados.meta_glicemia_jejum || dadosAtuais.meta_glicemia_jejum,
-         novosDados.meta_glicemia_pos || dadosAtuais.meta_glicemia_pos,
-         id_gestacao,
-         user.id_usuario
-      ]);
+      const [result] = await db.query(
+        `UPDATE gestacao SET data_prev_parto = ?, meta_glicemia_jejum = ?, meta_glicemia_pos = ? WHERE id_gestacao = ? AND id_usuario = ?`,
+        [
+          novosDados.data_prev_parto || dadosAtuais.data_prev_parto,
+          novosDados.meta_glicemia_jejum || dadosAtuais.meta_glicemia_jejum,
+          novosDados.meta_glicemia_pos || dadosAtuais.meta_glicemia_pos,
+          id_gestacao,
+          user.id_usuario,
+        ],
+      );
 
       return result;
-   }catch(error){
+    } catch (error) {
       throw error;
-   }finally{
-       if(db) db.release();
-   }
+    } finally {
+      if (db) db.release();
+    }
   }
 }

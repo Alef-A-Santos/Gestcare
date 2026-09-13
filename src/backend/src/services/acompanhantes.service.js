@@ -9,7 +9,6 @@ export default class AcompanhantesService {
       const response = await acompanhantesRepository.Listar();
       return response;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
@@ -24,7 +23,6 @@ export default class AcompanhantesService {
         await acompanhantesRepository.ListarAcompanhantesGestante(user);
       return response;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }
@@ -66,7 +64,6 @@ export default class AcompanhantesService {
       const response = await acompanhantesRepository.Cadastrar(dados, user);
       return { mensagem: response };
     } catch (error) {
-      console.error(error);
       throw error;
     } finally {
       if (db) db.release();
@@ -94,7 +91,6 @@ export default class AcompanhantesService {
       const response = await acompanhantesRepository.Remover(id);
       return { mensagem: response };
     } catch (error) {
-      console.error(error);
       throw error;
     } finally {
       if (db) db.release();
@@ -136,7 +132,6 @@ export default class AcompanhantesService {
       );
       return { mensagem: response };
     } catch (error) {
-      console.error(error);
       throw error;
     } finally {
       if (db) db.release();

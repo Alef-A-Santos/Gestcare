@@ -116,4 +116,9 @@ export default class AuthController {
       }
     };
   }
+  Autenticar() {
+    return async (req, res) => {
+      return res.status(200).send({user:req.user});
+    }
+  }
 }

@@ -7,10 +7,12 @@ export default class GlicemiaController {
     return async (req, res) => {
       //Req e Res REQ: Contém todos os dados da Requisição. RES:Utilizado para enviar ao usuario a resposta.
       try {
-        const { user, dados } = req.body;
+        const { dados } = req.body;
+        const { user } = req;
         const response = await glicemiaService.Cadastrar(user, dados);
         return res.status(200).send(response);
       } catch (error) {
+        console.error(error);
         if (error.camposFaltando) {
           return res.status(400).send({ erro: error.message }); //Mensagem de Erro ao usuario  // Erro 400: Usado quando o usario faz uma requisição e esquece de algo, ou faz um erro na req.
         }

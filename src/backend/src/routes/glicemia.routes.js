@@ -3,10 +3,11 @@ import GlicemiaController
 import {
     Router 
 } from "express"
+import { autenticar_gestante } from "../utils/auth.js";
 const router = Router();
 
 const glicemiaController = new GlicemiaController ()
 
-router.post("/cadastrar-glicemia", glicemiaController.Cadastrar());
+router.post("/cadastrar-glicemia", autenticar_gestante, glicemiaController.Cadastrar());
 
 export default router;
