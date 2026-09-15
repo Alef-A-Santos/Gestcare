@@ -1,4 +1,3 @@
-
 export function testarSenha(senha){
   const rexrNumeros = /(\d){1,}/g //Expressão regular para verificação da existência de números
   const rexrLetrasMaiusculas = /([A-Z]){1,}/g //Expressão regular para verificação da existência de letras maiúsculas

@@ -1,7 +1,7 @@
-function Botao ({nome, className, clickHandler}){
+function Botao ({nome, className, clickHandler, tipo="submit"}){
     return(
         <div className="flex justify-center items-center">
-            <button className={className} onClick={clickHandler}>{nome}</button>
+            <button type={tipo} className={className} onClick={clickHandler}>{nome}</button>
         </div>
     )
 }
