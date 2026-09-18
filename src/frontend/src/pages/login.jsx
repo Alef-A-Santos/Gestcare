@@ -1,4 +1,4 @@
-import Botao from "../components/BotaoCadastro";
+
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/Fundo1.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
@@ -9,7 +9,7 @@ import InputHome from "../components/InputHome";
 
 import logoRosa from "../assets/logos/logo_rosa.png";
 
-function Home() {
+function Login() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row">
@@ -41,10 +41,7 @@ function Home() {
 
             <InputHome />
 
-            <Botao
-           className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins"
-              nome={"Entrar"}
-            />
+            
             <div className="text-center font-poppins  text-white text-[16px] ">
               <p>
                 Ainda não tem conta?{" "}
@@ -57,4 +54,4 @@ function Home() {
     </div>
   );
 }
-export default Home;
+export default Login;
