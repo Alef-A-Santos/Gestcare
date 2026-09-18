@@ -17,7 +17,7 @@ export default class UsuariosController {
   Cadastrar(){
     return async (req, res) => {
       try {
-        const dados = req.body.dados;
+        const { dados } = req.body;
       
         const response = await usuariosService.Cadastrar(dados);
         return res.status(201).send(response);
@@ -35,7 +35,7 @@ export default class UsuariosController {
   Deletar() {
     return async (req, res) => {
       try {
-        const id = req.params.id;
+        const { id } = req.params;
         const response = await usuariosService.Deletar(id);
         return res.status(200).send({mensagem:'Usuário deletado com sucesso!'})
       }catch(error) {

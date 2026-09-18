@@ -11,7 +11,6 @@ export default  class UsuariosRepository {
 
       return result;
     }catch(error) {
-      console.error(error)
       throw new Error("Falha ao listar usuários.");
     }finally{
       //Fecha a conexão com o banco de dados
@@ -25,7 +24,6 @@ export default  class UsuariosRepository {
       const [result] = await db.query("INSERT INTO usuarios(nome, email, senha, perfil) VALUES(?, ?, ?, ?)", [nome, email, senha, perfil]);
       return result;
     }catch(error) {
-      console.error(error);
       mensagemErro = "Falha ao cadastrar usuário.";
       if(error.code === "ER_DUP_ENTRY") {
         mensagemErro = "Usuário já cadastrado!";

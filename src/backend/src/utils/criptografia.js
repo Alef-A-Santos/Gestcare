@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 export async function criptografar(dados) {
   try {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(15);
     const dadosCriptografado = await bcrypt.hash(dados,salt);
     return dadosCriptografado;
   }catch(err) {
@@ -16,6 +16,6 @@ export function compararDados(dado, dadoEncriptado) {
     const isCorrect = bcrypt.compare(dado, dadoEncriptado);
     return isCorrect;
   }catch(err) {
-    return error.message || "Falha na verificação dos dados!";
+    return err.message || "Falha na verificação dos dados!";
   }
 }

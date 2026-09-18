@@ -1,5 +1,5 @@
 import { Router } from "express";
-import GlicemiaRoute from './glicemia.route.js';
+import GlicemiaRoutes from './glicemia.routes.js';
 import UsuariosRoutes from './usuarios.routes.js';
 import AcompanhantesRoutes from './acompanhantes.routes.js';
 import AuthRoutes from './auth.routes.js';
@@ -12,7 +12,7 @@ const router = Router();
 // para utilizar o router(ou a função) correspondente
 router.use('/usuarios', UsuariosRoutes);
 router.use('/acompanhantes', AcompanhantesRoutes);
- router.use(`/glicemia`, GlicemiaRoutes);
+router.use(`/glicemia`, GlicemiaRoutes);
 router.use('/auth', AuthRoutes);
 router.use('/relatorio', RelatorioRoutes);
 
