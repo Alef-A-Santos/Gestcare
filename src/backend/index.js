@@ -12,7 +12,7 @@ import configDotenv from './src/config/dotenv.js';
 const app = express();
 
 app.use(cors({
-  origin:configDotenv.APP_FRONT_URL,
+  origin:[configDotenv.APP_FRONT_URL, "http://127.0.0.1:5500"],
   credentials:true
 }));
 app.use(bodyParser.json());
