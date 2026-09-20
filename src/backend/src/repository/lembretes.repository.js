@@ -101,4 +101,17 @@ export default class LembretesRepository {
 
       return lembreteAtualizado;
   }
+  async ListarTodosAtivos() {
+    let db;
+    try { 
+      db = await connectDB();
+      const [ativos] = await db.query(`SELECT lb.id_lembrete, lb.titulo, lb.categoria, lb.id_usuario, lb.config_node_schedule FROM lembretes lb LEFT JOIN usuarios usr ON lb.id_usuario = usr.id_usuario WHERE lb.ativo = 1 AND usr.ativo = 1`);
+
+      return ativos;
+    }catch(error) {
+      throw error;
+    }finally {
+      if(db) db.release();
+    }
+  }
 }

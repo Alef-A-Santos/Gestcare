@@ -8,7 +8,6 @@ const dispositivosRepository = new DispositivosRepository();
 export async function EnviarLembrete(titulo, categoria, user) {
   try {
     const dispositivos = await dispositivosRepository.ListarAtivosPorIdUsuario(user);
-
     for await (let dispositivo of dispositivos) {
       const sended = await sendPush(dispositivo, JSON.stringify({
         titulo, categoria
