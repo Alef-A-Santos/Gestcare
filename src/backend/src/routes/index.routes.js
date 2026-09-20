@@ -5,8 +5,7 @@ import AcompanhantesRoutes from './acompanhantes.routes.js';
 import AuthRoutes from './auth.routes.js';
 import RelatorioRoutes from './relatorios.routes.js';
 import DispositivosRoutes from './dispositivos.routes.js';
-import { enviar } from "../utils/sendEmail.js";
-import { gerarCodigo, validarCodigo } from "../utils/codigoValidacao.js";
+import LembretesRoutes from './lembretes.routes.js';
 const router = Router();
 
 // As linhas abaixo básicamente dizem para que quando uma requisição for feita para o endpoint específicado
@@ -17,6 +16,7 @@ router.use(`/glicemia`, GlicemiaRoutes);
 router.use('/auth', AuthRoutes);
 router.use('/relatorio', RelatorioRoutes);
 router.use('/dispositivos', DispositivosRoutes);
+router.use('/lembretes', LembretesRoutes);
 
 // Rota de teste
 router.use('/teste-api', (_, res) => {
