@@ -101,14 +101,16 @@ function InputCadastro() {
           </p>
         )}
       </div>
-       
-      <div className="w-96 flex flex-col justify-center lg:justify-start items-center">
+ 
+        {tipoUsuario === "gestante" && ( 
+          <div>
+        <div className="w-96 flex flex-col justify-center lg:justify-start items-center">
         <Labels
           desc="Mês da última menstruação"
           className="text-white font-poppins font-bold m-1 flex justify-start items-center pl-2 mb-1"
         />
 
-        <Inputs
+         <Inputs
           tipoDado="month"
           icone={
             <MdCalendarMonth className="absolute text-teal-500 m-4 text-end" />
@@ -140,7 +142,13 @@ function InputCadastro() {
           />
         </div>
       </div>
-    </div>
+        </div>
+        )}
+        
+      
+       
+      </div>
+    
   );
 }
 
