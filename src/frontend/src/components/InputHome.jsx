@@ -57,10 +57,6 @@ function InputHome() {
             />
       </div>
   </div>
-
-      
-
-       
      </form>
     </div>
   );

@@ -3,8 +3,6 @@ import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestCare.png";
-import Inputs from "../components/Inputs";
-import Labels from "../components/Labels";
 import { Link } from 'react-router-dom';
 
 
@@ -24,7 +22,6 @@ function Cadastro() {
             style={{ backgroundImage: `url("${fundo}")` }}
           >
           </div>
-
           {/* LADO DIREITO */}
 
           <main
@@ -41,23 +38,14 @@ function Cadastro() {
               </p>
 
               <InputCadastro />
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start">
-                <div className="flex flex-col text-center p-1">
-                  <Labels desc="Meta jejum (mg/dl)" className="font-poppins font-bold text-center text-white" />
-                  <Inputs tipoDado="number" placeName="95" className="border-2 p-3   rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
-                </div>
-                <div className="flex flex-col text-center p-1">
-                  <Labels desc="Meta pós-pradial" className="font-poppins font-bold text-center text-white" />
-                  <Inputs tipoDado="number" placeName="140" className="border-2 p-3  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
-                </div>
-              </div>
-              <Botao
+             
+              <Link className="text-white" to="/Cadastro/Verificacao">
+                <Botao
                 className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
-              tipoDado="submit"
-                
-                Component={<Link className="underline text-white" to="/Cadastro/Verificacao">Cadastrar</Link>}
-              />
+              tipoDado="submit" nome={"Cadastrar"}/>
+              </Link>
+              
 
               <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
               

@@ -1,23 +1,13 @@
 import Labels from "./Labels";
-
 import Inputs from "./Inputs";
-
 import { MdEmail } from "react-icons/md";
-
 import { FaLock } from "react-icons/fa";
-
 import { MdCalendarMonth } from "react-icons/md";
-
 import { VscAccount } from "react-icons/vsc";
-
 import { useState } from "react";
-
 import Botao from "../components/BotaoCadastro";
-
 import { FaEyeSlash } from "react-icons/fa";
-
 import { IoEyeSharp } from "react-icons/io5";
-
 import { testarSenha } from "../utils/verificarSenha";
 
 function InputCadastro() {
@@ -25,8 +15,35 @@ function InputCadastro() {
 
   const [erroSenha, setErroSenha] = useState("");
 
+  const[tipoUsuario, setTipoUsuario] = useState("gestante");
+
   return (
     <div className="flex justify-center items-center flex-col gap-1 overflow-y-hidden">
+      <div className="flex">
+        <div className="flex">
+          <label className="text-white font-poppins font-bold flex justify-start items-center m-1 pl-2">
+            Gestante
+          </label>
+          <input type="radio"
+          name="tipoUsuario"
+          checked={tipoUsuario === "gestante"}
+          onChange={()=>setTipoUsuario("gestante")} 
+          />
+        </div>
+        <div className="flex">
+          <label className="text-white font-poppins font-bold flex justify-start items-center m-1 pl-2">
+            Acompanhante
+          </label>
+          <input type="radio"
+          name="tipoUsuario"
+          checked={tipoUsuario === "acompanhante"}
+          onChange={()=>setTipoUsuario("acompanhante")} 
+          />
+        </div>
+      </div>
+
+
+
       <div className="w-100 flex flex-col justify-center items-center">
         <Labels
           desc="Nome"
@@ -84,7 +101,7 @@ function InputCadastro() {
           </p>
         )}
       </div>
-
+       
       <div className="w-96 flex flex-col justify-center lg:justify-start items-center">
         <Labels
           desc="Mês da última menstruação"
@@ -98,6 +115,30 @@ function InputCadastro() {
           }
           className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-gray-500 pl-9 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
         />
+      </div>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start">
+        <div className="flex flex-col text-center p-1">
+          <Labels
+            desc="Meta jejum (mg/dl)"
+            className="font-poppins font-bold text-center text-white"
+          />
+          <Inputs
+            tipoDado="number"
+            placeName="95"
+            className="border-2 p-3   rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300"
+          />
+        </div>
+        <div className="flex flex-col text-center p-1">
+          <Labels
+            desc="Meta pós-pradial"
+            className="font-poppins font-bold text-center text-white"
+          />
+          <Inputs
+            tipoDado="number"
+            placeName="140"
+            className="border-2 p-3  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300"
+          />
+        </div>
       </div>
     </div>
   );
