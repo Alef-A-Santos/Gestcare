@@ -45,14 +45,15 @@ const InputCadastro = forwardRef((props, ref) => {
 
   return (
     <div className="flex justify-center items-center flex-col gap-1 overflow-y-hidden">
-      <div className="flex">
+      <div className="flex text-[20px] gap-3 ">
         <div className="flex">
-          <label className="text-white font-poppins font-bold flex justify-start items-center m-1 pl-2">
+          <label className="text-white font-poppins font-bold flex justify-start items-center mr-3 pl-2 ">
             Gestante
           </label>
           <input
             type="radio"
             name="tipoUsuario"
+            className="accent-pink-500"
             checked={tipoUsuario === "gestante"}
             onChange={() => setTipoUsuario("gestante")}
           />
@@ -60,12 +61,13 @@ const InputCadastro = forwardRef((props, ref) => {
         </div>
           
         <div className="flex">
-          <label className="text-white font-poppins font-bold flex justify-start items-center m-1 pl-2">
+          <label className="text-white font-poppins font-bold flex justify-start items-center m-1 pl-2 mr-3">
             Acompanhante
           </label>
           <input
             type="radio"
             name="tipoUsuario"
+             className="accent-pink-500"
             checked={tipoUsuario === "acompanhante"}
             onChange={() => setTipoUsuario("acompanhante")}
           />
@@ -182,7 +184,7 @@ const InputCadastro = forwardRef((props, ref) => {
               <Inputs
                 tipoDado="number"
                 placeName="140"
-                className="border-2 p-3  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300"
+                className="border-2 p-3  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 md:text-start mt-2 text-grey-300 sm:text-center"
               />
             </div>
           </div>
