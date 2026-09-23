@@ -145,6 +145,38 @@ const InputCadastro = forwardRef((props, ref) => {
           </p>
         )}
       </div>
+      <div className="w-96 flex flex-col justify-center lg:justify-start items-center relative">
+        <Labels
+          desc="Confirme sua senha"
+          className="text-white font-poppins font-bold sm:text-center flex justify-start items-center m-1 pl-2"
+        />
+
+        <Inputs
+          tipoDado={isSenha ? "text" : "password"}
+          placeName="Confirme sua sua senha aqui"
+          onInput={(e) => {
+            setErroSenha(testarSenha(e.target.value) || "");
+          }}
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          icone={<FaLock className="absolute text-teal-500 m-5" />}
+          icone2={
+            <Botao
+              nome={isSenha ? <IoEyeSharp /> : <FaEyeSlash />}
+              className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
+              clickHandler={() => setIsSenha(!isSenha)}
+              tipoDado="button"
+            />
+          }
+          className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
+        />
+
+        {erroSenha && (
+          <p className="text-white text-sm mt-1 text-center font-bold w-full">
+            {erroSenha}
+          </p>
+        )}
+      </div>
 
       {tipoUsuario === "gestante" && (
         <div className="flex flex-col justify-center items-center">
