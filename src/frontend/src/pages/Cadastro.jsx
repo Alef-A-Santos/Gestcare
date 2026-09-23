@@ -4,9 +4,20 @@ import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestCare.png";
 import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 
 function Cadastro() {
+   const navigate = useNavigate();
+  const cadastroRef = useRef();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (cadastroRef.current.validar()) {
+      navigate("/Cadastro/Verificacao");
+    }
+  }
   
   return (
     <div>
@@ -28,7 +39,7 @@ function Cadastro() {
             className="w-full lg:w-2/5  min-h-screen flex items-center justify-center flex-col px-6 sm:px-8 bg-cover"
             style={{ backgroundImage: `url("${fundoForm}")` }}
           >
-            <form  className="mt-30" action="#" method="post">
+            <form  className="mt-30" onSubmit={handleSubmit}>
               <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
               <h2 className="font-playfair text-center text-6xl font-bold text-white ">
                 Crie sua conta
@@ -37,14 +48,14 @@ function Cadastro() {
                 Leva menos de um minuto
               </p>
 
-              <InputCadastro />
+              <InputCadastro ref={cadastroRef} />
              
-              <Link className="text-white" to="/Cadastro/Verificacao">
+             
                 <Botao
                 className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
               tipoDado="submit" nome={"Cadastrar"}/>
-              </Link>
+             
               
 
               <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
