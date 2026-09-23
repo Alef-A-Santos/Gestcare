@@ -18,6 +18,7 @@ const InputCadastro = forwardRef((props, ref) => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [ConfirmarSenha, setConfirmarSenha] = useState("");
   const [mes, setMes] = useState("");
   const [erroCadastro, setErroCadastro] = useState("");
 
@@ -157,14 +158,14 @@ const InputCadastro = forwardRef((props, ref) => {
           onInput={(e) => {
             setErroSenha(testarSenha(e.target.value) || "");
           }}
-          value={senha}
+          value={ConfirmarSenha}
           onChange={(e) => setSenha(e.target.value)}
           icone={<FaLock className="absolute text-teal-500 m-5" />}
           icone2={
             <Botao
               nome={isSenha ? <IoEyeSharp /> : <FaEyeSlash />}
               className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
-              clickHandler={() => setIsSenha(!isSenha)}
+              clickHandler={() => setConfirmarSenha(!isSenha)}
               tipoDado="button"
             />
           }
