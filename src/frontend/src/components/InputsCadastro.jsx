@@ -153,7 +153,7 @@ const InputCadastro = forwardRef((props, ref) => {
 
         <Inputs
           tipoDado={isSenha ? "text" : "password"}
-          placeName="Confirme sua sua senha aqui"
+          placeName="Confirme sua senha aqui"
           onInput={(e) => {
             setErroSenha(testarSenha(e.target.value) || "");
           }}
