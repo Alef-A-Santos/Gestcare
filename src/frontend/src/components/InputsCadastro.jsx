@@ -13,7 +13,8 @@ import { forwardRef, useImperativeHandle } from "react";
 
 const InputCadastro = forwardRef((props, ref) => {
   const [isSenha, setIsSenha] = useState(false);
-  const [erroSenha, setErroSenha] = useState("");
+  const [isConfirmarSenha, setIsConfirmarSenha] = useState(false);
+  // const [erroSenha, setErroSenha] = useState("");
   const [tipoUsuario, setTipoUsuario] = useState("gestante");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -21,27 +22,39 @@ const InputCadastro = forwardRef((props, ref) => {
   const [ConfirmarSenha, setConfirmarSenha] = useState("");
   const [mes, setMes] = useState("");
   const [erroCadastro, setErroCadastro] = useState("");
+  const erroSenha = senha ? testarSenha(senha) || "" : "";
+  const erroConfirmar = ConfirmarSenha && ConfirmarSenha !== senha ? "As senhas não coincidem" : "";
 
   function validar() {
-    if (!nome.trim()) {
-      setErroCadastro("Preencha o nome");
-      return false;
-    }
-    if (!email.trim()) {
-      setErroCadastro("Preencha o email");
-      return false;
-    }
-    if (!senha || erroSenha) {
-      setErroCadastro("Senha inválida");
-      return false;
-    }
-    if (tipoUsuario === "gestante" && !mes) {
-      setErroCadastro("Informe o mês da última menstruação");
-      return false;
-    }
-    setErroCadastro("");
-    return true;
+  if (!nome.trim()) {
+    setErroCadastro("Preencha o nome");
+    return false;
   }
+  if (!email.trim()) {
+    setErroCadastro("Preencha o email");
+    return false;
+  }
+  if (!senha) {
+    setErroCadastro("Preencha o campo senha");
+    return false;
+  }
+  if (erroSenha) {
+    setErroCadastro("Senha inválida");
+    return false;
+  }
+  if (!ConfirmarSenha || ConfirmarSenha !== senha) {
+    setErroCadastro("As senhas não coincidem");
+    return false;
+  }
+  if (tipoUsuario === "gestante" && !mes) {
+    setErroCadastro("Informe o mês da última menstruação");
+    return false;
+  }
+
+  setErroCadastro("");
+  return true;
+}
+ 
   useImperativeHandle(ref, () => ({ validar }));
 
   return (
@@ -75,7 +88,7 @@ const InputCadastro = forwardRef((props, ref) => {
         </div>
       </div>
      {erroCadastro && (
-            <p className="text-white mb-1 mt-1 text-center font-bold w-full sm:text-2xl">
+            <p className="text-white mb-1 mt-1 text-center font-bold w-full sm:text-[15px] font-playfair">
               {erroCadastro}
             </p>
           )}
@@ -123,9 +136,6 @@ const InputCadastro = forwardRef((props, ref) => {
         <Inputs
           tipoDado={isSenha ? "text" : "password"}
           placeName="Crie sua senha aqui"
-          onInput={(e) => {
-            setErroSenha(testarSenha(e.target.value) || "");
-          }}
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
           icone={<FaLock className="absolute text-teal-500 m-5" />}
@@ -153,28 +163,26 @@ const InputCadastro = forwardRef((props, ref) => {
         />
 
         <Inputs
-          tipoDado={isSenha ? "text" : "password"}
+          tipoDado={isConfirmarSenha ? "text" : "password"}
           placeName="Confirme sua senha aqui"
-          onInput={(e) => {
-            setErroSenha(testarSenha(e.target.value) || "");
-          }}
+         
           value={ConfirmarSenha}
-          onChange={(e) => setSenha(e.target.value)}
+          onChange={(e) => setConfirmarSenha(e.target.value)}
           icone={<FaLock className="absolute text-teal-500 m-5" />}
           icone2={
             <Botao
-              nome={isSenha ? <IoEyeSharp /> : <FaEyeSlash />}
+              nome={isConfirmarSenha ? <IoEyeSharp /> : <FaEyeSlash />}
               className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
-              clickHandler={() => setConfirmarSenha(!isSenha)}
+              clickHandler={() => setIsConfirmarSenha(!isConfirmarSenha)}
               tipoDado="button"
             />
           }
           className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
         />
 
-        {erroSenha && (
+        {erroConfirmar && (
           <p className="text-white text-sm mt-1 text-center font-bold w-full">
-            {erroSenha}
+            {erroConfirmar}
           </p>
         )}
       </div>

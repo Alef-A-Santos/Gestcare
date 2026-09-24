@@ -56,8 +56,6 @@ function Cadastro() {
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
               tipoDado="submit" nome={"Cadastrar"}/>
              
-              
-
               <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
               
                   <p className="text-white font-poppins">Já tem conta ?{" "}</p>
