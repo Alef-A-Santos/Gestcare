@@ -42,10 +42,13 @@ function Login() {
             <InputHome />
 
             
-            <div className="text-center font-poppins  text-white text-[16px] ">
-              <p>
+            <div className="text-center font-poppins  text-white text-[16px]  ">
+              
+                  <Link className=" text-white font-bold  hover:underline" to="/RecSenha">Esqueci minha Senha</Link> {""}
+              
+              <p className="mt-5">
                 Ainda não tem conta?{" "}
-                  <Link className="underline text-white font-bold " to="/cadastro">Cadastre-se</Link>
+                  <Link className=" text-white font-bold  hover:underline" to="/cadastro">Cadastre-se</Link>
               </p>
             </div>
           </div>
