@@ -27,6 +27,7 @@ if( !configDotenv.DB_HOST
     || !configDotenv.APP_FRONT_URL
 ){
     console.error(`Alguma das variáveis de ambiente não foram definidas! Por favor olhe o seu arquivo \x1b[33m.env\x1b[0m`);
+    process.exit(0);
 }
 
 export default configDotenv;
