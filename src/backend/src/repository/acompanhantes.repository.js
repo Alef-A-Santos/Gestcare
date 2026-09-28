@@ -14,7 +14,6 @@ export default class AcompanhantesRepository {
       );
       return result;
     } catch (error) {
-      console.error(error);
       throw new Error("Falha ao buscar acompanhantes!");
     } finally {
       if (db) db.release();
@@ -34,7 +33,6 @@ export default class AcompanhantesRepository {
       );
       return result;
     } catch (error) {
-      console.error(error);
       throw new Error("Falha ao listar acompanhantes da gestante.");
     } finally {
       if (db) db.release();
@@ -50,7 +48,6 @@ export default class AcompanhantesRepository {
       );
       return "Acompanhante cadastrado com sucesso!";
     } catch (error) {
-      console.error(error);
       throw new Error("Falha ao cadastrar acompanhante!");
     } finally {
       if (db) db.release();
@@ -66,7 +63,6 @@ export default class AcompanhantesRepository {
       );
       return "Acompanhante removido com sucesso!";
     } catch (error) {
-      console.error(error);
       throw new Error("Falha ao remover acompanhante.");
     }
   }
@@ -80,7 +76,6 @@ export default class AcompanhantesRepository {
       );
       return "Acompanhante alterado com sucesso!";
     } catch (error) {
-      console.error(error);
       throw new Error("Falha ao alterar acompanhante.");
     }
   }
