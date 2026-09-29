@@ -48,6 +48,8 @@ function InputHome() {
 useEffect(()=>{
   console.log(dados)
 }, [dados])
+
+
   return (
  
     <div className="w-full flex flex-col ">
