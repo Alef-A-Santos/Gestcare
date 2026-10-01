@@ -3,6 +3,7 @@ import Login from './pages/login';
 import Cadastro from "./pages/Cadastro";
 import Verificacao from './pages/Verificacao';
 import RecSenha from './pages/recSenha';
+import RedefinirSenha from './pages/RedefinirSenha';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/recSenha" element={<RecSenha/>}/>
         <Route path="/recSenha/Verificacao" element={<Verificacao/>}/>
         <Route path="/login" element={<Login/>}/>
+        <Route path="/RedefinirSenha" element={<RedefinirSenha/>}/>
         
 
       </Routes>
