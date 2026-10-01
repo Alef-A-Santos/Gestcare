@@ -1,3 +1,4 @@
+
 import { MdEmail } from "react-icons/md";
 
 import Botao from "./BotaoCadastro";
@@ -7,13 +8,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function InputRec() {
-
   const navegar = useNavigate();
 
-  const [
-    dados, setdados
-  ] = useState({
-    email: ""   
+  const [dados, setdados] = useState({
+    email: ""
   });
 
   async function enviar(e) {
@@ -22,6 +20,10 @@ function InputRec() {
     if (!dados.email.trim()) {
       return;
     }
+
+    localStorage.setItem("emailRecuperacao", dados.email);
+
+localStorage.getItem("emailRecuperacao")  
 
     navegar("/RecSenha/Verificacao", {
       state: { email: dados.email }
@@ -44,12 +46,10 @@ function InputRec() {
 
   return (
     <div className="w-full flex flex-col">
-
       <form
         className="flex justify-center items-center gap-1 px-4"
         onSubmit={enviar}
       >
-
         <div className="flex justify-center items-center flex-col">
 
           <label className="font-poppins Display text-[15px] text-white font-bold flex justify-start w-full m-2 pl-2">
@@ -57,7 +57,6 @@ function InputRec() {
           </label>
 
           <div className="relative lg:w-100 w-80">
-
             <MdEmail className="absolute left-3 top-2/4 -translate-y-1/2 text-teal-500" />
 
             <input
@@ -69,23 +68,18 @@ function InputRec() {
               value={dados.email}
               onChange={handleChange}
             />
-
           </div>
 
           <div className="relative lg:w-100 w-80">
-
             <Botao
               className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins mt-9"
               nome={"Redefinir senha"}
               tipoDado={"submit"}
             />
-
           </div>
 
         </div>
-
       </form>
-
     </div>
   );
 }
