@@ -121,4 +121,21 @@ export default class AuthController {
       return res.status(200).send({user:req.user});
     }
   }
+  AlterarSenha() {
+    return async (req, res) => {
+      try {
+        const { dados } = req.body;
+        const response = await authService.AlterarSenha(dados);
+        return res.status(200).send({ response });
+      }catch(error) {
+        console.error(error);
+        
+        if(error.hasMissingValues || error.isInvalida) {
+          return res.status(400).send({ erro: error.message });
+        }
+
+        return res.status(500).send({ erro: "Erro interno ao alterar a senha! Tente novamente mais tarde."  });
+      }
+    }
+  }
 }
