@@ -7,8 +7,7 @@ export default class GlicemiaService{
     async Cadastrar(user,dados) {
         let db   
         try{
-                const camposFaltando = camposObrigatorios.filter(campoObrigatorio => !dados[campoObrigatorio]) // {data_hora:valor }
-                console.log(camposFaltando);
+                const camposFaltando = camposObrigatorios.filter(campoObrigatorio => !dados[campoObrigatorio])
                 if (
                     !user || !dados || camposFaltando.length
                 ) {

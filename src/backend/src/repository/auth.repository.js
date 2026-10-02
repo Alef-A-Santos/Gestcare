@@ -11,25 +11,29 @@ export default class AuthRepository {
       );
       return result;
     } catch (error) {
-      console.error(error);
-      throw new Error("Falha na autenticação!");
+      throw error;
     } finally {
       if (db) db.release();
     }
   }
-  async Cadastrar(codigoValidacao, dados) {
-    let db;
+  async Cadastrar(codigoValidacao, dados, db) {
     try {
-      db = await connectDB();
       const [result] = await db.query(
         "INSERT INTO usuarios(nome, email, senha, perfil, ativo, codigo_validacao) VALUES(?, ?, ?, ?, 0, ?)",
         [dados.nome, dados.email, dados.senha, dados.perfil, codigoValidacao],
       );
 
-      return result;
+      if (result.affectedRows == 0) {
+        throw new Error();
+      }
+      const [[user]] = await db.query(
+        `SELECT id_usuario FROM usuarios WHERE email = ?`,
+        [dados.email],
+      );
+
+      return user;
     } catch (error) {
-      console.error(error);
-      throw new Error("Falha ao realizar cadastro!");
+      throw error;
     } finally {
       if (db) db.release();
     }
@@ -49,8 +53,7 @@ export default class AuthRepository {
 
       return result[0];
     } catch (error) {
-      console.error(error);
-      throw new Error("Falha na validação!");
+      throw error;
     } finally {
       if (db) db.release();
     }
@@ -73,8 +76,7 @@ export default class AuthRepository {
 
       return result;
     } catch (error) {
-      console.error(error);
-      throw new Error(JSON.stringify({}));
+      throw error;
     } finally {
       if (db) db.release();
     }

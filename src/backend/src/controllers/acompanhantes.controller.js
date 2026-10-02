@@ -19,7 +19,7 @@ export default class AcompanhantesController {
   ListarAcompanhantesGestante() {
     return async (req, res) => {
       try {
-        const { user } = req.body;
+        const { user } = req;
         const response =
           await acompanhantesService.ListarAcompanhantesGestante(user);
         return res.status(200).send(response);
@@ -37,11 +37,12 @@ export default class AcompanhantesController {
   Cadastrar() {
     return async (req, res) => {
       try {
-        const { user } = req.body;
+        const { user } = req;
         const { dados } = req.body;
         const response = await acompanhantesService.Cadastrar(dados, user);
         return res.status(201).send(response);
       } catch (error) {
+        console.error(error);
         if (error.hasMissingValues) {
           return res.status(400).send({ erro: error.message });
         }
@@ -75,7 +76,7 @@ export default class AcompanhantesController {
       try {
         const id_antigo_acompanhante = req.params.id;
         const id_novo_acompanhante = req.body.id;
-        const user = req.body.user;
+        const user = req;
         const response = await acompanhantesService.Editar(
           id_antigo_acompanhante,
           id_novo_acompanhante,
