@@ -28,7 +28,9 @@ const InputCadastro = forwardRef((props, ref) => {
   function validar() {
   if (!nome.trim()) {
     setErroCadastro("Preencha o nome");
+    console.log(nome)
     return false;
+
   }
   if (!email.trim()) {
     setErroCadastro("Preencha o email");
