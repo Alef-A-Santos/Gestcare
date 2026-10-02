@@ -6,7 +6,7 @@ export default class DashboardController {
   Resumo() {
     return async (req, res) => {
       try {
-        const { user } =  req.body; 
+        const { user } =  req; 
         const resumo = await dashboardService.Resumo(user);
         return res.status(200).send({resumo});
       } catch (error) {
