@@ -114,4 +114,23 @@ export default class LembretesRepository {
       if(db) db.release();
     }
   }
+  async buscarLembretesDia(user, recorrencia) {
+    let db;
+    try{
+
+      db = await connectDB();
+      const [ lembretes ] = await db.query(`
+        SELECT titulo, horario, recorrencia, categoria 
+        FROM lembretes 
+        WHERE id_usuario = ? 
+          AND ativo = 1 
+          AND recorrencia LIKE '%?%' 
+          AND horario > TIME(SYSDATE()) 
+        ORDER BY horario ASC`, [user.id_usuario, recorrencia]);
+      
+      return lembretes;
+    }catch(error) {
+      throw error;
+    }
+  }
 }
