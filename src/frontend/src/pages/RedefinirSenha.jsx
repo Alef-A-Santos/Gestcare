@@ -9,7 +9,7 @@ import { FaLock } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import { useState } from "react";
-import Botao from "../components/BotaoCadastro";
+import Botao from "../components/Botao";
 import { testarSenha } from "../utils/verificarSenha";
 
 function RedefinirSenha() {

@@ -1,6 +1,6 @@
 
 import { MdEmail } from "react-icons/md";
-import Botao from "./BotaoCadastro";
+import Botao from "./Botao";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 

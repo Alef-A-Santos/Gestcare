@@ -6,9 +6,7 @@ import InputEmail from "../components/inputEmail";
 import Logo from "../Components/Logo";
 
 import logoRosa from "../assets/logos/logo_rosa.png";
-
-import Botao from "../components/BotaoCadastro";
-
+import Botao from "../components/Botao";
 import fundo from "../assets/imagem/fundo3.png";
 
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";

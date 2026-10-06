@@ -5,7 +5,7 @@ import { FaLock } from "react-icons/fa";
 import { MdCalendarMonth } from "react-icons/md";
 import { VscAccount } from "react-icons/vsc";
 import { useEffect, useRef, useState } from "react";
-import Botao from "../components/BotaoCadastro";
+import Botao from "../components/Botao";
 import { FaEyeSlash } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import { testarSenha } from "../utils/verificarSenha";
