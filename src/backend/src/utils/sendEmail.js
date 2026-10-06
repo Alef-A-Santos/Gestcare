@@ -47,7 +47,7 @@ export async function  enviarCodigo(codigo, destinatario) {
     const info = await transporter.sendMail({
       from: configDotenv.SMTP_USER,
       to: destinatario,
-      subject: "Código de válidação",
+      subject: "Código de validação",
       html: templateCodigo.replace("[[code]]", codigoFormatado),
     });
 
