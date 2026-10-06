@@ -1,4 +1,4 @@
-import Botao from "../components/BotaoCadastro";
+import Botao from "../components/Botao";
 import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/fotoDireito.png";
