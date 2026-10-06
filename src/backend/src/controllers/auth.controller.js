@@ -52,7 +52,7 @@ export default class AuthController {
       } catch (error) {
         console.error(error);
         // const { erro, status } = JSON.parse(error.messageCampo obrigatórios:);
-        if (error.hasMissingValues || error.invalidPasswd) {
+        if (error.hasMissingValues || error.invalidPasswd || error.usuarioCadastrado) {
           return res.status(400).send({ erro: error.message });
         }
 
