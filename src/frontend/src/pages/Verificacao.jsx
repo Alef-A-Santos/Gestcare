@@ -52,7 +52,7 @@ function Verificacao() {
        
             <Botao
               className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins"
-              nome={"Entrar"}
+              nome={"Validar código"}
             />
 
             <div className="text-center font-poppins text-white text-sm sm:text-[16px] px-2">
