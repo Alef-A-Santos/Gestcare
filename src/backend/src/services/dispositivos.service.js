@@ -5,9 +5,9 @@ const dispositivosRepository = new DispositivosRepository();
 const error = new Error();
 
 export default class DispositivosService {
-  async ListarDispositivosUsuario(user) {
+  async Listar(user) {
     try {
-      const dispositivos = await dispositivosRepository.ListarDispositivosUsuario(user);
+      const dispositivos = await dispositivosRepository.Listar(user);
 
       return {
         mensagem: "Dispositvos listados com sucesso!",

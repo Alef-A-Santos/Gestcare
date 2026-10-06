@@ -18,21 +18,18 @@ const configDotenv = {
   VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
 };
 
-if (
-  !configDotenv.DB_HOST ||
-  !configDotenv.DB_USER ||
-  !configDotenv.DB_PASSWD ||
-  !configDotenv.DB_PORT ||
-  !configDotenv.DB_NAME ||
-  !configDotenv.JWT_SECRET ||
-  !configDotenv.SMTP_USER ||
-  !configDotenv.SMTP_PASS ||
-  !configDotenv.APP_FRONT_URL
-) {
-  console.error(
-    `Alguma das variáveis de ambiente não foram definidas! Por favor olhe o seu arquivo \x1b[33m.env\x1b[0m`,
-  );
-  process.exit(0);
+if( !configDotenv.DB_HOST 
+   || !configDotenv.DB_USER 
+     || !configDotenv.DB_PASSWD 
+    || !configDotenv.DB_PORT 
+    || !configDotenv.DB_NAME
+    || !configDotenv.JWT_SECRET
+    || !configDotenv.SMTP_USER
+    || !configDotenv.SMTP_PASS
+    || !configDotenv.APP_FRONT_URL
+){
+    console.error(`Alguma das variáveis de ambiente não foram definidas! Por favor olhe o seu arquivo \x1b[33m.env\x1b[0m`);
+    process.exit(0);
 }
 
 export default configDotenv;

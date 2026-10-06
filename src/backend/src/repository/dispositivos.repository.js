@@ -1,15 +1,16 @@
 import connectDB from "../database/db.js";
 
 export default class DispositivosRepository {
-  async ListarDispositivosUsuario(user) {
+  async Listar(user) {
     let db;
     try {
       db = await connectDB();
 
-      const [result] = await db.query(
+      const result = db.query(
         `SELECT id_dispositivo, id_usuario, nome, ativo FROM dispositivos WHERE id_usuario = ?`,
-        [user.id_usuario],
+        [user.id],
       );
+
       return result;
     } catch (error) {
       throw error;
@@ -86,15 +87,13 @@ export default class DispositivosRepository {
 
     return result;
   }
-  async ListarAtivosPorIdUsuario(user) {
+  async ListarTodosAtivos() {
     let db;
     try {
       db = await connectDB();
-      const [ativos] = await db.query(
-        `SELECT id_dispositivo, endpoint, p256dh, auth, expiration_time FROM dispositivos WHERE ativo = 1 AND id_usuario = ?`,[
-          user.id_usuario
-        ]
-      );  
+      const [ativos] = db.query(
+        `SELECT id_dispositivo, endpoint, p256dh, auth, expiration_time FROM dispositivos WHERE ativo = 1`,
+      );
 
       const subscriptions = ativos.map((ativo) => ({
         endpoint: ativo.endpoint,
@@ -104,6 +103,7 @@ export default class DispositivosRepository {
 
       return subscriptions;
     } catch (error) {
+      console.error(error);
       throw error;
     } finally {
       if (db) db.release();

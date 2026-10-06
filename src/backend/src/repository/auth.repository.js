@@ -81,4 +81,16 @@ export default class AuthRepository {
       if (db) db.release();
     }
   }
+  async AlterarSenha(dados){
+    let db;
+    try {
+      db = await connectDB();
+
+      const [ result ] = await db.query(`UPDATE usuarios SET senha = ? WHERE email = ?`, [dados.senha, dados.email]);
+      
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

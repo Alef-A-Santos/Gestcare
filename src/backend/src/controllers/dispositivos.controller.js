@@ -5,11 +5,11 @@ const dispositivosService = new DispositivosService();
 const mensagemErroInterno = 'Erro interno no servidor.';
 
 export default class DispositivosController {
-  ListarDispositivosUsuario() {
+  Listar() {
     return async (req, res) => {
       try {
         const { user } = req;
-        const response  = dispositivosService.ListarDispositivosUsuario(user);
+        const response  = dispositivosService.Listar(user);
         return res.status(200).send(response); 
       }catch(error) {
         console.error(error);
@@ -22,7 +22,7 @@ export default class DispositivosController {
       try {
         const { user } = req;
         const { subscription } = req.body;
-        const nome = req.get("User-Agent"); // Pega o nome do dispositivo/client que fez a requisição
+        const nome = req.get("User-Agent"); // Pega o nome do dispositivo que fez a requisição
         const response = await dispositivosService.Cadastrar(user, subscription, nome);
         return res.status(201).send(response); 
       }catch(error) {

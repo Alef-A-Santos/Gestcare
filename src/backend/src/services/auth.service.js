@@ -183,6 +183,51 @@ export default class AuthService {
         );
       }, 30000);
 
+
+      if (user.length) throw error;
+
+      const usuario = {
+        nome: dados.nome,
+        email: dados.email,
+        senha: await criptografar(dados.senha),
+        perfil: dados.perfil,
+      };
+
+      const codigoValidacao = gerarCodigo();
+
+      const response = await authRepository.Cadastrar(
+        codigoValidacao,
+        usuario,
+        db,
+      );
+      usuario.id_usuario = response.id_usuario;
+
+      if (isGestante) {
+        dados.data_prev_parto = await GestacaoService.getDataPrevParto(
+          dados.data_ultima_menstruacao,
+          db,
+        );
+        const responseGestacao = await gestacaoRepository.CriarGestacao(
+          dados,
+          usuario,
+          db,
+        );
+      }
+
+      const emailEnviado = await enviarCodigo(codigoValidacao, dados.email);
+      if (!emailEnviado) {
+        error.emailNotSended = true;
+        error.message = "Falha ao enviar o código de validação!";
+        throw error;
+      }
+
+      setTimeout(async () => {
+        await db.query(
+          "UPDATE usuarios SET codigo_validacao = null WHERE email = ?",
+          [dados.email],
+        );
+      }, 30000);
+
       db.commit();
       return {
         mensagem: "Código de validação enviado para o email!",
@@ -281,6 +326,48 @@ export default class AuthService {
       return {
         mensagem: "Código enviado com sucesso!",
       };
+
+        throw error;
+      }
+      const response = await authRepository.ReenviarCodigo(
+        codigoValidacao,
+        dados,
+      );
+
+      return {
+        mensagem: "Código enviado com sucesso!",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+  async AlterarSenha(dados) {
+    try {
+      if(!dados || !Object.keys(dados).length) {
+        error.message = "Informe a nova senha!";
+        error.hasMissingValues = true;
+        throw error;
+      }
+
+      const isInvalida = testarSenha(dados.senha);
+
+      if(isInvalida){
+        error.isInvalida = true;
+        error.message = isInvalida;
+        throw error;
+      }
+
+      const hashSenha = await criptografar(dados.senha);
+      dados.senha = hashSenha;
+      const response = await authRepository.AlterarSenha(dados);
+      
+      if(response.affectedRows === 0 ) {
+        throw Error();
+      }
+
+      return { 
+        mensagem:"Senha alterada com sucesso!"
+      }
     } catch (error) {
       throw error;
     }
