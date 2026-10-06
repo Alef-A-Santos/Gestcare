@@ -149,6 +149,50 @@ export default class AuthService {
         perfil: dados.perfil,
       };
 
+      const response = await authRepository.Cadastrar(
+        codigoValidacao,
+        usuario,
+        db,
+      );
+      usuario.id_usuario = response.id_usuario;
+
+      if (isGestante) {
+        dados.data_prev_parto = await GestacaoService.getDataPrevParto(
+          dados.data_ultima_menstruacao,
+          db,
+        );
+        const responseGestacao = await gestacaoRepository.CriarGestacao(
+          dados,
+          usuario,
+          db,
+        );
+      }
+
+      const codigoValidacao = gerarCodigo();
+      const emailEnviado = await enviarCodigo(codigoValidacao, dados.email);
+      if (!emailEnviado) {
+        error.emailNotSended = true;
+        error.message = "Falha ao enviar o código de validação!";
+        throw error;
+      }
+
+      setTimeout(async () => {
+        await db.query(
+          "UPDATE usuarios SET codigo_validacao = null WHERE email = ?",
+          [dados.email],
+        );
+      }, 30000);
+
+
+      if (user.length) throw error;
+
+      const usuario = {
+        nome: dados.nome,
+        email: dados.email,
+        senha: await criptografar(dados.senha),
+        perfil: dados.perfil,
+      };
+
       const codigoValidacao = gerarCodigo();
 
       const response = await authRepository.Cadastrar(
@@ -271,6 +315,17 @@ export default class AuthService {
       if (!emailEnviado) {
         error.emailNotSended = true;
         error.message = "Falha ao enviar o código de validação!";
+
+        throw error;
+      }
+      const response = await authRepository.ReenviarCodigo(
+        codigoValidacao,
+        dados,
+      );
+
+      return {
+        mensagem: "Código enviado com sucesso!",
+      };
 
         throw error;
       }

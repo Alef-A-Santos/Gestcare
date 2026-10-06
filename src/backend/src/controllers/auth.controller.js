@@ -136,6 +136,11 @@ export default class AuthController {
 
         return res.status(500).send({ erro: "Erro interno ao alterar a senha! Tente novamente mais tarde."  });
       }
+    };
+  }
+  Autenticar() {
+    return async (req, res) => {
+      return res.status(200).send({user:req.user});
     }
   }
 }
