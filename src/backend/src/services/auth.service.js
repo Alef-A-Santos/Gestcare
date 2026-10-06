@@ -153,6 +153,8 @@ export default class AuthService {
         perfil: dados.perfil,
       };
 
+      const codigoValidacao = gerarCodigo();
+
       const response = await authRepository.Cadastrar(
         codigoValidacao,
         usuario,
@@ -172,7 +174,6 @@ export default class AuthService {
         );
       }
 
-      const codigoValidacao = gerarCodigo();
       const emailEnviado = await enviarCodigo(codigoValidacao, dados.email);
       if (!emailEnviado) {
         error.emailNotSended = true;
