@@ -1,8 +1,8 @@
 import connectDB from "../database/db.js";
 
 const db = await connectDB();
-
-export async function criarDica({ titulo, descricao, categoria, id_usuario }) {
+export default class DicasRepository{
+ async  criarDica({ titulo, descricao, categoria, id_usuario }) {
   const result = await db.query(
     `INSERT INTO dicas (titulo, descricao, categoria, id_usuario)
      VALUES ($1, $2, $3, $4) RETURNING *`,
@@ -11,14 +11,14 @@ export async function criarDica({ titulo, descricao, categoria, id_usuario }) {
   return result.rows[0];
 }
 
-export async function buscarDicas() {
+ async  buscarDicas() {
   const result = await db.query(
     `SELECT * FROM dicas ORDER BY categoria ASC, titulo ASC`
   );
   return result.rows;
 }
 
-export async function buscarDicasPorCategoria(categoria) {
+ async  buscarDicasPorCategoria(categoria) {
   const result = await db.query(
     `SELECT * FROM dicas WHERE categoria = $1 ORDER BY titulo ASC`,
     [categoria]
@@ -26,7 +26,7 @@ export async function buscarDicasPorCategoria(categoria) {
   return result.rows;
 }
 
-export async function buscarDicasPorGestante(gestanteId) {
+ async  buscarDicasPorGestante(gestanteId) {
   const result = await db.query(
     `SELECT * FROM dicas WHERE id_usuario = $1 ORDER BY criada_em DESC`,
     [gestanteId]
@@ -34,7 +34,7 @@ export async function buscarDicasPorGestante(gestanteId) {
   return result.rows;
 }
 
-export async function atualizarDica(id, { titulo, descricao, categoria }) {
+ async  atualizarDica(id, { titulo, descricao, categoria }) {
   const result = await db.query(
     `UPDATE dicas SET titulo = $1, descricao = $2, categoria = $3
      WHERE id = $4 RETURNING *`,
@@ -43,7 +43,7 @@ export async function atualizarDica(id, { titulo, descricao, categoria }) {
   return result.rows[0];
 }
 
-export async function vincularLinkDica(dicaId, link) {
+ async  vincularLinkDica(dicaId, link) {
   const result = await db.query(
     `UPDATE dicas SET link_referencia = $1 WHERE id = $2 RETURNING *`,
     [link, dicaId]
@@ -51,10 +51,11 @@ export async function vincularLinkDica(dicaId, link) {
   return result.rows[0];
 }
 
-export async function removerDica(id) {
+ async  removerDica(id) {
   const result = await db.query(
     `DELETE FROM dicas WHERE id = $1 RETURNING *`,
     [id]
   );
   return result.rows[0];
+}
 }

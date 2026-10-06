@@ -1,4 +1,4 @@
-import * as dicasRepository from "../repositories/dicas.repository.js";
+import  DicasRepository from "../repository/dicas.repository.js";
 
 const CATEGORIAS_VALIDAS = [
   "alimentacao",
@@ -7,7 +7,7 @@ const CATEGORIAS_VALIDAS = [
   "medicacao",
   "sinais_de_alerta",
 ];
-
+const dicasRepository = new DicasRepository()
 export default class DicasService {
   async ListarDicas() {
     return await dicasRepository.buscarDicas();
