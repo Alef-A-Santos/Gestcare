@@ -3,13 +3,28 @@ import InputCadastro from "../components/InputsCadastro";
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestCare.png";
-import Inputs from "../components/Inputs";
-import Labels from "../components/Labels";
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 
 function Cadastro() {
-  
+  const navigate = useNavigate();
+  const cadastroRef = useRef();
+  const [enviando, setEnviando] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (enviando || !cadastroRef.current.validar()) return;
+
+    setEnviando(true);
+    const ok = await cadastroRef.current.enviar();
+    setEnviando(false);
+
+    if (ok) {
+      navigate("/Cadastro/Verificacao");
+    }
+  }
+
   return (
     <div>
       <div>
@@ -22,53 +37,39 @@ function Cadastro() {
           <div
             className="hidden lg:flex md:w-4/6 min-h-screen p-8 text-white bg-cover bg-left"
             style={{ backgroundImage: `url("${fundo}")` }}
-          >
-          </div>
+          ></div>
 
           {/* LADO DIREITO */}
-
           <main
             className="w-full lg:w-2/5  min-h-screen flex items-center justify-center flex-col px-6 sm:px-8 bg-cover"
             style={{ backgroundImage: `url("${fundoForm}")` }}
           >
-            <form  className="mt-30" action="#" method="post">
+            <form className="mt-30" onSubmit={handleSubmit}>
               <div className="w-full flex flex-col gap-4 justify-center items-center mb-5 px-8 min-h-screen">
-              <h2 className="font-playfair text-center text-6xl font-bold text-white ">
-                Crie sua conta
-              </h2>
-              <p className="font-playfair text-sm:3xl text-white text-center p-2 font-bold text-[20px]">
-                Leva menos de um minuto
-              </p>
+                <h2 className="font-playfair text-center text-6xl font-bold text-white ">
+                  Crie sua conta
+                </h2>
+                <p className="font-playfair text-sm:3xl text-white text-center p-2 font-bold text-[20px]">
+                  Leva menos de um minuto
+                </p>
 
-              <InputCadastro />
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-1 m-2 text-start">
-                <div className="flex flex-col text-center p-1">
-                  <Labels desc="Meta jejum (mg/dl)" className="font-poppins font-bold text-center text-white" />
-                  <Inputs tipoDado="number" placeName="95" className="border-2 p-3   rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
-                </div>
-                <div className="flex flex-col text-center p-1">
-                  <Labels desc="Meta pós-pradial" className="font-poppins font-bold text-center text-white" />
-                  <Inputs tipoDado="number" placeName="140" className="border-2 p-3  rounded-lg bg-white border-red-300 w-full sm:w-50 outline-none  focus:border-red-400 focus:border-2 text-start mt-2 text-grey-300" />
-                </div>
-              </div>
-              <Botao
-                className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
+                <InputCadastro ref={cadastroRef} />
+
+                <Botao
+                  className="font-poppins  text-center bg-teal-500 hover:bg-teal-600 font-bold text-white
              rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
-              tipoDado="submit"
-                
-                Component={<Link className="underline text-white" to="/Cadastro/Verificacao">Cadastrar</Link>}
-              />
+                  tipoDado="submit"
+                  nome={enviando ? "Cadastrando..." : "Cadastrar"}
+                />
 
-              <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
-              
+                <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
                   <p className="text-white font-poppins">Já tem conta ?{" "}</p>
                   <Link className="underline text-white" to="/">
-                   <b className="font-poppins font-bold">Entrar</b>
+                    <b className="font-poppins font-bold">Entrar</b>
                   </Link>
+                </div>
               </div>
-            </div>
             </form>
-            
           </main>
         </div>
       </div>
