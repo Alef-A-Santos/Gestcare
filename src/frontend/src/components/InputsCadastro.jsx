@@ -11,8 +11,8 @@ import { IoEyeSharp } from "react-icons/io5";
 import { testarSenha } from "../utils/verificarSenha";
 import { forwardRef, useImperativeHandle } from "react";
 
-// Troque pelo prefixo real onde o router de usuários é montado no servidor
-const URL_CADASTRO = "http://localhost:3000/api/usuarios/cadastrar-usuario";
+
+const URL_CADASTRO = "http://localhost:3000/api/auth/cadastrar-se";
 
 const InputCadastro = forwardRef((props, ref) => {
   const [isSenha, setIsSenha] = useState(false);
@@ -32,7 +32,7 @@ const InputCadastro = forwardRef((props, ref) => {
   const erroConfirmar =
     ConfirmarSenha && ConfirmarSenha !== senha ? "As senhas não coincidem" : "";
 
-  // Rola a tela até a mensagem de erro quando ela aparece
+
   useEffect(() => {
     if (erroCadastro) {
       erroRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
