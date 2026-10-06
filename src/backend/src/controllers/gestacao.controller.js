@@ -7,10 +7,11 @@ export default class GestacaoController{
    ListarGestacoes(){
       return async (req, res) => {
          try{
-            const { user } = req.body;
+            const { user } = req;
             const response = await gestacaoService.ListarGestacoes(user);
             return res.status(200).send(response);
          }catch(error){
+            console.error();
             return res.status(500).send({erro:mensagemErroInterno});
          }
       }
@@ -18,10 +19,8 @@ export default class GestacaoController{
    ListarGestacao(){
       return async (req, res) => {
          try {
-            console.log(req.params)
             const { id_gestacao } = req.params;
-            // const { user } = req;
-            const { user } = req.body;
+            const { user } = req;
             const response = await gestacaoService.ListarGestacao(id_gestacao, user);
             return res.status(200).send(response);
          }catch(error){
@@ -41,7 +40,8 @@ export default class GestacaoController{
    CriarGestacao(){
       return async (req, res) =>{
          try {
-            const { dados, user } = req.body;
+            const { dados } = req.body;
+            const { user } = req;
             const response = await gestacaoService.CriarGestacao(dados, user);
             res.status(201).send(response);
          }catch(error){
@@ -60,9 +60,8 @@ export default class GestacaoController{
    RemoverGestacao(){
       return async (req, res) => {
          try {
-            console.log(req.params)
             const { id_gestacao } = req.params;
-            const { user } = req.body;
+            const { user } = req;
             const response = await gestacaoService.RemoverGestacao(id_gestacao, user);
             return res.status(200).send(response);
          }catch(error) {
@@ -89,7 +88,7 @@ export default class GestacaoController{
       return async (req, res) => {
          try{
             const { id_gestacao } = req.params;
-            const { user } = req.body;
+            const { user } = req;
             const response = await gestacaoService.FinalizarGestacao(id_gestacao, user);
             return res.status(200).send(response);  
          }catch(error) {
@@ -113,10 +112,11 @@ export default class GestacaoController{
       return async (req, res) => {
          try{
             const { id_gestacao }= req.params;
-            const { dados, user }= req.body;
+            const { dados } = req.body;
+            const  { user } = req;
             const response = await gestacaoService.AlterarGestacao(id_gestacao, dados, user);
 
-            if(response.noModified){
+            if(response.notModified){
                return res.status(304).send(response.mensagem);
             }
             return res.status(200).send(response);
