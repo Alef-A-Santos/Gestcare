@@ -14,7 +14,6 @@ const router = Router();
 router.use('/usuarios', UsuariosRoutes);
 router.use('/acompanhantes', AcompanhantesRoutes);
 router.use(`/glicemia`, GlicemiaRoutes);
-
 router.use('/auth', AuthRoutes);
 router.use('/relatorio', RelatorioRoutes);
 router.use('/dispositivos', DispositivosRoutes);
