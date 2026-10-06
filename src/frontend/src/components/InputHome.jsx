@@ -3,6 +3,7 @@
   import { IoEyeSharp } from "react-icons/io5";
   import Botao from "./BotaoHome";
   import { useEffect, useState } from "react";
+import {  useNavigate } from "react-router-dom";
 
 
   function InputHome() {
@@ -10,6 +11,7 @@
       isSenha, setIsSenha
 
     ] = useState (false)
+    const navigate = useNavigate()
 
     const[
       dados ,setdados
@@ -32,6 +34,7 @@
         if(!response.ok){
           throw new Error ("Falha ao relizar login")
         }
+        navigate ("/Home")
       } catch(Error){
         console.log(Error)
       }
