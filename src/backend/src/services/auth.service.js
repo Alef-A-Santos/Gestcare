@@ -139,8 +139,12 @@ export default class AuthService {
         "SELECT nome, email FROM usuarios WHERE email = ?",
         [dados.email],
       );
-
-      if (user.length) throw error;
+      
+      if (user.length) {
+        error.message = "Usuário já cadastrado!";
+        error.usuarioCadastrado = true;
+        throw error;
+      }
 
       const usuario = {
         nome: dados.nome,
