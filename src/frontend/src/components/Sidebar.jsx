@@ -48,44 +48,44 @@ function Sidebar() {
         <div className="m-3 p-3 flex flex-col gap-3 mt-8">
 
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="Início"
             Component={IoHomeOutline}
           />
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="Historico Glicemico"
             Component={VscSettingsCompact}
           />
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="Diario Alimentar"
             Component={LuSalad}
           />
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="   Lembretes"
             Component={FaRegBell}
           />
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="Emergência"
             Component={BsTelephone}
           />
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="Dicas educativas"
             Component={LuNotebookPen}
           />
           <Botao
-            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1"
+            className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
             nome="Ajustes"
             Component={IoSettingsOutline}
           />
    
           <Botao
             className={
-              "flex justify-center items-center m-2 mt-5 p-3 gap-6 rounded-2xl text-2xl font-bold font-poppins hover:transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer hover:-translate-y-1"
+              "flex justify-center items-center m-2 mt-5 p-3 gap-6 rounded-2xl text-2xl font-bold font-poppins hover:transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer hover:-translate-y-1 hover:shadow-xl"
             }
             nome={"Sair"}
           />

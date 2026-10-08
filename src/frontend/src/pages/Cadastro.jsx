@@ -141,7 +141,7 @@ function Cadastro() {
 
                 <Botao
 
-                  className="font-poppins text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer"
+                  className="font-poppins text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full sm:w-100 md:w-70 transition duration-300 px-10 mt-3 cursor-pointer hover:scale-105 hover:shadow-xl"
 
                   tipoDado="submit"
 

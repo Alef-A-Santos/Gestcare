@@ -171,7 +171,7 @@ function InputHome() {
             <Botao
               tipo="submit"
               disabled={carregando}
-              className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins mt-9 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 m-2 w-full max-w-100 cursor-pointer font-poppins mt-9 disabled:opacity-70 disabled:cursor-not-allowed hover:scale-105 hover:shadow-xl hover:duration-500"
               nome={
                 carregando
                   ? "Entrando..."
