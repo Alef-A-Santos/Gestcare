@@ -244,7 +244,7 @@ const InputCadastro = forwardRef((props, ref) => {
               tipoDado="button"
             />
           }
-          className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
+          className="border-2 py-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-15"
         />
 
         {erroConfirmar && (
