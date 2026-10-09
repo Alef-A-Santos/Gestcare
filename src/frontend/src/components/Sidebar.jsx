@@ -8,9 +8,11 @@ import { LuNotebookPen } from "react-icons/lu";
 import Botao from "../components/Botao";
 import { useState } from "react";
 import { IoSettingsOutline } from "react-icons/io5";
+import UserName from "./UserName";
 
 function Sidebar() {
   const [foto, setFoto] = useState(null);
+  //const [setaEsq, setsetaEsq] = useState("");
   return (
     <div>
       <aside className="bg-teal-500 p-4 flex flex-col min-h-screen text-white ">
@@ -37,7 +39,7 @@ function Sidebar() {
               
             />
           </label>
-          <h4 className="text-2xl font-playfair font-bold">Maria Fonseca</h4>
+          <UserName className={"text-2xl font-playfair font-bold"} nome={"Maria Fonseca"}/>
         </div>
         <div className="m-2 mt-5 p-2 flex justify-center">
           <h4 className="text-2xl">
@@ -45,7 +47,8 @@ function Sidebar() {
             <span className="font-bold font-poppins text-2xl">22 Semanas</span>
           </h4>
         </div>
-        <div className="m-3 p-3 flex flex-col gap-3 mt-8">
+        <div>
+              <div className="m-3 p-3 flex flex-col gap-3 mt-8">
 
           <Botao
             className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
@@ -64,7 +67,7 @@ function Sidebar() {
           />
           <Botao
             className="flex justify-start items-center m-2 p-3 gap-6 rounded-2xl transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer text-2xl font-poppins font-semibold hover:-translate-y-1 hover:shadow-xl"
-            nome="   Lembretes"
+            nome="Lembretes"
             Component={FaRegBell}
           />
           <Botao
@@ -90,6 +93,9 @@ function Sidebar() {
             nome={"Sair"}
           />
         </div>
+        <button className="rounded-full m-2 p-2"></button>
+        </div>
+        
       </aside>
     </div>
   );
