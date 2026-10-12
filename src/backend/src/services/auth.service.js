@@ -29,7 +29,7 @@ const camposObrigatoriosCadastroAcompanhante = [
 ];
 const camposObrigatoriosCadastroGestante = [
   ...camposObrigatoriosCadastroAcompanhante,
-  "data_ultima_menstruacao",
+  "mes",
   "meta_glicemia_jejum",
   "meta_glicemia_pos",
 ];
@@ -40,7 +40,7 @@ export default class AuthService {
     nome: "Nome",
     perfil: "Perfil",
     senha: "Senha",
-    data_ultima_menstruacao: "Data da última menstruação",
+    mes: "Mês da última menstruação",
     meta_glicemia_jejum: "Meta glicemia jejum",
     meta_glicemia_pos: "Meta glicemia pos",
   };
@@ -164,9 +164,10 @@ export default class AuthService {
 
       if (isGestante) {
         dados.data_prev_parto = await GestacaoService.getDataPrevParto(
-          dados.data_ultima_menstruacao,
+          dados.mes,
           db,
         );
+        
         const responseGestacao = await gestacaoRepository.CriarGestacao(
           dados,
           usuario,
