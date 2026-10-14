@@ -9,11 +9,7 @@ export default class RelatoriosController {
     return async (req, res) => {
       try {
         const { dados } = req.body;
-        // const { user } = req;
-        const user = {
-          id_usuario:37,
-          nome:"Gestante Teste",
-        }
+        const { user } = req;
         const response = await relatoriosService.Gerar(dados, user);
         const caminho_relatorio = await GerarPdfTemplate(gerarTemplateRelatorio(response.response), `relatorio_${user.id_usuario}_${dados.data_inicio}_${dados.data_fim}`);
         return res.status(200).sendFile(caminho_relatorio);
