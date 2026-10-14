@@ -1,4 +1,6 @@
+import { gerarTemplateRelatorio } from "../HTMLTemplates/relatorioTemplate.js";
 import RelatoriosService from "../services/relatorios.service.js";
+import { GerarPdfTemplate } from "../utils/pdf.js";
 
 const relatoriosService = new RelatoriosService();
 
@@ -7,9 +9,14 @@ export default class RelatoriosController {
     return async (req, res) => {
       try {
         const { dados } = req.body;
-        const { user } = req;
+        // const { user } = req;
+        const user = {
+          id_usuario:37,
+          nome:"Gestante Teste",
+        }
         const response = await relatoriosService.Gerar(dados, user);
-        return res.status(200).send(response);
+        const caminho_relatorio = await GerarPdfTemplate(gerarTemplateRelatorio(response.response), `relatorio_${user.id_usuario}_${dados.data_inicio}_${dados.data_fim}`);
+        return res.status(200).sendFile(caminho_relatorio);
       } catch (error) {
         console.error(error);
         return this.#VerificarErro(res, error);
