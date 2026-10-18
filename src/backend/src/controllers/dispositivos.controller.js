@@ -89,6 +89,10 @@ export default class DispositivosController {
         if(error.hasMissingValues){
           return res.status(400).send({erro:error.message});
         }
+        
+        if(error.notFound){
+          return res.status(404).send({erro:error.message});
+        }
 
         return res.status(500).send({erro:mensagemErroInterno});
       }

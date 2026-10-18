@@ -6,7 +6,7 @@ const router = Router();
 const acompanhantesController = new AcompanhantesController(); 
 
 router.get("/listar-acompanhantes", autenticar_gestante, acompanhantesController.Listar());
-router.get("/listar-acompanhantes-gestante", acompanhantesController.ListarAcompanhantesGestante());
+router.get("/listar-acompanhantes-gestante/:id", acompanhantesController.ListarAcompanhantesGestante());
 router.post("/cadastrar-acompanhante", autenticar_gestante, acompanhantesController.Cadastrar());
 router.delete("/remover-acompanhante/:id", autenticar_gestante, acompanhantesController.Remover());
 router.patch("/editar-acompanhante/:id", autenticar_gestante, acompanhantesController.Editar());
