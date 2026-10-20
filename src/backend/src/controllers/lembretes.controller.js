@@ -49,6 +49,10 @@ export default class LembretesController {
         return res.status(200).send(response);
       } catch (error) {
         console.error(error);
+        if (error.hasMissingValues) {
+          return res.status(400).send({ erro: error.message });
+        }
+
         if (error.notFound) {
           return res.status(404).send({ erro: error.message });
         }
