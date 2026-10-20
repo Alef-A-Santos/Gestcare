@@ -5,7 +5,7 @@ const dispositivosController = new DispositivosController();
 const router = Router();
 
 
-router.get("/listar-dispositivos", autenticar_gestante, dispositivosController.Listar());
+router.get("/listar-dispositivos-usuario", autenticar_gestante, dispositivosController.ListarDispositivosUsuario());
 router.post("/cadastrar-dispositivo", autenticar_gestante, dispositivosController.Cadastrar());
 router.put("/editar-dispositivo/:id", autenticar_gestante, dispositivosController.Editar());
 router.delete("/deletar-dispositivo/:id", autenticar_gestante, dispositivosController.Deletar());
