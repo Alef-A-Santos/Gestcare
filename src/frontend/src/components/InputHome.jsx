@@ -6,6 +6,7 @@ import Botao from "./BotaoHome";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 function InputHome() {
   const [isSenha, setIsSenha] = useState(false);
   const [erro, setErro] = useState("");
@@ -39,15 +40,17 @@ function InputHome() {
           headers: {
             "Content-Type": "application/json",
           },
+           credentials:"include",
           body: JSON.stringify({ dados }),
           signal: controller.signal,
         }
+       
       );
 
       const corpo = await response.json().catch(() => null);
 
       console.log("Resposta do login:", corpo);
-      console.log("Dados enviados:", dados);
+    
 
       if (!response.ok) {
         setErro(
@@ -94,7 +97,7 @@ function InputHome() {
   }
 
   useEffect(() => {
-    console.log(dados);
+ 
   }, [dados]);
 
   return (

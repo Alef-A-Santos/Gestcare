@@ -5,6 +5,7 @@ import { Routes, Route } from 'react-router-dom';
   import RecSenha from './pages/recSenha';
    import RedefinirSenha from './pages/RedefinirSenha';
     import Home from './pages/Home'; 
+    import ProtecaoRota from './components/ProtecaoRota';
     function App() {
        return (
          <Routes> 
@@ -15,6 +16,13 @@ import { Routes, Route } from 'react-router-dom';
              <Route path="/recSenha/Verificacao" element={<Verificacao />} /> 
              <Route path="/login" element={<Login />} /> 
              <Route path="/redefinirSenha" element={<RedefinirSenha />} /> 
-             <Route path="/home" element={<Home />} /> </Routes> );
+
+             {/* ROTAS PROTEGIDAS! */}
+             <Route element={<ProtecaoRota />}>
+                   <Route path="/home" element={<Home />} />
+             </Route>
+
+
+        </Routes> );
               } 
               export default App;
