@@ -139,8 +139,12 @@ export default class AuthService {
         "SELECT nome, email FROM usuarios WHERE email = ?",
         [dados.email],
       );
-
-      if (user.length) throw error;
+      
+      if (user.length) {
+        error.message = "Usuário já cadastrado!";
+        error.usuarioCadastrado = true;
+        throw error;
+      }
 
       const usuario = {
         nome: dados.nome,
@@ -148,6 +152,8 @@ export default class AuthService {
         senha: await criptografar(dados.senha),
         perfil: dados.perfil,
       };
+
+      const codigoValidacao = gerarCodigo();
 
       const response = await authRepository.Cadastrar(
         codigoValidacao,
@@ -168,7 +174,6 @@ export default class AuthService {
         );
       }
 
-      const codigoValidacao = gerarCodigo();
       const emailEnviado = await enviarCodigo(codigoValidacao, dados.email);
       if (!emailEnviado) {
         error.emailNotSended = true;
@@ -281,6 +286,37 @@ export default class AuthService {
       return {
         mensagem: "Código enviado com sucesso!",
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+  async AlterarSenha(dados) {
+    try {
+      if(!dados || !Object.keys(dados).length) {
+        error.message = "Informe a nova senha!";
+        error.hasMissingValues = true;
+        throw error;
+      }
+
+      const isInvalida = testarSenha(dados.senha);
+
+      if(isInvalida){
+        error.isInvalida = true;
+        error.message = isInvalida;
+        throw error;
+      }
+
+      const hashSenha = await criptografar(dados.senha);
+      dados.senha = hashSenha;
+      const response = await authRepository.AlterarSenha(dados);
+      
+      if(response.affectedRows === 0 ) {
+        throw Error();
+      }
+
+      return { 
+        mensagem:"Senha alterada com sucesso!"
+      }
     } catch (error) {
       throw error;
     }

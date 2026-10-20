@@ -7,6 +7,7 @@ import RelatorioRoutes from './relatorios.routes.js';
 import DispositivosRoutes from './dispositivos.routes.js';
 import LembretesRoutes from './lembretes.routes.js';
 import DashboardRoutes from './dashboard.routes.js';
+import DicasRoutes from './dicas.routes.js';
 const router = Router();
 
 // As linhas abaixo básicamente dizem para que quando uma requisição for feita para o endpoint específicado
@@ -19,6 +20,8 @@ router.use('/relatorio', RelatorioRoutes);
 router.use('/dispositivos', DispositivosRoutes);
 router.use('/lembretes', LembretesRoutes);
 router.use('/dashboard', DashboardRoutes);
+router.use('/dicas', DicasRoutes);
+
 
 // Rota de teste
 router.use('/teste-api', (_, res) => {
