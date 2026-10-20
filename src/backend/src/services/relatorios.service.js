@@ -2,6 +2,14 @@ import connectDB from "../database/db.js";
 import RelatoriosRepository from "../repository/relatorios.repository.js";
 
 const relatoriosRepository = new RelatoriosRepository();
+const formatarData = (dataStr) => {
+  const data = new Date(dataStr.split("-"));
+
+  return Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+  }).format(data);
+};
+
 const camposObrigatorios = ["data_inicio", "data_fim", "ano"];
 const error = new Error();
 
@@ -10,6 +18,8 @@ export default class RelatoriosService {
     try {
       this.#VerificarCampos(dados);
       const response = await relatoriosRepository.Gerar(dados, user);
+      response.nome_gestante = user.nome;
+      response.periodo = `${formatarData(dados.data_inicio)} - ${formatarData(dados.data_fim)}`;
       return {
         response,
         mensagem: "Relatório gerado com sucesso!",
@@ -23,15 +33,19 @@ export default class RelatoriosService {
     try {
       this.#VerificarCampos(dados);
       db = await connectDB();
-      const { media_periodo } = await relatoriosRepository.CalcularMediaPeriodo(dados, user, db);
+      const { media_periodo } = await relatoriosRepository.CalcularMediaPeriodo(
+        dados,
+        user,
+        db,
+      );
       return {
         media_periodo,
         mensagem: "Média calculada com sucesso!",
       };
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
   async CalcularMediasSemanais(dados, user) {
@@ -39,15 +53,19 @@ export default class RelatoriosService {
     try {
       this.#VerificarCampos(dados);
       db = await connectDB();
-      const { medias } = await relatoriosRepository.CalcularMediasSemanais(dados, user, db);
+      const { medias } = await relatoriosRepository.CalcularMediasSemanais(
+        dados,
+        user,
+        db,
+      );
       return {
         medias,
         mensagem: "Médias semanais calculadas com sucesso!",
       };
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
   async CalcularMediasMensais(dados, user) {
@@ -55,26 +73,28 @@ export default class RelatoriosService {
     try {
       this.#VerificarCampos(dados);
       db = await connectDB();
-      const { medias } = await relatoriosRepository.CalcularMediasMensais(dados, user, db);
+      const { medias } = await relatoriosRepository.CalcularMediasMensais(
+        dados,
+        user,
+        db,
+      );
       return {
         medias,
         mensagem: "Médias mensais calculadas com sucesso!",
       };
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
 
   #VerificarCampos(dados) {
-    const camposFaltando = camposObrigatorios.filter(
-        (campo) => !dados[campo],
-      );
-      if (!dados || camposFaltando.length) {
-        error.camposFaltando = true;
-        error.message = `Preencha os campos obrigatórios: ${camposFaltando.join(",")}`;
-        throw error;
-      }
+    const camposFaltando = camposObrigatorios.filter((campo) => !dados[campo]);
+    if (!dados || camposFaltando.length) {
+      error.camposFaltando = true;
+      error.message = `Preencha os campos obrigatórios: ${camposFaltando.join(",")}`;
+      throw error;
+    }
   }
 }
