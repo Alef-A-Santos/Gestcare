@@ -165,7 +165,7 @@ function Cadastro() {
 
                   <Link
                     className="underline text-white"
-                    to="/"
+                    to="/login"
                   >
 
                     <b className="font-poppins font-bold">

@@ -7,11 +7,25 @@ import { LuNotebookPen } from "react-icons/lu";
 //import { FaRegUserCircle } from "react-icons/fa";
 import Botao from "../components/Botao";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
 import UserName from "./UserName";
 
 function Sidebar() {
   const [foto, setFoto] = useState(null);
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    try {
+      await fetch("http://localhost:3000/api/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+    } finally {
+      navigate("/login", { replace: true });
+    }
+  }
+
   //const [setaEsq, setsetaEsq] = useState("");
   return (
     <div>
@@ -91,6 +105,7 @@ function Sidebar() {
               "flex justify-center items-center m-2 mt-5 p-3 gap-6 rounded-2xl text-2xl font-bold font-poppins hover:transition duration-600 hover:bg-pink-300 w-80 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer hover:-translate-y-1 hover:shadow-xl"
             }
             nome={"Sair"}
+            clickHandler={handleLogout}
           />
         </div>
         <button className="rounded-full m-2 p-2"></button>
