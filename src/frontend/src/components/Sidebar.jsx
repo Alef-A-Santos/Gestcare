@@ -10,12 +10,36 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
 import UserName from "./UserName";
+import Swal from "sweetalert2";
 
 function Sidebar() {
   const [foto, setFoto] = useState(null);
   const navigate = useNavigate();
 
   async function handleLogout() {
+    const confirmacao = await Swal.fire({
+      title: "Deseja sair?",
+      text: "Tem certeza de que deseja sair da sua conta Gestcare?",
+      icon: "question",
+      iconColor: "#0d9488",
+      showCancelButton: true,
+      confirmButtonText: "Sim, sair",
+      cancelButtonText: "Continuar no Gestcare",
+      confirmButtonColor: "#0d9488",
+      cancelButtonColor: "#ec4899",
+      reverseButtons: true,
+      focusCancel: true,
+      customClass: {
+        popup: "gestcare-swal-popup",
+        title: "gestcare-swal-title",
+        htmlContainer: "gestcare-swal-text",
+        confirmButton: "gestcare-swal-confirm",
+        cancelButton: "gestcare-swal-cancel",
+      },
+    });
+
+    if (!confirmacao.isConfirmed) return;
+
     try {
       await fetch("http://localhost:3000/api/auth/logout", {
         method: "GET",
