@@ -90,6 +90,7 @@ function Sidebar() {
             <h4 className="text-2xl mt-2 text-center">
               Sua Gestação: <span className="font-bold font-poppins">22 Semanas</span>
             </h4>
+            <hr />
           </div>
         )}
 

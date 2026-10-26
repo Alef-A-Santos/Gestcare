@@ -1,5 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import CardInfo from "../components/CardInfo";
 
 function Home() {
   return (
@@ -12,23 +13,17 @@ function Home() {
       <main className="flex-1 p-6">
         <Header />
         <div className="flex">
-          <div>
-            <h2 className="text-3xl">Ultima medição</h2>
-            <h3 className="text-2xl"> 20mg/dl</h3>
-            <div>
-              <div>
-                <p>baixa</p>
-              </div>
-              
-              <p>jejum</p>
-            </div>
-            <div>
-              <p>19/08/2026</p>
-              <p>13:49</p>
-            </div>
-          </div>
-          <div></div>
-          <div></div>
+          <CardInfo
+            UltimaAfericao={"20mg/dl"}
+            className={
+              "text-2xl rounded-full bg-amber-200 text-zinc-400 py-1 px-4 font-poppins"
+            }
+            nivel={"Baixa"}
+            estado={"jejum"}
+            data={"19/08/2026"}
+            horario={"13:49"}
+          />
+          
         </div>
       </main>
     </div>
