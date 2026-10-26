@@ -85,7 +85,10 @@ function Sidebar() {
                 }}
               />
             </label>
-            <UserName className="text-2xl font-playfair font-bold text-center m-5" nome="Maria Fonseca" />
+            <UserName
+              className="text-2xl font-playfair font-bold text-center m-5"
+              nome="Maria Fonseca"
+            />
 
             <h4 className="text-2xl mt-2 text-center">
               Sua Gestação: <span className="font-bold font-poppins">22 Semanas</span>
