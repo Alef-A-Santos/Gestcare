@@ -25,8 +25,8 @@ function Sidebar() {
       showCancelButton: true,
       confirmButtonText: "Sim, sair",
       cancelButtonText: "Continuar no Gestcare",
-      confirmButtonColor: "#0d9488",
-      cancelButtonColor: "#ec4899",
+      confirmButtonColor: "#ec4899",
+      cancelButtonColor: "#0d9488",
       reverseButtons: true,
       focusCancel: true,
       customClass: {
