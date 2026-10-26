@@ -6,7 +6,6 @@ import AuthRoutes from './auth.routes.js';
 import RelatorioRoutes from './relatorios.routes.js';
 import DispositivosRoutes from './dispositivos.routes.js';
 import LembretesRoutes from './lembretes.routes.js';
-import DashboardRoutes from './dashboard.routes.js';
 import DicasRoutes from './dicas.routes.js';
 const router = Router();
 
@@ -14,10 +13,6 @@ const router = Router();
 // para utilizar o router(ou a função) correspondente
 router.use('/acompanhantes', AcompanhantesRoutes);
 router.use('/auth', AuthRoutes);
-router.use('/relatorio', RelatorioRoutes);
-router.use('/dispositivos', DispositivosRoutes);
-router.use('/lembretes', LembretesRoutes);
-router.use('/dashboard', DashboardRoutes);
 router.use('/dicas', DicasRoutes);
 router.use('/dispositivos', DispositivosRoutes);
 router.use(`/glicemia`, GlicemiaRoutes);
