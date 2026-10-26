@@ -126,6 +126,7 @@ export default class LembretesRepository {
           AND ativo = 1 
           AND recorrencia LIKE '%?%' 
           AND horario > TIME(SYSDATE()) 
+          AND TIME(horario) >  TIME("00:00")
         ORDER BY horario ASC`, [user.id_usuario, recorrencia]);
       
       return lembretes;
