@@ -12,4 +12,29 @@ export default class GlicemiaRespository {
       throw error;
     }
   }
+
+  async Listar(user, db) {
+    try {
+      const [rows] = await db.query(
+        "SELECT id_glicemia, valor, data_hora, classificacao FROM registro_glicemia WHERE id_usuario = ? ORDER BY data_hora DESC",
+        [user.id_usuario],
+      );
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async Remover(user, id, db) {
+    try {
+      // o id_usuario no WHERE garante que ela só apaga o próprio registro
+      const [result] = await db.query(
+        "DELETE FROM registro_glicemia WHERE id_glicemia = ? AND id_usuario = ?",
+        [id, user.id_usuario],
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

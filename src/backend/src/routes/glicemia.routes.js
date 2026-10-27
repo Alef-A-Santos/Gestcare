@@ -9,5 +9,7 @@ const router = Router();
 const glicemiaController = new GlicemiaController ()
 
 router.post("/cadastrar-glicemia", autenticar_gestante, glicemiaController.Cadastrar());
+router.get("/listar-glicemia", autenticar_gestante, glicemiaController.Listar());
+router.delete("/remover-glicemia/:id", autenticar_gestante, glicemiaController.Remover());
 
 export default router;
