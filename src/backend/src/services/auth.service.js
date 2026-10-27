@@ -13,12 +13,12 @@ import {
 } from "../utils/codigoValidacao.js";
 import { enviarCodigo } from "../utils/sendEmail.js";
 import connectDB from "../database/db.js";
-import GestacaoRepository from "../repository/gestacao.repository.js";
+import GestcaoRepository from "../repository/gestacao.repository.js";
 import GestacaoService from "./gestacao.service.js";
 
 const authRepository = new AuthRepository();
 const usuariosRepository = new UsuariosRepository();
-const gestacaoRepository = new GestacaoRepository();
+const gestacaoRepository = new GestcaoRepository();
 
 const error = new Error();
 const camposObrigatoriosCadastroAcompanhante = [
