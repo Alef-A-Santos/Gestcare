@@ -96,11 +96,6 @@ export default class UsuariosService {
         const emailCadastrado = await usuariosRepository.BuscarUsuario(
           dados.email,
         );
-
-        if (emailCadastrado.length)
-          throw new Error(
-            JSON.stringify({ erro: "Email já cadastrado!", status: 400 }),
-          );
       }
 
       if (dados.senha) {

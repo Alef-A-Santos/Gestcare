@@ -10,7 +10,7 @@ export default class DispositivosService {
       const dispositivos = await dispositivosRepository.ListarDispositivosUsuario(user);
 
       return {
-        mensagem: "Dispositvos listados com sucesso!",
+        mensagem: "Dispositivos listados com sucesso!",
         dispositivos,
       };
     } catch (error) {

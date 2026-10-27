@@ -110,6 +110,11 @@ export default class LembretesService {
   async AlterarStatus(id, user, status) {
     let db;
     try {
+      if(!status || !id){
+        error.hasMissingValues = true;
+        error.message = "Informe o status e o lembrete!";
+        throw error;
+      }
       db = await connectDB();
 
       const [[lembrete]] = await db.query(`SELECT COUNT(id_lembrete) as qtd_lembrete FROM lembretes WHERE id_lembrete = ? AND id_usuario = ?`,[

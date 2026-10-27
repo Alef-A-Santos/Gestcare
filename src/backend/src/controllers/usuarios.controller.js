@@ -37,7 +37,7 @@ export default class UsuariosController {
       try {
         const { id } = req.params;
         const response = await usuariosService.Deletar(id);
-        return res.status(200).send({mensagem:'Usuário deletado com sucesso!'})
+        return res.status(200).send(response)
       }catch(error) {
         console.error(error);
         const {erro, status} = JSON.parse(error.message);

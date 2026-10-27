@@ -9,7 +9,7 @@ export default class AcompanhantesRepository {
         `with gestante as (
             SELECT id_usuario,nome FROM usuarios)
 
-            SELECT acompanhantes.id_acompanhante, usuarios.nome as nome_acompanhnate, usuarios.email as email_acompanhante, acompanhantes.id_gestante, gestante.nome as nome_gestante 
+            SELECT acompanhantes.id_acompanhante, usuarios.nome as nome_acompanhante, usuarios.email as email_acompanhante, acompanhantes.id_gestante, gestante.nome as nome_gestante 
             FROM  acompanhantes inner join gestante on acompanhantes.id_gestante = gestante.id_usuario inner join usuarios on acompanhantes.id_acompanhante = usuarios.id_usuario`,
       );
       return result;
@@ -19,17 +19,17 @@ export default class AcompanhantesRepository {
       if (db) db.release();
     }
   }
-  async ListarAcompanhantesGestante(user) {
+  async ListarAcompanhantesGestante(id_gestante) {
     let db;
     try {
       db = await connectDB();
       const [result] = await db.query(
         `with gestante as (
             SELECT id_usuario,nome FROM usuarios)
-            SELECT acompanhantes.id_acompanhante, usuarios.nome, acompanhantes.id_gestante, gestante.nome,  usuarios.perfil, usuarios.email
+            SELECT acompanhantes.id_acompanhante, usuarios.nome, acompanhantes.id_gestante, gestante.nome AS nome_acompanhante,  usuarios.perfil, usuarios.email
             FROM  acompanhantes inner join gestante on acompanhantes.id_gestante = gestante.id_usuario inner join usuarios on acompanhantes.id_acompanhante = usuarios.id_usuario
             WHERE gestante.id_usuario = ?`,
-        [user.id_usuario],
+        [id_gestante],
       );
       return result;
     } catch (error) {

@@ -19,9 +19,9 @@ export default class AcompanhantesController {
   ListarAcompanhantesGestante() {
     return async (req, res) => {
       try {
-        const { user } = req;
+        const { id_gestante } = req.params;
         const response =
-          await acompanhantesService.ListarAcompanhantesGestante(user);
+          await acompanhantesService.ListarAcompanhantesGestante(id_gestante);
         return res.status(200).send(response);
       } catch (error) {
         console.error(error);
@@ -43,10 +43,10 @@ export default class AcompanhantesController {
         return res.status(201).send(response);
       } catch (error) {
         console.error(error);
-        if (error.hasMissingValues) {
+        if (error.hasMissingValues || error.hasMaxAcompanhantes) {
           return res.status(400).send({ erro: error.message });
         }
-        if (error.userNonExistent || error.hasMaxAcompanhantes) {
+        if (error.userNonExistent) {
           return res.status(404).send({ erro: error.message });
         }
         return res.status(500).send({ erro: "Falha no servidor!" });
@@ -56,7 +56,7 @@ export default class AcompanhantesController {
   Remover() {
     return async (req, res) => {
       try {
-        const id = req.params.id;
+        const { id } = req.params;
         const response = await acompanhantesService.Remover(id);
         return res.status(200).send({ response });
       } catch (error) {
@@ -64,7 +64,7 @@ export default class AcompanhantesController {
         if (error.hasMissingValues) {
           return res.status(400).send({ erro: error.message });
         }
-        if (error.userNonExistent || error.hasMaxAcompanhantes) {
+        if (error.userNonExistent) {
           return res.status(404).send({ erro: error.message });
         }
         return res.status(500).send({ erro: "Erro no servidor." });

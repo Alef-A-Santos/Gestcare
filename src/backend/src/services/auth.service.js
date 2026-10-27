@@ -29,7 +29,7 @@ const camposObrigatoriosCadastroAcompanhante = [
 ];
 const camposObrigatoriosCadastroGestante = [
   ...camposObrigatoriosCadastroAcompanhante,
-  "data_ultima_menstruacao",
+  "mes",
   "meta_glicemia_jejum",
   "meta_glicemia_pos",
 ];
@@ -40,7 +40,7 @@ export default class AuthService {
     nome: "Nome",
     perfil: "Perfil",
     senha: "Senha",
-    data_ultima_menstruacao: "Data da última menstruação",
+    mes: "Mês da última menstruação",
     meta_glicemia_jejum: "Meta glicemia jejum",
     meta_glicemia_pos: "Meta glicemia pos",
   };
@@ -164,9 +164,10 @@ export default class AuthService {
 
       if (isGestante) {
         dados.data_prev_parto = await GestacaoService.getDataPrevParto(
-          dados.data_ultima_menstruacao,
+          dados.mes,
           db,
         );
+        
         const responseGestacao = await gestacaoRepository.CriarGestacao(
           dados,
           usuario,
@@ -320,5 +321,31 @@ export default class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+  async EnviarCodigo(dados) {
+    if(!dados || !dados.email.trim()){
+      error.hasMissingValues = true;
+      error.message = "Preencha o email para o envio do código!";
+      throw error;
+    }
+
+    const usuario = await usuariosRepository.BuscarUsuario(dados.email);
+    if(!usuario.length) {
+      error.notFound = true;
+      error.message = "Usuário não cadastrado!";
+      throw error;
+    }
+
+    const codigo = gerarCodigo();
+    const enviado = await enviarCodigo(codigo, dados.email);
+    const armazenado = await authRepository.ReenviarCodigo(codigo, dados);
+
+    if(!enviado || armazenado.affectedRows === 0) {
+      error.sendFail  = true;
+      error.message = "Falha ao enviar  código! Tente novamente mais tarde.";
+      throw error;
+    }
+
+    return { mensagem: "Código enviado com sucesso!" };
   }
 }

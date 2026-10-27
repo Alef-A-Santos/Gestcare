@@ -9,6 +9,7 @@ router.get("/logout", authController.Deslogar());
 router.post("/cadastrar-se", authController.Cadastrar());
 router.post("/validar-codigo", authController.ValidarCodigo());
 router.post("/reenviar-codigo", authController.ReenviarCodigo());
+router.post("/enviar-codigo", authController.EnviarCodigo());
 router.patch("/alterar-senha",authController.AlterarSenha());
 router.get('/me', autenticar_acompanhante,authController.Autenticar());
 
