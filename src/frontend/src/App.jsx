@@ -5,6 +5,7 @@ import Verificacao from "./pages/Verificacao";
 import RecSenha from "./pages/recSenha";
 import RedefinirSenha from "./pages/RedefinirSenha";
 import Home from "./pages/Home";
+import ProtecaoRota from "./components/ProtecaoRota";
 
 function App() {
   return (
@@ -16,7 +17,10 @@ function App() {
       <Route path="/recSenha/Verificacao" element={<Verificacao />} />
       <Route path="/login" element={<Login />} />
       <Route path="/RedefinirSenha" element={<RedefinirSenha />} />
-      <Route path="/Home" element={<Home />} />
+      {/* ROTAS PROTEGIDAS! */}
+             <Route element={<ProtecaoRota />}>
+                   <Route path="/home" element={<Home />} />
+             </Route>
     </Routes>
   );
 }

@@ -4,25 +4,32 @@ import configDotenv from "../config/dotenv.js";
 function autenticarUsuario(perfisAutorizados, req, res, next) {
   try {
     const token = req.cookies.jwt_tkn;
+    let dadosDecoded;
     if (!token) {
       return res.status(401).send({ erro: "Autenticação necessária!" });
     }
 
-    const decoded = jsonwebtoken.decode(token);
-    
-    if (!perfisAutorizados.includes(decoded.perfil)) {
-      return res.status(403).send({ erro: "Ação não autorizada!" });
-    }
+    jsonwebtoken.verify(token, configDotenv.JWT_SECRET, (error,decoded ) => {
+      if(error || !perfisAutorizados.includes(decoded.perfil)) {
+        error.code = "INVALID_TKN"
+        error.message = "Ação não autorizada!"
+        throw error;
+      }
+      dadosDecoded = decoded;
+    });
 
     req.user = {
-      id_usuario: decoded.id_usuario,
-      nome: decoded.nome,
-      email: decoded.email,
-      perfil: decoded.perfil,
+      id_usuario: dadosDecoded.id_usuario,
+      nome: dadosDecoded.nome,
+      email: dadosDecoded.email,
+      perfil: dadosDecoded.perfil,
     };
     next();
   } catch (error) {
-    console.error(error);
+    console.error(error.code);
+    if(error.code === "INVALID_TKN"){
+      return res.status(403).send({ erro: error.message });
+    }
     return res.status(500).send({ erro: "Falha no servidor!" });
   }
 }

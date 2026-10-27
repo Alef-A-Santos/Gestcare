@@ -173,11 +173,11 @@ const InputCadastro = forwardRef((props, ref) => {
 
         mes,
 
-        metaJejum: metaJejum
+        meta_glicemia_jejum: metaJejum
           ? Number(metaJejum)
           : null,
 
-        metaPosPrandial:
+        meta_glicemia_pos:
           metaPosPrandial
             ? Number(metaPosPrandial)
             : null,
@@ -191,11 +191,11 @@ const InputCadastro = forwardRef((props, ref) => {
       new AbortController();
 
 
-    // 10 segundos para o backend responder
+
 
     const timeout = setTimeout(
       () => controller.abort(),
-      10000
+      20000
     );
 
 
@@ -244,8 +244,6 @@ const InputCadastro = forwardRef((props, ref) => {
 
       }
 
-
-      // SALVA O E-MAIL PARA A VERIFICAÇÃO
 
       localStorage.setItem(
         "emailVerificacao",

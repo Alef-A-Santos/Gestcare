@@ -20,3 +20,25 @@ input[type="number"] {
 html {
   font-size: 87.5%;
 }
+/* Identidade visual Gestcare nos diálogos SweetAlert2. */
+.gestcare-swal-popup {
+  border: 1px solid #ccfbf1;
+  border-radius: 1.25rem;
+  font-family: inherit;
+}
+
+.gestcare-swal-title {
+  color: #115e59;
+  font-weight: 700;
+}
+
+.gestcare-swal-text {
+  color: #475569;
+}
+
+.gestcare-swal-confirm,
+.gestcare-swal-cancel {
+  border-radius: 9999px !important;
+  padding: 0.75rem 1.25rem !important;
+  font-weight: 600 !important;
+}
