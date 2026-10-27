@@ -12,15 +12,15 @@ export default class AcompanhantesService {
       throw error;
     }
   }
-  async ListarAcompanhantesGestante(user) {
+  async ListarAcompanhantesGestante(id_gestante) {
     try {
-      if (!user) {
+      if (!id_gestante) {
         const error = new Error("Gestante não identificada!");
         error.hasMissingValues = true;
         throw error;
       }
       const response =
-        await acompanhantesRepository.ListarAcompanhantesGestante(user);
+        await acompanhantesRepository.ListarAcompanhantesGestante(id_gestante);
       return response;
     } catch (error) {
       throw error;
@@ -111,16 +111,6 @@ export default class AcompanhantesService {
       );
       if (!result.length) {
         const error = new Error("Antigo acompanhante não identificado!");
-        error.userNonExistent = true;
-        throw error;
-      }
-
-      [result] = await db.query(
-        "SELECT id_usuario FROM usuarios WHERE id_usuario = ?",
-        [id_novo_acompanhante],
-      );
-      if (!result.length) {
-        const error = new Error("Novo acompanhante não identificado!");
         error.userNonExistent = true;
         throw error;
       }

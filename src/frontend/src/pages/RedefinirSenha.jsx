@@ -1,220 +1,284 @@
 import Logo from "../Components/Logo";
+
 import fundo from "../assets/imagem/fundoredefinir.png";
+
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
+
 import { Link, useNavigate } from "react-router-dom";
+
 import logoRosa from "../assets/logos/logo_rosa.png";
+
 import Labels from "../components/Labels";
+
 import Inputs from "../components/Inputs";
+
 import { FaLock } from "react-icons/fa";
+
 import { FaEyeSlash } from "react-icons/fa";
+
 import { IoEyeSharp } from "react-icons/io5";
+
 import { useState } from "react";
+
 import Botao from "../components/Botao";
+
 import { testarSenha } from "../utils/verificarSenha";
 
+const URL_ALTERAR_SENHA = "http://localhost:3000/api/auth/alterar-senha";
+
 function RedefinirSenha() {
-      const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const [isSenha, setIsSenha] = useState(false);
-const [isConfirmarSenha, setIsConfirmarSenha] = useState(false);
-const [senha, setSenha] = useState("");
-const [ConfirmarSenha, setConfirmarSenha] = useState("");
-const [erroCadastro, setErroCadastro] = useState("");
-const erroSenha = senha ? testarSenha(senha) || "" : "";
+  const [isSenha, setIsSenha] = useState(false);
 
-const erroConfirmar =
-ConfirmarSenha && ConfirmarSenha !== senha
-? "As senhas não coincidem"
-: "";
+  const [isConfirmarSenha, setIsConfirmarSenha] = useState(false);
 
-function validar() {
+  const [senha, setSenha] = useState("");
 
+  const [ConfirmarSenha, setConfirmarSenha] = useState("");
 
-if (!senha) {
-  setErroCadastro("Preencha o campo senha");
-  return false;
-}
+  const [erroCadastro, setErroCadastro] = useState("");
 
-if (erroSenha) {
-  setErroCadastro("Senha inválida");
-  return false;
-}
+  const [carregando, setCarregando] = useState(false);
 
-if (!ConfirmarSenha || ConfirmarSenha !== senha) {
-  setErroCadastro("As senhas não coincidem");
-  return false;
-}
+  const erroSenha = senha ? testarSenha(senha) || "" : "";
 
-setErroCadastro("");
-  navigate("/login");
+  const erroConfirmar =
+    ConfirmarSenha && ConfirmarSenha !== senha ? "As senhas não coincidem" : "";
 
-return true;
+  async function validar() {
+    setErroCadastro("");
 
-}
+    if (!senha) {
+      setErroCadastro("Preencha o campo senha");
 
-return (
+      return;
+    }
 
+    if (erroSenha) {
+      setErroCadastro("Senha inválida");
 
-<div>
+      return;
+    }
 
-  <div className="min-h-screen flex flex-col md:flex-row">
+    if (!ConfirmarSenha || ConfirmarSenha !== senha) {
+      setErroCadastro("As senhas não coincidem");
 
-    <div className="m-7 flex w-25 absolute">
-      <Logo img={logoRosa} />
-    </div>
+      return;
+    }
 
+    // PEGA O EMAIL SALVO DURANTE A RECUPERAÇÃO
+    const email = localStorage.getItem("emailVerificacao");
 
-    {/* LADO ESQUERDO */}
+    if (!email) {
+      setErroCadastro(
+        "E-mail não encontrado. Solicite a recuperação de senha novamente.",
+      );
 
-    <div
-      className="w-full md:w-AUTO h-screen p-8 text-white bg-cover bg-left hidden lg:flex"
-      style={{ backgroundImage: `url("${fundo}")` }}
-    >
-    </div>
+      return;
+    }
 
+    const controller = new AbortController();
 
-    {/* LADO DIREITO */}
+    // TEMPO MÁXIMO DE 30 SEGUNDOS
+    const timeout = setTimeout(() => controller.abort(), 30000);
 
-    <main
-      className="w-full md:w-2/5 min-h-screen flex items-center justify-center px-6 rounded-lg"
-      style={{ backgroundImage: `url("${fundoForm}")` }}
-    >
+    try {
+      setCarregando(true);
 
-      <div className="w-full h-full flex flex-col justify-center gap-5">
+      const resposta = await fetch(URL_ALTERAR_SENHA, {
+        method: "PATCH",
 
-        <h2 className="font-playfair text-center text-4xl text-white mt-12">
-          <b>Redefinir senha.</b>
-        </h2>
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-        <p className="font-poppins text-center text-[20px] text-white font-bold m-3">
-          Crie sua nova senha
-        </p>
+        body: JSON.stringify({
+          dados: {
+            email: email,
 
+            senha: senha,
+          },
+        }),
 
-        {/* SENHA */}
+        signal: controller.signal,
+      });
 
-        <div className="w-96 flex flex-col justify-center lg:justify-start items-center relative mx-auto">
+      const corpo = await resposta.json().catch(() => null);
 
-          <Labels
-            desc="Senha"
-            className="text-white font-poppins font-bold sm:text-center flex justify-start items-center m-1 pl-2"
-          />
+      console.log("Resposta ao alterar senha:", corpo);
 
-          <Inputs
-            tipoDado={isSenha ? "text" : "password"}
-            placeName="Crie sua senha aqui"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            icone={
-              <FaLock className="absolute text-teal-500 m-5" />
-            }
-            icone2={
-              <Botao
-                nome={isSenha ? <IoEyeSharp /> : <FaEyeSlash />}
-                className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
-                clickHandler={() => setIsSenha(!isSenha)}
-                tipoDado="button"
-              />
-            }
-            className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
-          />
+      if (!resposta.ok) {
+        setErroCadastro(
+          corpo?.erro ||
+            corpo?.message ||
+            corpo?.mensagem ||
+            "Não foi possível alterar a senha.",
+        );
 
-          {erroSenha && (
-            <p className="text-white text-sm mt-1 text-center font-bold w-full">
-              {erroSenha}
+        return;
+      }
+
+      console.log("Senha alterada com sucesso!");
+
+      // LIMPA DADOS DA VERIFICAÇÃO
+      localStorage.removeItem("codigoVerificacao");
+
+      localStorage.removeItem("fluxoVerificacao");
+
+      localStorage.removeItem("emailVerificacao");
+
+      // VOLTA PARA O LOGIN
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+
+      if (error.name === "AbortError") {
+        setErroCadastro(
+          "O servidor demorou demais para responder. Tente novamente.",
+        );
+      } else {
+        setErroCadastro(
+          "Não foi possível conectar ao servidor. Tente novamente mais tarde.",
+        );
+      }
+    } finally {
+      clearTimeout(timeout);
+
+      setCarregando(false);
+    }
+  }
+
+  return (
+    <div>
+      <div className="min-h-screen flex flex-col md:flex-row">
+        <div className="m-7 flex w-25 absolute">
+          <Logo img={logoRosa} />
+        </div>
+
+        {/* LADO ESQUERDO */}
+
+        <div
+          className="w-full md:w-AUTO h-screen p-8 text-white bg-cover bg-left hidden lg:flex"
+          style={{
+            backgroundImage: `url("${fundo}")`,
+          }}
+        ></div>
+
+        {/* LADO DIREITO */}
+
+        <main
+          className="w-full md:w-2/5 min-h-screen flex items-center justify-center px-6 rounded-lg"
+          style={{
+            backgroundImage: `url("${fundoForm}")`,
+          }}
+        >
+          <div className="w-full h-full flex flex-col justify-center gap-5">
+            <h2 className="font-playfair text-center text-4xl text-white mt-12">
+              <b>Redefinir senha.</b>
+            </h2>
+
+            <p className="font-poppins text-center text-[20px] text-white font-bold m-3">
+              Crie sua nova senha
             </p>
-          )}
 
-        </div>
+            {/* SENHA */}
 
-
-        {/* CONFIRMAR SENHA */}
-
-        <div className="w-96 flex flex-col justify-center lg:justify-start items-center relative mx-auto">
-
-          <Labels
-            desc="Confirme sua senha"
-            className="text-white font-poppins font-bold sm:text-center flex justify-start items-center m-1 pl-2"
-          />
-
-          <Inputs
-            tipoDado={isConfirmarSenha ? "text" : "password"}
-            placeName="Confirme sua senha aqui"
-            value={ConfirmarSenha}
-            onChange={(e) => setConfirmarSenha(e.target.value)}
-            icone={
-              <FaLock className="absolute text-teal-500 m-5" />
-            }
-            icone2={
-              <Botao
-                nome={
-                  isConfirmarSenha
-                    ? <IoEyeSharp />
-                    : <FaEyeSlash />
-                }
-                className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
-                clickHandler={() =>
-                  setIsConfirmarSenha(!isConfirmarSenha)
-                }
-                tipoDado="button"
+            <div className="w-96 flex flex-col justify-center lg:justify-start items-center relative mx-auto">
+              <Labels
+                desc="Senha"
+                className="text-white font-poppins font-bold sm:text-center flex justify-start items-center m-1 pl-2"
               />
-            }
-            className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
-          />
 
-          {erroConfirmar && (
-            <p className="text-white text-sm mt-1 text-center font-bold w-full">
-              {erroConfirmar}
-            </p>
-          )}
+              <Inputs
+                tipoDado={isSenha ? "text" : "password"}
+                placeName="Crie sua senha aqui"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                icone={<FaLock className="absolute text-teal-500 m-5" />}
+                icone2={
+                  <Botao
+                    nome={isSenha ? <IoEyeSharp /> : <FaEyeSlash />}
+                    className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
+                    clickHandler={() => setIsSenha(!isSenha)}
+                    tipoDado="button"
+                  />
+                }
+                className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
+              />
 
-        </div>
+              {erroSenha && (
+                <p className="text-white text-sm mt-1 text-center font-bold w-full">
+                  {erroSenha}
+                </p>
+              )}
+            </div>
 
+            {/* CONFIRMAR SENHA */}
 
-        {/* ERRO GERAL */}
+            <div className="w-96 flex flex-col justify-center lg:justify-start items-center relative mx-auto">
+              <Labels
+                desc="Confirme sua senha"
+                className="text-white font-poppins font-bold sm:text-center flex justify-start items-center m-1 pl-2"
+              />
 
-        {erroCadastro && (
-          <p className="text-white text-center font-bold font-playfair">
-            {erroCadastro}
-          </p>
-        )}
+              <Inputs
+                tipoDado={isConfirmarSenha ? "text" : "password"}
+                placeName="Confirme sua senha aqui"
+                value={ConfirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                icone={<FaLock className="absolute text-teal-500 m-5" />}
+                icone2={
+                  <Botao
+                    nome={isConfirmarSenha ? <IoEyeSharp /> : <FaEyeSlash />}
+                    className="cursor-pointer text-teal-500 absolute right-10 top-2/4 -translate-y-6/10 m-1"
+                    clickHandler={() => setIsConfirmarSenha(!isConfirmarSenha)}
+                    tipoDado="button"
+                  />
+                }
+                className="border-2 p-3 text-start rounded-lg bg-white border-red-300 w-full sm:w-96 outline-none focus:border-red-400 focus:border-2 text-grey-300 pl-11 pr-6"
+              />
 
+              {erroConfirmar && (
+                <p className="text-white text-sm mt-1 text-center font-bold w-full">
+                  {erroConfirmar}
+                </p>
+              )}
+            </div>
 
-        {/* BOTÃO */}
+            {/* ERRO GERAL */}
 
-        <div className="flex justify-center">
+            {erroCadastro && (
+              <p className="text-white text-center font-bold font-playfair">
+                {erroCadastro}
+              </p>
+            )}
 
-          <Botao
-            nome="Redefinir senha"
-            tipoDado="button"
-            clickHandler={validar}
-            className="bg-teal-500 text-white font-poppins font-bold py-3 px-8 rounded-lg cursor-pointer"
-          />
+            {/* BOTÃO */}
 
-        </div>
+            <div className="flex justify-center">
+              <Botao
+                nome={carregando ? "Redefinindo..." : "Redefinir senha"}
+                tipoDado="button"
+                clickHandler={validar}
+                disabled={carregando}
+                className="bg-teal-500 text-white font-poppins font-bold py-3 px-8 rounded-lg cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              />
+            </div>
 
-
-        <div className="text-center font-poppins text-white text-[16px]">
-
-          <Link
-            className="hover:underline text-white font-bold"
-            to="/login"
-          >
-            Voltar ao login
-          </Link>
-
-        </div>
-
+            <div className="text-center font-poppins text-white text-[16px]">
+              <Link
+                className="hover:underline text-white font-bold"
+                to="/login"
+              >
+                Voltar ao login
+              </Link>
+            </div>
+          </div>
+        </main>
       </div>
-
-    </main>
-
-  </div>
-
-</div>
-
-
-);
+    </div>
+  );
 }
 
 export default RedefinirSenha;

@@ -1,6 +1,7 @@
 import AuthService from "../services/auth.service.js";
 
 const authService = new AuthService();
+const mensagemErroInterno = "Erro interno no servidor!";
 
 export default class AuthController {
   Logar() {
@@ -14,7 +15,7 @@ export default class AuthController {
           httpOnly: true, // Não permite que o cookie seja acessado via js no front
           secure: true, // Só permite a transmissão de cookies via HTTP, ou conexões seguras
           maxAge: 60 * 60 * 24 * 30 * 1000, // Expira em 30 dias
-          path: "/",
+          // path: "/",
         });
 
         return res.status(200).send({ mensagem, dadosUsuario });
@@ -141,6 +142,26 @@ export default class AuthController {
   Autenticar() {
     return async (req, res) => {
       return res.status(200).send({user:req.user});
+    }
+  }
+  EnviarCodigo(){
+    return async (req, res) => {
+      try {
+        const { dados } = req.body;
+        const response = await authService.EnviarCodigo(dados); 
+        return res.status(200).send(response);
+      } catch (error) {
+        console.error(error);
+
+         if(error.notFound) {
+          return res.status(404).send({ erro : error.message });
+        }
+
+        if(error.hasMissingValues) {
+          return res.status(400).send({ erro : error.message });
+        }
+        return res.status(500).send({erro: mensagemErroInterno});
+      }
     }
   }
 }
