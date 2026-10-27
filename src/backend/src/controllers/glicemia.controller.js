@@ -20,4 +20,40 @@ export default class GlicemiaController {
       }
     };
   }
+
+  Listar() {
+    return async (req, res) => {
+      try {
+        const { user } = req;
+        const response = await glicemiaService.Listar(user);
+        return res.status(200).send(response);
+      } catch (error) {
+        console.error(error);
+        if (error.camposFaltando) {
+          return res.status(400).send({ erro: error.message });
+        }
+        return res.status(500).send({ erro: error.message });
+      }
+    };
+  }
+
+  Remover() {
+    return async (req, res) => {
+      try {
+        const { user } = req;
+        const { id } = req.params; // o id vem na URL: DELETE /remover-glicemia/:id
+        const response = await glicemiaService.Remover(user, id);
+        return res.status(200).send(response);
+      } catch (error) {
+        console.error(error);
+        if (error.camposFaltando) {
+          return res.status(400).send({ erro: error.message });
+        }
+        if (error.naoEncontrado) {
+          return res.status(404).send({ erro: error.message }); // Erro 404: o registro não existe (ou não pertence a ela)
+        }
+        return res.status(500).send({ erro: error.message });
+      }
+    };
+  }
 }

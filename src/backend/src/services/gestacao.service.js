@@ -37,7 +37,7 @@ export default class GestacaoService {
     try {
       if (
         !dados ||
-        (!dados.data_prev_parto && !dados.data_ultima_menstruacao)
+        (!dados.data_prev_parto && !dados.mes)
       ) {
         error.hasMissingValues = true;
         throw error;
@@ -51,7 +51,9 @@ export default class GestacaoService {
       db = await connectDB();
       // Métodos não estáticos não podem acessar métodos/campos estáticos
       // Uma forma de acessá-los é utilizando CLASS_NAME.METHOD/FIELD 
-      dados.data_prev_parto = GestacaoService.getDataPrevParto();
+      if(!dados.data_prev_parto) {
+        dados.data_prev_parto = GestacaoService.getDataPrevParto(dados.mes, db);
+      }
 
       const dados_gestacao = await gestacaoRepository.CriarGestacao(
         dados,
@@ -142,7 +144,9 @@ export default class GestacaoService {
    }
   }
 
-  static async getDataPrevParto(data_ultima_menstruacao, db) {
+  static async getDataPrevParto(mes, db) {
+    mes = mes.split("-");
+    const data_ultima_menstruacao = new Date(parseInt(mes[0]), parseInt(mes[1]), 0);
     const [[result]] = await db.query(
       `SELECT DATE_ADD(?,INTERVAL 9 MONTH) as data_prev_parto`,
       [data_ultima_menstruacao],
