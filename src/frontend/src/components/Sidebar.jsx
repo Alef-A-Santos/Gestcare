@@ -12,7 +12,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import UserName from "./UserName";
 import Swal from "sweetalert2";
 
-function Sidebar() {
+function Sidebar({ nomeUsuario }) {
   const [foto, setFoto] = useState(null);
   const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ function Sidebar() {
               
             />
           </label>
-          <UserName className={"text-2xl font-playfair font-bold"} nome={"Maria Fonseca"}/>
+          <UserName className={"text-2xl font-playfair font-bold"} nome={nomeUsuario || "Carregando..."}/>
         </div>
         <div className="m-2 mt-5 p-2 flex justify-center">
           <h4 className="text-2xl">
