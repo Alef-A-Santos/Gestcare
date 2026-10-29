@@ -4,7 +4,7 @@ import Badge from "./Badge";
 function CardInfo({ UltimaAfericao, nivel, estado, data, horario }) {
   return (
     <Card titulo="Última medição">
-      <p className="text-4xl font-playfair font-bold text-teal-500 text-center">
+      <p className="text-4xl font-poppins font-bold text-teal-500 text-center">
         {UltimaAfericao}
       </p>
       <div className="flex gap-3 mt-3 justify-center items-center">

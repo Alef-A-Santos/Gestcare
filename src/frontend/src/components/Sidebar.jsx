@@ -66,7 +66,7 @@ function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
       <aside
         className={`bg-teal-500 p-4 flex flex-col h-screen overflow-y-auto text-white transition-all duration-300 z-40 fixed top-0 left-0 md:sticky ${
           isOpen
-            ? "w-72 lg:w-80 max-w-[85vw] translate-x-0"
+            ? "w-96 lg:w-96 max-w-[85vw] translate-x-0"
             : "-translate-x-full md:translate-x-0 md:w-20"
         }`}
       >

@@ -4,7 +4,7 @@ function CardGestacao({ semanas, dias, trimestre, dataParto, className = "" }) {
   return (
     <Card titulo="Gestação" className={className}>
       <p className="text-center text-teal-500">
-        <span className="text-5xl font-playfair font-bold">{semanas}</span>
+        <span className="text-5xl font-poppins font-bold">{semanas}</span>
         <span className="text-xl font-poppins ml-2">sem {dias}d</span>
       </p>
       <p className="text-lg font-poppins text-zinc-500 mt-3 text-center">
