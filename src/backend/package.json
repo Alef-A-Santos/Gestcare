@@ -31,11 +31,7 @@
     "node-schedule": "^2.1.1",
     "nodemailer": "^9.0.5",
     "otpauth": "^9.5.1",
-<<<<<<< HEAD
     "puppeteer": "^25.16.0",
-=======
-    "puppeteer": "^25.15.0",
->>>>>>> f2a36ba3bf1da8f4ee3772a9ee6da3dfe4db8c79
     "web-push": "^3.6.7"
   },
   "devDependencies": {
