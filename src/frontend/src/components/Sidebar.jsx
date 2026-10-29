@@ -116,7 +116,7 @@ function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
         )}
  
         {/* Lista de Itens do Menu */}
-        <nav className="flex-1 flex flex-col gap-1">
+        <nav className="flex-1 flex flex-col gap-3">
           {itens.map((item) => (
             <SidebarItens
               key={item.to}
