@@ -1,87 +1,69 @@
 import Sidebar from "../components/Sidebar";
-import UserName from "../components/UserName";
-import iconePdf from "../assets/Icones/icone-pdf.png";
-import { useEffect, useState } from "react";
-
+import Header from "../components/Header";
+import CardInfo from "../components/CardInfo";
+import CardMedia from "../components/CardMedia";
+import CardGestacao from "../components/CardGestacao";
+import CardDiario from "../components/CardDiario";
+import CardMarco from "../components/CardMarco";
+import CardLembrete from "../components/CardLembrete";
+ 
+const refeicoes = [
+  "Café da manhã",
+  "Lanche da manhã",
+  "Almoço",
+  "Lanche da tarde",
+  "Jantar",
+  "Ceia",
+];
+ 
 function Home() {
-    const [usuario, setUsuario] = useState(null);
-    const [resumo, setResumo] = useState(null);
-    const [erro, setErro] = useState("");
-    const [carregando, setCarregando] = useState(true);
-
-    useEffect(() => {
-        let ativo = true;
-
-        async function carregarDashboard() {
-            try {
-                const respostaUsuario = await fetch("http://localhost:3000/api/auth/me", {
-                    method: "GET",
-                    credentials: "include",
-                });
-
-                const dadosUsuario = await respostaUsuario.json().catch(() => null);
-                if (!respostaUsuario.ok) {
-                    throw new Error(dadosUsuario?.erro || "Não foi possível carregar os dados do usuário.");
-                }
-
-                const usuarioSessao = dadosUsuario?.user ?? null;
-                if (ativo) setUsuario(usuarioSessao);
-
-                if (usuarioSessao?.perfil !== "gestante") return;
-
-                const respostaResumo = await fetch("http://localhost:3000/api/dashboard/resumo", {
-                    method: "GET",
-                    credentials: "include",
-                });
-                const dadosResumo = await respostaResumo.json().catch(() => null);
-                console.log(dadosResumo)
-                if (!respostaResumo.ok) {
-                    throw new Error(dadosResumo?.erro || "Não foi possível carregar o resumo do dashboard.");
-                }
-                if (ativo) setResumo(dadosResumo);
-            } catch (error) {
-                if (ativo) setErro(error.message || "Falha ao conectar com o servidor.");
-            } finally {
-                if (ativo) setCarregando(false);
-            }
-        }
-
-        carregarDashboard();
-        return () => { ativo = false; };
-    }, []);
-
-    return (
-        <div className="min-h-screen flex ">
-            <div className="w-3/10 min-h-screen">
-                <Sidebar nomeUsuario={usuario?.nome} />
-            </div>
-            <div className="w-full bg-pink-100 p-5">
-                <main >
-                    <header>
-                        <div className="flex justify-between items-center m-3 p-1">
-                        <UserName className={"text-5xl text-pink-400 font-bold m-2 font-poppins"} nome={usuario?.nome || (carregando ? "Carregando..." : "Dashboard")}/>
-                        <button className="bg-white rounded-2xl m-2 p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-80 focus:outline-none shadow-xl">
-                            <img className="w-10 h-10" src={iconePdf} alt="Ícone de PDF"/><p className="p-1 font-semibold">Exportar relatório em PDF</p>
-                        </button>
-                        </div>
-                        {usuario?.perfil === "gestante" && resumo && <div className="m-3 flex flex-wrap gap-4 font-poppins text-gray-700">
-                            {Object.entries(resumo).flatMap(([chave, valor]) => {
-                                if (valor === null || typeof valor === "object") return [];
-                                return <p key={chave} className="rounded-xl bg-white px-4 py-3 shadow">
-                                    <span className="font-semibold">{chave}: </span>
-                                    <span>{String(valor)}</span>
-                                </p>;
-                            })}
-                        </div>}
-                        {!carregando && usuario && usuario.perfil !== "gestante" && <p className="m-3 font-poppins text-gray-700">O resumo do dashboard está disponível apenas para gestantes.</p>}
-                        {carregando && <p className="m-3 font-poppins text-gray-700">Carregando dados...</p>}
-                        {erro && <p role="alert" className="m-3 text-red-700">{erro}</p>}
-                    </header>
-                </main>
-
-            </div>
+  return (
+    <div className="min-h-screen flex bg-pink-100">
+      {/* Sidebar direto, sem <div> em volta, para ela acompanhar a altura da página */}
+      <Sidebar />
+ 
+      {/* min-w-0 evita que os cards estourem a largura; pt-20 libera espaço pro botão do menu no mobile */}
+      <main className="flex-1 min-w-0 p-6 pt-20 md:pt-6">
+        <Header />
+ 
+        <div className="max-w-6xl mx-auto mt-6 flex flex-col gap-6">
+          {/* Linha 1: resumo */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <CardInfo
+              UltimaAfericao="20 mg/dl"
+              nivel="Baixa"
+              estado="jejum"
+              data="19/08/2026"
+              horario="13:49"
+            />
+            <CardMedia media="85 mg/dl" nivel="Normal" />
+            <CardGestacao
+              className="lg:col-span-2 xl:col-span-1"
+              semanas={22}
+              dias={0}
+              trimestre={2}
+              dataParto="22/12/2026"
+            />
+          </div>
+ 
+          {/* Linha 2: diário e marco */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CardDiario refeicoes={refeicoes} />
+            <CardMarco
+              semana="20+"
+              comparacao="Do tamanho de um mamão papaya"
+              descricao="ouvidos atentos à sua voz e movimentos cheios de energia."
+            />
+          </div>
+ 
+          {/* Linha 3: lembrete */}
+          <div className="max-w-md w-full mx-auto">
+            <CardLembrete lembrete={null} aoCriar={() => {}} />
+          </div>
         </div>
-    )
+      </main>
+    </div>
+  );
 }
-
+ 
 export default Home;
