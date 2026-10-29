@@ -116,7 +116,7 @@ function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
         )}
  
         {/* Lista de Itens do Menu */}
-        <nav className="flex-1 flex flex-col gap-3">
+        <nav className="flex-1 flex flex-col gap-5">
           {itens.map((item) => (
             <SidebarItens
               key={item.to}
@@ -133,7 +133,7 @@ function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
             type="button"
             title="Sair"
             onClick={handleLogout}
-            className="w-full flex justify-center items-center gap-2 p-3 rounded-2xl text-xl font-bold font-poppins text-white bg-pink-300 hover:bg-pink-400 transition cursor-pointer"
+            className="w-full flex justify-center items-center gap-2 p-3 mb-4 rounded-2xl text-xl font-bold font-poppins text-white bg-pink-300 hover:scale-102 transition cursor-pointer"
           >
             {isOpen ? "Sair" : <IoLogOutOutline size={26} />}
           </button>

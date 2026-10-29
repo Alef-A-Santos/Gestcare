@@ -15,7 +15,7 @@ export default class AuthController {
           httpOnly: true, // Não permite que o cookie seja acessado via js no front
           secure: true, // Só permite a transmissão de cookies via HTTP, ou conexões seguras
           maxAge: 60 * 60 * 24 * 30 * 1000, // Expira em 30 dias
-          path: "/",
+          // path: "/",
         });
 
         return res.status(200).send({ mensagem, dadosUsuario });
