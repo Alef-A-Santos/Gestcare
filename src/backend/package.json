@@ -2,6 +2,10 @@
   "name": "gestcare_back",
   "version": "1.0.0",
   "description": "Backend do TCC",
+  "engines": {
+    "node": ">= 24.0.0",
+    "npm": ">= 11.0.0"
+  },
   "homepage": "https://github.com/Alef-A-Santos/gestCare_back#readme",
   "bugs": {
     "url": "https://github.com/Alef-A-Santos/gestCare_back/issues"
@@ -29,12 +33,16 @@
     "morgan": "^1.11.0",
     "mysql2": "^3.23.3",
     "node-schedule": "^2.1.1",
-    "nodemailer": "^9.0.5",
+    "nodemailer": "^10.3.1",
     "otpauth": "^9.5.1",
     "puppeteer": "^25.16.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "puppeteer@25.16.0": true
   }
 }
