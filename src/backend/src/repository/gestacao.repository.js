@@ -1,6 +1,6 @@
 import connectDB from "../database/db.js";
 
-export default class GestcaoRepository {
+export default class GestacaoRepository {
   async ListarGestacoes(user) {
     let db;
     try {
@@ -106,6 +106,23 @@ export default class GestcaoRepository {
       throw error;
     } finally {
       if (db) db.release();
+    }
+  }
+  static async getQuantidadeSemanas(user) {
+    let db;
+    try {
+      db = await connectDB();
+      const [[quantidadeSemanas]] = await db.query(`
+          SELECT CONCAT(
+            TIMESTAMPDIFF(WEEK, DATE_ADD(data_prev_parto, INTERVAL -9 MONTH), SYSDATE()), 
+            " semana(s) ", 
+            TIMESTAMPDIFF(DAY, DATE_ADD(data_prev_parto, INTERVAL -9 MONTH), SYSDATE()), 
+            " dia(s)") AS qtd_semanas
+          FROM gestacao WHERE id_usuario = ? AND ativo = 1`,[user.id_usuario]);
+
+      return quantidadeSemanas;
+    }catch(error){
+      throw error;
     }
   }
 }
