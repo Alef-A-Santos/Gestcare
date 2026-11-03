@@ -8,7 +8,7 @@ function CardLembrete({ lembrete, aoCriar }) {
         <p className="text-xl font-poppins text-zinc-700">{lembrete}</p>
       ) : (
         <>
-          <p className="text-xl font-poppins text-zinc-400 mb-4">
+          <p className="text-xl font-poppins text-zinc-400 mb-4 text-center">
             Sem nenhum lembrete agendado
           </p>
           <Botao
