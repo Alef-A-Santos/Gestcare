@@ -20,7 +20,7 @@ function SidebarItens({ rotulo, icone: Icone, to, aberto, aoClicar }) {
         aberto ? "justify-start px-4 text-left" : "justify-center px-0"
       } ${
         ativo
-          ? "bg-pink-400 text-zinc-800 shadow"
+          ? "bg-pink-300 text-white shadow"
           : "text-white hover:bg-pink-300 hover:shadow-lg hover:-translate-y-0.5"
       }`}
     >
