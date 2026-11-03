@@ -5,6 +5,7 @@ import { FaRegBell } from "react-icons/fa";
 import { BsTelephone } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import UserName from "./UserName";
+import Swal  from "sweetalert2"
 import SidebarItens from "./SidebarItens";
 import { useNavigate } from "react-router-dom";
  
@@ -19,7 +20,7 @@ const itens = [
   { rotulo: "Ajustes", icone: IoSettingsOutline, to: "/ajustes" },
 ];
  
-function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
+function Sidebar({ nome, semanas }) {
   const navigate = useNavigate();
   const [foto, setFoto] = useState(null);
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
@@ -39,7 +40,42 @@ function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
     if (window.innerWidth < 768) setIsOpen(false);
   };
  
-  const handleLogout = () => navigate("/");
+   async function handleLogout() {
+    const confirmacao = await Swal.fire({
+      title: "Deseja sair?",
+      text: "Tem certeza de que deseja sair da sua conta Gestcare?",
+      icon: "question",
+      iconColor: "#0d9488",
+      showCancelButton: true,
+      confirmButtonText: "Sim, sair",
+      cancelButtonText: "Continuar no Gestcare",
+      confirmButtonColor: "#0d9488",
+      cancelButtonColor: "#ec4899",
+      reverseButtons: true,
+      focusCancel: true,
+      customClass: {
+        popup: "gestcare-swal-popup",
+        title: "gestcare-swal-title",
+        htmlContainer: "gestcare-swal-text",
+        confirmButton: "gestcare-swal-confirm",
+        cancelButton: "gestcare-swal-cancel",
+      },
+    });
+
+    if (!confirmacao.isConfirmed) return;
+
+    try {
+      await fetch("http://localhost:3000/api/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+    } finally {
+      navigate("/login", { replace: true });
+    }
+  }
+
+  //const [setaEsq, setsetaEsq] = useState("");
+  // const handleLogout = () => navigate("/");
  
   return (
     <div className="shrink-0">
