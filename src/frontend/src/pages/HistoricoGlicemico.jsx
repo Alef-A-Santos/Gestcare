@@ -38,7 +38,7 @@ function HistoricoGlicemico() {
       <Sidebar />
       <main className="flex-1 min-w-0 p-4 sm:p-6 pt-20 md:pt-6">
         <Header
-          titulo="Histórico glicêmico"
+          titulo="Histórico glicêmico "
           component2={
             <button
               type="button"
