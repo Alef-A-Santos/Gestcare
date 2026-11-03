@@ -119,7 +119,7 @@ function Sidebar({ nome, semanas }) {
  
         {/* Perfil e Boas-Vindas */}
         {isOpen && (
-          <div className="flex flex-col items-center justify-center gap-2 mb-6">
+          <div className="flex flex-col items-center justify-center gap-2 mb-6 animate-fadeIn">
             <label className="rounded-full w-24 h-24 bg-white overflow-hidden cursor-pointer flex items-center justify-center border-4 border-pink-300 shadow">
               {foto ? (
                 <img src={foto} alt="Perfil" className="w-full h-full object-cover" />
