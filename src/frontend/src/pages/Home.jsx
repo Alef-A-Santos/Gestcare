@@ -9,6 +9,7 @@ import CardLembrete from "../components/CardLembrete";
 import UserName from "../components/UserName";
 import Botao from "../components/Botao";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const refeicoes = [
   "Café da manhã",
@@ -24,6 +25,11 @@ function Home() {
     const [resumo, setResumo] = useState(null);
     const [erro, setErro] = useState("");
     const [carregando, setCarregando] = useState(true);
+    const classificacaoUltima = {
+      alta: "Alta",
+      baixa: "Baixa",
+      normal: "Normal",
+    }[String(resumo?.ultima_medicao?.classificacao || "").toLowerCase()] || "Sem dados";
 
     useEffect(() => {
         let ativo = true;
@@ -50,11 +56,10 @@ function Home() {
                     credentials: "include",
                 });
                 const dadosResumo = await respostaResumo.json().catch(() => null);
-                console.log(dadosResumo)
                 if (!respostaResumo.ok) {
                     throw new Error(dadosResumo?.erro || "Não foi possível carregar o resumo do dashboard.");
                 }
-                if (ativo) setResumo(dadosResumo);
+                if (ativo) setResumo(dadosResumo?.resumo ?? null);
             } catch (error) {
                 if (ativo) setErro(error.message || "Falha ao conectar com o servidor.");
             } finally {
@@ -76,9 +81,9 @@ function Home() {
         <Header
           titulo={"Olá"}
           component={
-            <UserName
+          <UserName
               className={"text-pink-400 text-3xl sm:text-4xl font-bold"}
-              nome={"Maria Fonseca"}
+              nome={usuario?.nome || ""}
             />
           }
           component2={
@@ -97,19 +102,21 @@ function Home() {
           {/* Linha 1: resumo */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <CardInfo
-              UltimaAfericao="20 mg/dl"
-              nivel="Baixa"
-              estado="jejum"
-              data="19/08/2026"
-              horario="13:49"
+              UltimaAfericao={resumo?.ultima_medicao?.valor != null ? `${resumo.ultima_medicao.valor} mg/dL` : "Sem medições"}
+              nivel={classificacaoUltima}
+              data={resumo?.ultima_medicao?.data_hora ? new Date(resumo.ultima_medicao.data_hora).toLocaleDateString("pt-BR") : ""}
+              horario={resumo?.ultima_medicao?.data_hora ? new Date(resumo.ultima_medicao.data_hora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}
             />
-            <CardMedia media="85 mg/dl" nivel="Normal" />
+            <CardMedia
+              media={resumo?.media != null ? `${resumo.media} mg/dL` : "Sem dados"}
+              nivel={resumo?.media != null ? "Normal" : "Sem dados"}
+            />
             <CardGestacao
               className="lg:col-span-2 xl:col-span-1"
-              semanas={22}
-              dias={0}
-              trimestre={2}
-              dataParto="22/12/2026"
+              semanas={resumo?.qtd_semanas || "Sem dados de gestação"}
+              dias=""
+              trimestre=""
+              dataParto=""
             />
           </div>
 
@@ -125,8 +132,24 @@ function Home() {
 
           {/* Linha 3: lembrete */}
           <div className="max-w-md w-full mx-auto">
-            <CardLembrete lembrete={null} aoCriar={() => {}} />
+            <CardLembrete
+              lembrete={resumo?.proximos_lembretes?.[0]
+                ? `${resumo.proximos_lembretes[0].titulo} — ${String(resumo.proximos_lembretes[0].horario).slice(0, 5)}`
+                : null}
+              aoCriar={() => {}}
+            />
           </div>
+          {erro && <p role="alert" className="text-center text-rose-700">{erro}</p>}
+          {!carregando && !resumo?.ultima_medicao && (
+            <Link to="/historico" className="mx-auto rounded-full bg-teal-600 px-6 py-3 font-semibold text-white shadow hover:bg-teal-700">
+              Registrar primeira glicemia
+            </Link>
+          )}
+          {!carregando && !resumo?.qtd_semanas && (
+            <Link to="/Cadastro" className="mx-auto rounded-full bg-pink-400 px-6 py-3 font-semibold text-white shadow hover:bg-pink-500">
+              Cadastrar dados da gestação
+            </Link>
+          )}
         </div>
       </main>
     </div>
