@@ -17,7 +17,7 @@ function SidebarItens({ rotulo, icone: Icone, to, aberto, aoClicar }) {
       title={rotulo}
       aria-current={ativo ? "page" : undefined}
       className={`w-full flex  items-center gap-4 py-3 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer ${
-        aberto ? "justify-start px-4 text-left" : "justify-center px-0"
+        aberto ? "justify-start px-4 text-left transition-all animate-fadeIn" : "justify-center px-0"
       } ${
         ativo
           ? "bg-pink-300 text-white shadow"

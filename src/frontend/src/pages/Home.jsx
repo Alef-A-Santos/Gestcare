@@ -8,6 +8,7 @@ import CardMarco from "../components/CardMarco";
 import CardLembrete from "../components/CardLembrete";
 import UserName from "../components/UserName";
 import Botao from "../components/Botao";
+import { useEffect, useState } from "react";
 
 const refeicoes = [
   "Café da manhã",
@@ -19,10 +20,56 @@ const refeicoes = [
 ];
 
 function Home() {
+    const [usuario, setUsuario] = useState(null);
+    const [resumo, setResumo] = useState(null);
+    const [erro, setErro] = useState("");
+    const [carregando, setCarregando] = useState(true);
+
+    useEffect(() => {
+        let ativo = true;
+
+        async function carregarDashboard() {
+            try {
+                const respostaUsuario = await fetch("http://localhost:3000/api/auth/me", {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                const dadosUsuario = await respostaUsuario.json().catch(() => null);
+                if (!respostaUsuario.ok) {
+                    throw new Error(dadosUsuario?.erro || "Não foi possível carregar os dados do usuário.");
+                }
+
+                const usuarioSessao = dadosUsuario?.user ?? null;
+                if (ativo) setUsuario(usuarioSessao);
+
+                if (usuarioSessao?.perfil !== "gestante") return;
+
+                const respostaResumo = await fetch("http://localhost:3000/api/dashboard/resumo", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                const dadosResumo = await respostaResumo.json().catch(() => null);
+                console.log(dadosResumo)
+                if (!respostaResumo.ok) {
+                    throw new Error(dadosResumo?.erro || "Não foi possível carregar o resumo do dashboard.");
+                }
+                if (ativo) setResumo(dadosResumo);
+            } catch (error) {
+                if (ativo) setErro(error.message || "Falha ao conectar com o servidor.");
+            } finally {
+                if (ativo) setCarregando(false);
+            }
+        }
+
+        carregarDashboard();
+        return () => { ativo = false; };
+    }, []);
   return (
     <div className="min-h-screen flex bg-pink-100">
       {/* Sidebar direto, sem <div> em volta, para ela acompanhar a altura da página */}
-      <Sidebar />
+      
+      <Sidebar nome={usuario?.nome}/>
 
       {/* min-w-0 evita que os cards estourem a largura; pt-20 libera espaço pro botão do menu no mobile */}
       <main className="flex-1 min-w-0 p-4 sm:p-6 pt-20 md:pt-6">
