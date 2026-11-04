@@ -68,12 +68,12 @@
 
         // Cookies HttpOnly são removidos pelo servidor na rota de logout.
         // Limpa também os cookies acessíveis pelo JavaScript.
-        document.cookie.split(";").forEach((cookie) => {
-          const nome = cookie.split("=")[0].trim();
-          if (nome) {
-            document.cookie = `${nome}=; Max-Age=0; path=/; SameSite=Lax`;
-          }
-        });
+        // document.cookie.split(";").forEach((cookie) => {
+        //   const nome = cookie.split("=")[0].trim();
+        //   if (nome) {
+        //     document.cookie = `${nome}=; Max-Age=0; path=/; SameSite=Lax`;
+        //   }
+        // });
 
         navigate("/login", { replace: true });
       } catch (error) {
