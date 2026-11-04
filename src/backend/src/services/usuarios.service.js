@@ -1,6 +1,9 @@
 import UsuariosRepository from "../repository/usuarios.repository.js";
 import { criptografar } from "../utils/criptografia.js";
+import { resolve } from 'path'
+import { criarDiretorio } from "../utils/pdf.js";
 import { testarSenha } from "../utils/verificarSenha.js";
+import { Upload } from "../utils/uploadArquivo.js";
 const usuariosRepository = new UsuariosRepository();
 
 export default class UsuariosService {
@@ -119,6 +122,22 @@ export default class UsuariosService {
       return { mensagem: "Dados atualizados com sucesso!" };
     } catch (error) {
       throw new Error(error.message);
+    }
+  }
+  async UploadFoto(arquivo) {
+    try {
+      const caminho = resolve("documentos", "imagens");  
+
+      await criarDiretorio(caminho);
+      console.log(caminho)
+      const caminho_arquivo = resolve(caminho, `teste.${arquivo.mimetype.split("/")[1]}`);
+      await Upload(caminho_arquivo, arquivo.buffer);
+
+      const response = await usuariosRepository.UploadFoto(caminho_arquivo, 33);
+
+      return caminho_arquivo;
+    } catch (error) {
+      throw error;
     }
   }
 }

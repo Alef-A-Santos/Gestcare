@@ -31,7 +31,7 @@ export async function GerarPdfTemplate (template, pdf_name) {
   return pdf_path;
 }
 
-function criarDiretorio(diretorio) {
+export function criarDiretorio(diretorio) {
   return new Promise (
     (resolve, reject) => 
       open(diretorio, (error, fd) => {

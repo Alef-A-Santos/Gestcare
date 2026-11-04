@@ -85,4 +85,17 @@ export default  class UsuariosRepository {
       if(db) db.release();
     }
   }
+  async UploadFoto(caminho, id_usuario) {
+    let db;
+    try {
+      db = await connectDB();
+      const [result] = await db.query("UPDATE usuarios SET url_foto = ? WHERE id_usuario = ?", [caminho, id_usuario]);
+
+      return result;
+    } catch (error) {
+      throw error;
+    }finally{
+      if(db) db.release();
+    }
+  }
 }
