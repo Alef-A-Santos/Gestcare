@@ -1,4 +1,4 @@
-import { IoHomeOutline, IoSettingsOutline, IoMenu, IoClose, IoLogOutOutline, IoPerson } from "react-icons/io5";
+import { IoHomeOutline, IoMenu, IoClose, IoLogOutOutline, IoPerson } from "react-icons/io5";
 import { VscSettingsCompact } from "react-icons/vsc";
 import { LuSalad, LuNotebookPen } from "react-icons/lu";
 import { FaRegBell } from "react-icons/fa";
@@ -15,8 +15,7 @@ const itens = [
   { rotulo: "Diário Alimentar", icone: LuSalad, to: "/diario" },
   { rotulo: "Lembretes", icone: FaRegBell, to: "/lembretes" },
   { rotulo: "Números de Emergência", icone: BsTelephone, to: "/emergencia" },
-  { rotulo: "Dicas Educativas", icone: LuNotebookPen, to: "/dicas" },
-  { rotulo: "Ajustes", icone: IoSettingsOutline, to: "/ajustes" },
+  { rotulo: "Dicas Educativas", icone: LuNotebookPen, to: "/dicas" }
 ];
  
 function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
