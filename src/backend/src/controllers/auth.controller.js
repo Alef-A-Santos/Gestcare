@@ -1,6 +1,8 @@
+import UsuariosRepository from "../repository/usuarios.repository.js";
 import AuthService from "../services/auth.service.js";
 
 const authService = new AuthService();
+const usuariosRepository = new UsuariosRepository();
 const mensagemErroInterno = "Erro interno no servidor!";
 
 export default class AuthController {
@@ -119,7 +121,14 @@ export default class AuthController {
   }
   Autenticar() {
     return async (req, res) => {
-      return res.status(200).send({user:req.user});
+      try {
+        const { user } = req;
+        user.url_foto = await usuariosRepository.BuscarUrlFotoUsuario(user) || "";
+        return res.status(200).send({ user });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send({ erro: "Falha ao autenticar usuário! Tente novamente mais tarde."});
+      }
     }
   }
   AlterarSenha() {

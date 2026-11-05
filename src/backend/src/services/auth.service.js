@@ -15,6 +15,7 @@ import { enviarCodigo } from "../utils/sendEmail.js";
 import connectDB from "../database/db.js";
 import GestacaoRepository from "../repository/gestacao.repository.js";
 import GestacaoService from "./gestacao.service.js";
+import { scheduleJob } from "node-schedule";
 
 const authRepository = new AuthRepository();
 const usuariosRepository = new UsuariosRepository();
@@ -139,7 +140,7 @@ export default class AuthService {
         "SELECT nome, email FROM usuarios WHERE email = ?",
         [dados.email],
       );
-      
+
       if (user.length) {
         error.message = "Usuário já cadastrado!";
         error.usuarioCadastrado = true;
@@ -167,7 +168,7 @@ export default class AuthService {
           dados.mes,
           db,
         );
-        
+
         const responseGestacao = await gestacaoRepository.CriarGestacao(
           dados,
           usuario,
@@ -182,12 +183,8 @@ export default class AuthService {
         throw error;
       }
 
-      setTimeout(async () => {
-        await db.query(
-          "UPDATE usuarios SET codigo_validacao = null WHERE email = ?",
-          [dados.email],
-        );
-      }, 30000);
+      this.#resetarCodigo(dados.email);
+
 
       db.commit();
       return {
@@ -279,21 +276,26 @@ export default class AuthService {
 
         throw error;
       }
+
       const response = await authRepository.ReenviarCodigo(
         codigoValidacao,
         dados,
       );
+
+      this.#resetarCodigo(dados.email);
 
       return {
         mensagem: "Código enviado com sucesso!",
       };
     } catch (error) {
       throw error;
+    }finally{
+      if(db) db.release();
     }
   }
   async AlterarSenha(dados) {
     try {
-      if(!dados || !Object.keys(dados).length) {
+      if (!dados || !Object.keys(dados).length) {
         error.message = "Informe a nova senha!";
         error.hasMissingValues = true;
         throw error;
@@ -301,7 +303,7 @@ export default class AuthService {
 
       const isInvalida = testarSenha(dados.senha);
 
-      if(isInvalida){
+      if (isInvalida) {
         error.isInvalida = true;
         error.message = isInvalida;
         throw error;
@@ -310,27 +312,27 @@ export default class AuthService {
       const hashSenha = await criptografar(dados.senha);
       dados.senha = hashSenha;
       const response = await authRepository.AlterarSenha(dados);
-      
-      if(response.affectedRows === 0 ) {
+
+      if (response.affectedRows === 0) {
         throw Error();
       }
 
-      return { 
-        mensagem:"Senha alterada com sucesso!"
-      }
+      return {
+        mensagem: "Senha alterada com sucesso!",
+      };
     } catch (error) {
       throw error;
     }
   }
   async EnviarCodigo(dados) {
-    if(!dados || !dados.email.trim()){
+    if (!dados || !dados.email.trim()) {
       error.hasMissingValues = true;
       error.message = "Preencha o email para o envio do código!";
       throw error;
     }
 
     const usuario = await usuariosRepository.BuscarUsuario(dados.email);
-    if(!usuario.length) {
+    if (!usuario.length) {
       error.notFound = true;
       error.message = "Usuário não cadastrado!";
       throw error;
@@ -340,12 +342,34 @@ export default class AuthService {
     const enviado = await enviarCodigo(codigo, dados.email);
     const armazenado = await authRepository.ReenviarCodigo(codigo, dados);
 
-    if(!enviado || armazenado.affectedRows === 0) {
-      error.sendFail  = true;
+    if (!enviado || armazenado.affectedRows === 0) {
+      error.sendFail = true;
       error.message = "Falha ao enviar  código! Tente novamente mais tarde.";
       throw error;
     }
 
     return { mensagem: "Código enviado com sucesso!" };
+  }
+
+  async #resetarCodigo(email) {
+      const currData = new Date()
+    scheduleJob(
+      "reset-codigo",
+      `${currData.getSeconds()} ${currData.getMinutes() + 5} * * * *`, // Reseta o código 5 minutos depois do horário do envio
+      async () => {
+        let db;
+        try {
+          db = await connectDB();
+          await db.query(
+            "UPDATE usuarios SET codigo_validacao = null WHERE email = ?",
+            [email],
+          );
+        } catch (error) {
+          throw error;
+        }finally{
+          if(db) db.release();
+        }
+      },
+    );
   }
 }
