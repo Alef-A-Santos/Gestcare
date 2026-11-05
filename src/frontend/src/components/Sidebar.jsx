@@ -19,9 +19,10 @@
     { rotulo: "Dicas Educativas", icone: LuNotebookPen, to: "/dicas" },
   ];
   
-  function Sidebar({ nome = "Maria Fonseca", semanas }) {
+  function Sidebar({ nome = "Maria Fonseca", semanas, caminhoFoto }) {
     const navigate = useNavigate();
-    const [foto, setFoto] = useState(null);
+    const [fotoEnviada, setFotoEnviada] = useState(null);
+    const [enviandoFoto, setEnviandoFoto] = useState(false);
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
 
     const gestacaoFormatada = (() => {
@@ -47,6 +48,42 @@
       mq.addEventListener("change", aoMudar);
       return () => mq.removeEventListener("change", aoMudar);
     }, []);
+
+    const foto = fotoEnviada || (caminhoFoto
+      ? `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(caminhoFoto)}`
+      : null);
+
+    const enviarFoto = async (event) => {
+      const arquivo = event.target.files?.[0];
+      if (!arquivo) return;
+
+      const formData = new FormData();
+      formData.append("foto_perfil", arquivo);
+      setEnviandoFoto(true);
+
+      try {
+        const resposta = await fetch("http://localhost:3000/api/usuarios/upload-foto", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+        const dados = await resposta.json().catch(() => null);
+        if (!resposta.ok) {
+          throw new Error(dados?.erro || "Não foi possível enviar a foto.");
+        }
+        if (!dados?.caminho_foto) {
+          throw new Error("O servidor não retornou o caminho da foto.");
+        }
+
+        const urlFoto = `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(dados.caminho_foto)}`;
+        setFotoEnviada(`${urlFoto}&t=${Date.now()}`);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setEnviandoFoto(false);
+        event.target.value = "";
+      }
+    };
   
     const toggleSidebar = () => setIsOpen(!isOpen);
   
@@ -155,11 +192,8 @@
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      setFoto(URL.createObjectURL(e.target.files[0]));
-                    }
-                  }}
+                  onChange={enviarFoto}
+                  disabled={enviandoFoto}
                 />
               </label>
   
