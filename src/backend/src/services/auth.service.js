@@ -352,20 +352,11 @@ export default class AuthService {
   }
 
   async #resetarCodigo(email) {
-    console.log("Iniciando contagem do token");
-      const intl = Intl.DateTimeFormat("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-      console.log(intl.format(new Date()));
-      console.log();
+      const currData = new Date()
     scheduleJob(
       "reset-codigo",
-      `* ${new Date().getMinutes() + 2} * * * *`,
+      `${currData.getSeconds()} ${currData.getMinutes() + 5} * * * *`, // Reseta o código 5 minutos depois do horário do envio
       async () => {
-        console.log("Iniciando reset token");
-        console.log(intl.format(new Date()));
         let db;
         try {
           db = await connectDB();
@@ -378,8 +369,6 @@ export default class AuthService {
         }finally{
           if(db) db.release();
         }
-        console.log("Token resetado!");
-        console.log(intl.format(new Date()));
       },
     );
   }
