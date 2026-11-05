@@ -1,0 +1,1816 @@
+openapi: 3.0.3
+info:
+  title: Backend do sistema Gestcare
+  description: Documentação das rotas relacionadas à API do sistema Gestcare.
+
+servers:
+  - url: http://localhost:3000/api
+    description: URL base do servidor
+
+tags:
+  - name: Teste
+    description: Rota de teste da API
+  - name: Acompanhantes
+    description: Rotas para cadastro, listagem, edição e remoção dos acompanhantes relacionados a uma gestante
+  - name: Auth
+    description: Rotas para autenticação dos usuários
+  - name: Dicas
+    description: Rotas para cadastro das dicas que serão exibidas para as gestantes
+  - name: Dispositivos
+    description: Rotas para gerenciamento dos dispositivos que receberão as notificações dos lembretes da gestante
+  - name: Glicemia
+    description: Rotas para cadastro e acompanhamento das aferições da gestante
+  - name: Usuários
+    description: Rotas para gerenciamento dos usuários
+  - name: Relatório
+    description: Rotas para gerar dados do relatório em PDF
+  - name: Lembretes
+    description: Rotas para gerenciamento dos lembretes da gestante
+
+paths:
+  /teste-api:
+    description: Rota para testar se a API está rodando
+    get:
+      tags:
+        - Teste
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "sucesso"
+                    description: Status da resposta
+                  mensagem:
+                    type: string
+                    example: "Servidor rodando com sucesso"
+                    description: Mensagem indicando que o servidor está rodando
+
+  # Rotas de acompanhantes /acompanhantes
+  /acompanhantes/listar-acompanhantes:
+    description: Rota para listar todos os usuários cadastrados como acompanhante
+    get:
+      tags:
+        - Acompanhantes
+      responses:
+        "200":
+          description: "Sucesso, quando todos os acompanhantes são listados com sucesso"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Acompanhante"
+        "500":
+          description: "Erro interno no servidor"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /acompanhantes/listar-acompanhantes-gestante/{id}:
+    description: Rota para listagem dos acompanhantes da gestante com o ID especificado
+    get:
+      tags:
+        - Acompanhantes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da gestante
+          schema:
+            type: integer
+            example: 5
+      responses:
+        "200":
+          description: "Resposta de sucesso na busca"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id_acompanhante:
+                      type: integer
+                      example: 1
+                    nome:
+                      type: string
+                      example: "João Silva"
+                    id_gestante:
+                      type: integer
+                      example: 5
+                    nome_acompanhante:
+                      type: string
+                      example: "João Silva"
+                    perfil:
+                      type: string
+                      example: "acompanhante"
+                    email:
+                      type: string
+                      example: "joao@email.com"
+        "400":
+          description: "Status retornado quando o ID da gestante não é informado para busca dos acompanhantes"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno no servidor"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /acompanhantes/cadastrar-acompanhante:
+    description: "Rota para cadastro do acompanhante. O ID da gestante é obtido pelo objeto user inserido pelo middleware de autenticação."
+    post:
+      tags:
+        - Acompanhantes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_usuario:
+                  type: integer
+                  example: 2
+                email:
+                  type: string
+                  example: "acompanhante@email.com"
+      responses:
+        "201":
+          description: "Status retornado quando o acompanhante é cadastrado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando os valores do body não são passados, ou quando a gestante alcançou o número máximo de acompanhantes permitidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o usuário não é encontrado na base de dados"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro no cadastro"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /acompanhantes/remover-acompanhante/{id}:
+    description: "Rota para remoção de um acompanhante."
+    delete:
+      tags:
+        - Acompanhantes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do acompanhante
+          schema:
+            type: integer
+            example: 3
+      responses:
+        "200":
+          description: "Status retornado quando o acompanhante é removido com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o ID do acompanhante não é passado."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o usuário não é encontrado na base de dados"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro na remoção"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /acompanhantes/editar-acompanhante/{id}:
+    description: "Rota para edição de acompanhante. Permite a substituição do acompanhante por outro. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Acompanhantes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do acompanhante
+          schema:
+            type: integer
+            example: 3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 3
+      responses:
+        "200":
+          description: "Status retornado quando o acompanhante é editado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando os IDs do antigo e novo acompanhante não são enviados."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o acompanhante não é encontrado na base de dados"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro na edição"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  # Rotas de autenticação /auth
+  /auth/login:
+    description: "Rota de login"
+    post:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: "usuario@email.com"
+                    senha:
+                      type: string
+                      example: "Senha123*"
+      responses:
+        "200":
+          description: "Status retornado quando o login é efetuado com sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dadosUsuario:
+                    $ref: "#/components/schemas/Usuario"
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o usuário está inativo, a senha está incorreta ou os dados do login não foram enviados"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o usuário não está cadastrado no sistema"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro no login"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /auth/logout:
+    description: Rota de logout do sistema
+    get:
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: "Status retornado no momento do logout"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+
+  /auth/cadastrar-se:
+    description: "Rota para cadastro no sistema"
+    post:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: "gestante@email.com"
+                    nome:
+                      type: string
+                      example: "Maria Souza"
+                    perfil:
+                      type: string
+                      example: "gestante"
+                    senha:
+                      type: string
+                      example: "Senha123*"
+                    mes:
+                      type: string
+                      example: "08-2026"
+                      description: "Exigido apenas para o perfil de gestante"
+                    meta_glicemia_jejum:
+                      type: number
+                      example: 90.0
+                      description: "Exigido apenas para o perfil de gestante"
+                    meta_glicemia_pos:
+                      type: number
+                      example: 120.0
+                      description: "Exigido apenas para o perfil de gestante"
+      responses:
+        "200":
+          description: "Status retornado quando o cadastro no banco é efetuado e o código de validação é enviado para o e-mail"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dadosUsuario:
+                    type: object
+                    properties:
+                      nome:
+                        type: string
+                        example: "Maria Souza"
+                      email:
+                        type: string
+                        example: "gestante@email.com"
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o usuário não envia os dados exigidos, a senha não corresponde ao padrão ou o usuário já está cadastrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o perfil informado não é um dos esperados (Gestante ou Acompanhante)"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorre falha no envio do código ou erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /auth/validar-codigo:
+    description: "Rota para validação do código e criação do token JWT para login"
+    post:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                codigo:
+                  type: string
+                  example: "123456"
+                dados:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: "usuario@email.com"
+      responses:
+        "200":
+          description: "Status retornado quando o código é validado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o usuário não envia os dados exigidos, o código expirou ou é inválido"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o usuário não está cadastrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro na validação do código"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /auth/reenviar-codigo:
+    description: "Rota para reenvio do código de validação"
+    post:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: "usuario@email.com"
+      responses:
+        "200":
+          description: "Status retornado quando o código é enviado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o usuário não envia os dados exigidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorre uma falha no envio do código"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /auth/enviar-codigo:
+    description: "Rota para envio do código de validação"
+    post:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                codigo:
+                  type: string
+                  example: "123456"
+                dados:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: "usuario@email.com"
+      responses:
+        "200":
+          description: "Status retornado quando o código é enviado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o usuário não envia os dados exigidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o usuário não está cadastrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro no envio do código"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /auth/alterar-senha:
+    description: "Rota para alteração da senha. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    senha:
+                      type: string
+                      example: "NovaSenha123*"
+                    email:
+                      type: string
+                      example: "usuario@email.com"
+      responses:
+        "200":
+          description: "Status retornado quando a senha é alterada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Status retornado quando o usuário não envia os dados exigidos ou a senha enviada não corresponde aos critérios"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Status retornado quando o usuário não está cadastrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Status retornado quando ocorreu algum erro na alteração da senha"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /me:
+    description: "Rota para verificar se o usuário está autenticado, retornando os seus dados"
+    get:
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: "Status retornado quando o usuário está autenticado"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/Usuario"
+
+  # Rotas de dicas /dicas
+  /dicas/listar-dicas:
+    description: Rota para listagem das dicas cadastradas
+    get:
+      tags:
+        - Dicas
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dicas:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Dica"
+        "400":
+          description: "Erro na requisição"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dicas/listar-dicas/categoria/{categoria}:
+    description: "Rota para listagem das dicas por categoria"
+    get:
+      tags:
+        - Dicas
+      parameters:
+        - name: categoria
+          in: path
+          required: true
+          description: Categoria da dica
+          schema:
+            type: string
+            example: "Nutrição"
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dicas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_dica:
+                          type: integer
+                          example: 1
+                        id_usuario:
+                          type: integer
+                          example: 1
+                        titulo:
+                          type: string
+                          example: "Alimentação saudável"
+                        descricao:
+                          type: string
+                          example: "Consuma frutas e verduras diariamente."
+                        categoria:
+                          type: string
+                          example: "Nutrição"
+                        link_referencia:
+                          type: string
+                          example: "https://exemplo.com"
+                        criada_em:
+                          type: string
+                          format: date-time
+                          example: "2026-06-01T10:00:00Z"
+        "400":
+          description: "Status retornado quando é enviada uma categoria inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dicas/criar-dica:
+    description: "Rota para cadastro de uma dica"
+    post:
+      tags:
+        - Dicas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    titulo:
+                      type: string
+                      example: "Hidratação na gravidez"
+                    descricao:
+                      type: string
+                      example: "Beba pelo menos 2 litros de água por dia."
+                    categoria:
+                      type: string
+                      example: "Saúde"
+                    id_usuario:
+                      type: integer
+                      example: 1
+      responses:
+        "201":
+          description: "Dica criada com sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+                  dica:
+                    $ref: "#/components/schemas/Dica"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dicas/alterar-dica/{id_dica}:
+    description: "Rota para edição da dica. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Dicas
+      parameters:
+        - name: id_dica
+          in: path
+          required: true
+          description: ID da dica
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    titulo:
+                      type: string
+                      example: "Título atualizado"
+                    descricao:
+                      type: string
+                      example: "Descrição atualizada da dica."
+                    categoria:
+                      type: string
+                      example: "Bem-estar"
+      responses:
+        "200":
+          description: "Dica alterada com sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+                  dica:
+                    $ref: "#/components/schemas/Dica"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Dica não encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dicas/vincular-link-dica/{id_dica}:
+    description: "Rota para vincular um link a uma dica. Ex: link de um vídeo relacionado à dica. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Dicas
+      parameters:
+        - name: id_dica
+          in: path
+          required: true
+          description: ID da dica
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    link:
+                      type: string
+                      example: "https://youtube.com/exemplo"
+      responses:
+        "200":
+          description: "Link vinculado com sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+                  dica:
+                    $ref: "#/components/schemas/Dica"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Dica não encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dicas/remover-dica/{id_dica}:
+    description: "Rota para remoção da dica"
+    delete:
+      tags:
+        - Dicas
+      parameters:
+        - name: id_dica
+          in: path
+          required: true
+          description: ID da dica
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: "Dica removida com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Dica não encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  # Rotas de dispositivos /dispositivos
+  /dispositivos/listar-dispositivos-usuario:
+    description: "Rota para listagem dos dispositivos cadastrados da gestante."
+    get:
+      tags:
+        - Dispositivos
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+                  dispositivos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_dispositivo:
+                          type: integer
+                          example: 1
+                        id_usuario:
+                          type: integer
+                          example: 1
+                        nome:
+                          type: string
+                          example: "Smartphone Moto G"
+                        ativo:
+                          type: integer
+                          example: 1
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dispositivos/cadastrar-dispositivo:
+    description: "Rota para cadastro de um dispositivo para recebimento das notificações relacionadas aos lembretes"
+    post:
+      tags:
+        - Dispositivos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription:
+                  type: object
+                  properties:
+                    endpoint:
+                      type: string
+                      example: "https://fcm.googleapis.com/fcm/send/..."
+                    keys:
+                      type: object
+                      properties:
+                        p256dh:
+                          type: string
+                          example: "BNC1..."
+                        auth:
+                          type: string
+                          example: "tH8v..."
+      responses:
+        "201":
+          description: "Dispositivo cadastrado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dispositivos/editar-dispositivo/{id}:
+    description: "Rota para edição de um dispositivo. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    put:
+      tags:
+        - Dispositivos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do dispositivo
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription:
+                  type: object
+                  properties:
+                    endpoint:
+                      type: string
+                      example: "https://fcm.googleapis.com/fcm/send/..."
+                    keys:
+                      type: object
+                      properties:
+                        p256dh:
+                          type: string
+                          example: "BNC1..."
+                        auth:
+                          type: string
+                          example: "tH8v..."
+      responses:
+        "200":
+          description: "Dispositivo editado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "404":
+          description: "Retornado quando o dispositivo não é encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dispositivos/deletar-dispositivo/{id}:
+    description: "Rota para deleção de um dispositivo"
+    delete:
+      tags:
+        - Dispositivos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do dispositivo
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: "Dispositivo deletado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /dispositivos/alterar-status-dispositivo/{id}:
+    description: "Rota para desativação/ativação de um dispositivo. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Dispositivos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do dispositivo
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 0
+      responses:
+        "200":
+          description: "Status alterado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Dispositivo não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  # Rotas de aferições de glicemia /glicemia
+  /glicemia/cadastrar-glicemia:
+    description: "Rota para cadastro de aferição de glicemia"
+    post:
+      tags:
+        - Glicemia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    valor:
+                      type: integer
+                      example: 95
+      responses:
+        "200":
+          description: "Aferição cadastrada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  # Rotas de lembretes /lembretes
+  /lembretes/listar-lembretes-usuario:
+    description: "Rota para listagem de todos os lembretes do usuário."
+    get:
+      tags:
+        - Lembretes
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lembretes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id_lembrete:
+                          type: integer
+                          example: 1
+                        titulo:
+                          type: string
+                          example: "Tomar vitamina"
+                        horario:
+                          type: string
+                          format: date
+                          example: "08:00"
+                        recorrencia:
+                          type: string
+                          example: "diaria"
+                        ativo:
+                          type: integer
+                          example: 1
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /lembretes/criar-lembrete:
+    description: "Rota para criação de lembrete"
+    post:
+      tags:
+        - Lembretes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    recorrencia:
+                      type: string
+                      example: "diaria"
+                    horario_fixo:
+                      type: boolean
+                      example: true
+                    titulo:
+                      type: string
+                      example: "Medição de glicemia"
+                    categoria:
+                      type: string
+                      example: "Saúde"
+      responses:
+        "201":
+          description: "Lembrete criado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /lembretes/alterar-status-lembrete/{id}:
+    description: "Rota para ativação/desativação de um lembrete. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Lembretes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do lembrete
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: "Status alterado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Lembrete não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /lembretes/deletar-lembrete/{id}:
+    description: "Rota para deleção de um lembrete"
+    delete:
+      tags:
+        - Lembretes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do lembrete
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: "Lembrete deletado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /lembretes/editar-lembrete/{id}:
+    description: "Rota para edição de um lembrete. Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    put:
+      tags:
+        - Lembretes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do lembrete
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    recorrencia:
+                      type: string
+                      example: "semanal"
+                    horario_fixo:
+                      type: boolean
+                      example: false
+                    titulo:
+                      type: string
+                      example: "Consulta médica"
+                    categoria:
+                      type: string
+                      example: "Médico"
+      responses:
+        "200":
+          description: "Lembrete editado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Lembrete não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  # Rotas de relatorio /relatorio
+  /relatorio/gerar-relatorio:
+    description: "Rota para gerar o relatório do período especificado"
+    post:
+      tags:
+        - Relatório
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    data_inicio:
+                      type: string
+                      format: date
+                      example: "2026-01-01"
+                    data_fim:
+                      type: string
+                      format: date
+                      example: "2026-01-31"
+                    ano:
+                      type: integer
+                      example: 2026
+      responses:
+        "200":
+          description: "Relatório gerado com sucesso (PDF)"
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /relatorio/calcular-media-periodo:
+    description: "Rota para calcular a média das medições do período especificado"
+    post:
+      tags:
+        - Relatório
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    data_inicio:
+                      type: string
+                      format: date
+                      example: "2026-01-01"
+                    data_fim:
+                      type: string
+                      format: date
+                      example: "2026-01-31"
+                    ano:
+                      type: integer
+                      example: 2026
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media_periodo:
+                    type: number
+                    example: 98.5
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /relatorio/calcular-medias-semais:
+    description: "Rota para calcular as médias semanais das medições do período especificado"
+    post:
+      tags:
+        - Relatório
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    data_inicio:
+                      type: string
+                      format: date
+                      example: "2026-01-01"
+                    data_fim:
+                      type: string
+                      format: date
+                      example: "2026-01-31"
+                    ano:
+                      type: integer
+                      example: 2026
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    n_semana:
+                      type: object
+                      properties:
+                        media:
+                          type: number
+                          example: 95.2
+                        data_inicio:
+                          type: string
+                          format: date
+                          example: "2026-01-01"
+                        data_fim:
+                          type: string
+                          format: date
+                          example: "2026-01-07"
+                        qtd_registros:
+                          type: integer
+                          example: 14
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /relatorio/calcular-medias-mensais:
+    description: "Rota para calcular as médias mensais das medições do período especificado"
+    post:
+      tags:
+        - Relatório
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  type: object
+                  properties:
+                    data_inicio:
+                      type: string
+                      format: date
+                      example: "2026-01-01"
+                    data_fim:
+                      type: string
+                      format: date
+                      example: "2026-12-31"
+                    ano:
+                      type: integer
+                      example: 2026
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mes:
+                      type: integer
+                      example: 1
+                    media:
+                      type: number
+                      example: 96.4
+                    qtd_registros:
+                      type: integer
+                      example: 60
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  # Rotas de usuarios /usuarios
+  /usuarios/listar-usuarios:
+    description: "Rota para listagem dos usuários para admin/dev"
+    get:
+      tags:
+        - Usuários
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dados:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Usuario"
+                  mensagem:
+                    $ref: "#/components/schemas/MensagemSucesso"
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /usuarios/cadastrar-usuario:
+    description: "Rota para cadastro de usuário por um admin/dev"
+    post:
+      tags:
+        - Usuários
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  $ref: "#/components/schemas/Usuario"
+      responses:
+        "201":
+          description: "Usuário cadastrado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"   
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro" 
+
+  /usuarios/deletar-usuario/{id}:
+    description: "Rota para deletar um usuário (admin/dev)"
+    delete:
+      tags:
+        - Usuários
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do usuário
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: "Usuário deletado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Requisição inválida"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Usuário não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"  
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+
+  /usuarios/editar-usuario/{id}:
+    description: "Rota para editar um usuário (admin/dev). Observação: Nem todos os campos são obrigatórios, mas pelo menos um deve ser enviado."
+    patch:
+      tags:
+        - Usuários
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do usuário
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dados:
+                  $ref: "#/components/schemas/Usuario"
+      responses:
+        "200":
+          description: "Usuário editado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MensagemSucesso"
+        "400":
+          description: "Dados inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+        "404":
+          description: "Usuário não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"  
+        "500":
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"             
+
+components:
+  schemas:
+    Acompanhante:
+      type: object
+      properties:
+        id_acompanhante:
+          type: integer
+          example: 1
+        nome_acompanhante:
+          type: string
+          example: "Carlos Silva"
+        email_acompanhante:
+          type: string
+          example: "carlos@email.com"
+        id_gestante:
+          type: integer
+          description: "ID da gestante em que ele está cadastrado"
+          example: 5
+        nome_gestante:
+          type: string
+          description: "Nome da gestante em que ele está cadastrado"
+          example: "Ana Paula"
+
+    Usuario:
+      type: object
+      properties:
+        id_usuario:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          example: "Ana Paula"
+        email:
+          type: string
+          example: "ana@email.com"
+        perfil:
+          type: string
+          example: "gestante"
+
+    Dica:
+      type: object
+      properties:
+        id_dica:
+          type: integer
+          example: 1
+        id_usuario:
+          type: integer
+          example: 1
+        titulo:
+          type: string
+          example: "Cuidados com a pressão"
+        descricao:
+          type: string
+          example: "Monitore sua pressão arterial regularmente."
+        categoria:
+          type: string
+          example: "Saúde"
+        link_referencia:
+          type: string
+          example: "https://exemplo.com"
+        criada_em:
+          type: string
+          format: date-time
+          example: "2026-06-01T10:00:00Z"
+
+    Erro:
+      type: object
+      properties:
+        erro:
+          type: string
+          example: "Ocorreu um erro ao processar a requisição."
+
+    MensagemSucesso:
+      type: object
+      properties:
+        mensagem:
+          type: string
+          example: "Operação realizada com sucesso!"

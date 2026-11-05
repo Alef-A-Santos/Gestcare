@@ -5,6 +5,17 @@
 @theme {
   --font-poppins: "Poppins", sans-serif;
   --font-playfair: "Playfair Display", serif;
+  --animate-fadeIn: fadeIn .6s ease;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 100%;
+    }
+  }
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -20,6 +31,7 @@ input[type="number"] {
 html {
   font-size: 87.5%;
 }
+
 /* Identidade visual Gestcare nos diálogos SweetAlert2. */
 .gestcare-swal-popup {
   border: 1px solid #ccfbf1;

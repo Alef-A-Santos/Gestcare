@@ -1,15 +1,9 @@
 import { useRef, useState } from "react";
-
-import InputEmail from "../components/InputEmail";
-
+import InputEmail from "../components/inputEmail";
 import Logo from "../Components/Logo";
-
 import logoRosa from "../assets/logos/logo_rosa.png";
-
 import Botao from "../components/Botao";
-
 import fundo from "../assets/imagem/fundo3.png";
-
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
 
 import { useNavigate } from "react-router-dom";
@@ -62,9 +56,10 @@ function Verificacao() {
   async function reenviarCodigo(e) {
     e.preventDefault();
 
-    setErro("");
+    const codigoString = codigo.join("");
 
-    setMensagemReenvio("");
+    console.log("Código:", codigoString);
+    console.log("Tipo:", typeof codigoString);
 
     // PEGA O E-MAIL SALVO
 

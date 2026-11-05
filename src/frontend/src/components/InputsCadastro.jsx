@@ -61,7 +61,7 @@ const InputCadastro = forwardRef((props, ref) => {
 
   const erroConfirmar =
     ConfirmarSenha &&
-    ConfirmarSenha !== senha
+      ConfirmarSenha !== senha
       ? "As senhas não coincidem"
       : "";
 

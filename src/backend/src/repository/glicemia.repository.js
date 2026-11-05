@@ -36,7 +36,7 @@ export default class GlicemiaRespository {
       throw error;
     }
   }
-}
+
   async BuscarUltimaMedicao(user) {
     let db; 
     try {
