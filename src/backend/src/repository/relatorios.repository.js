@@ -5,6 +5,23 @@ export default class RelatoriosRepository {
     let db;
     try {
       db = await connectDB();
+
+      const [registros_periodo] = await db.query(
+        `SELECT id_glicemia, valor, data_hora, classificacao 
+        FROM registro_glicemia 
+        WHERE id_usuario = ? 
+          AND data_hora BETWEEN ? AND ?
+          AND YEAR(data_hora) = ?
+        ORDER BY data_hora`,
+        [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
+      );
+
+      if (!registros_periodo.length) {
+        return {
+          mensagem: "Nenhum registro nesse período."
+        }
+      }
+
       const [[registro_mais_alto]] = await db.query(
         `WITH max as (
 	          SELECT MAX(valor) as media, id_usuario 
@@ -22,6 +39,7 @@ export default class RelatoriosRepository {
         [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
 
+
       const [[registro_mais_baixo]] = await db.query(
         `WITH min as (
 	          SELECT MIN(valor) as media, id_usuario 
@@ -35,16 +53,6 @@ export default class RelatoriosRepository {
         WHERE registro_glicemia.valor = min.media
         ORDER BY registro_glicemia.valor DESC
         LIMIT 1;`,
-        [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
-      );
-
-      const [registros_periodo] = await db.query(
-        `SELECT id_glicemia, valor, data_hora, classificacao 
-        FROM registro_glicemia 
-        WHERE id_usuario = ? 
-          AND data_hora BETWEEN ? AND ?
-          AND YEAR(data_hora) = ?
-        ORDER BY data_hora`,
         [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
 

@@ -18,6 +18,9 @@ export default class RelatoriosService {
     try {
       this.#VerificarCampos(dados);
       const response = await relatoriosRepository.Gerar(dados, user);
+      if(response.mensagem){
+        return response;
+      }
       response.nome_gestante = user.nome;
       response.periodo = `${formatarData(dados.data_inicio)} - ${formatarData(dados.data_fim)}`;
       return {

@@ -11,7 +11,7 @@ export async function GerarPdfTemplate (template, pdf_name) {
   const page = await browser.newPage();
   await page.setContent(template, { waitUntil:"load" });
   const path = resolve(__dirname, "..", "..", "documentos", "pdfs");
-
+  console.log(path)
   await criarDiretorio(path);
 
   const pdf_path = resolve(path, `${pdf_name}.pdf`);
