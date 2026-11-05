@@ -20,10 +20,26 @@
     { rotulo: "Ajustes", icone: IoSettingsOutline, to: "/ajustes" },
   ];
   
-  function Sidebar({ nome = "Maria Fonseca", semanas = 22 }) {
+  function Sidebar({ nome = "Maria Fonseca", semanas }) {
     const navigate = useNavigate();
     const [foto, setFoto] = useState(null);
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
+
+    const gestacaoFormatada = (() => {
+      if (semanas == null || semanas === "") return null;
+
+      const valor = String(semanas).trim();
+      const totalDias = valor.match(/(\d+)\s*dias?/i);
+      if (totalDias) {
+        const dias = Number(totalDias[1]);
+        const semanasCompletas = Math.floor(dias / 7);
+        const diasRestantes = dias % 7;
+        return `${semanasCompletas} semanas e ${diasRestantes} dias`;
+      }
+
+      const numeroSemanas = valor.match(/\d+/);
+      return numeroSemanas ? `${Number(numeroSemanas[0])} semanas` : valor;
+    })();
   
     // Abre no desktop e fecha no mobile quando a tela muda de tamanho
     useEffect(() => {
@@ -155,7 +171,9 @@
   
               <h4 className="text-xl mt-2 text-center font-poppins">
                 Sua Gestação:{" "}
-                <span className="font-bold">{semanas} Semanas</span>
+                {gestacaoFormatada && (
+                  <span className="font-bold">{gestacaoFormatada}</span>
+                )}
               </h4>
               <hr className="w-3/4 border-white/40 mt-2" />
             </div>

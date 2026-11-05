@@ -25,11 +25,70 @@ function Home() {
     const [resumo, setResumo] = useState(null);
     const [erro, setErro] = useState("");
     const [carregando, setCarregando] = useState(true);
-    const classificacaoUltima = {
-      alta: "Alta",
-      baixa: "Baixa",
-      normal: "Normal",
-    }[String(resumo?.ultima_medicao?.classificacao || "").toLowerCase()] || "Sem dados";
+    const hoje = new Date();
+    const dataLocal = (data) => `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
+    const primeiroDiaMes = dataLocal(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
+    const [dataInicio, setDataInicio] = useState(primeiroDiaMes);
+    const [dataFim, setDataFim] = useState(dataLocal(hoje));
+    const [mostrarPeriodo, setMostrarPeriodo] = useState(false);
+    const [gerandoPdf, setGerandoPdf] = useState(false);
+    const [erroPdf, setErroPdf] = useState("");
+    const classificacaoBackend = String(resumo?.ultima_medicao?.classificacao || "").trim();
+    const classificacoes = {
+      A: "Alta",
+      B: "Baixa",
+      N: "Normal",
+    };
+    const codigoClassificacao = classificacaoBackend.toUpperCase();
+    const classificacaoUltima = classificacoes[codigoClassificacao]
+      || ({ alta: "Alta", baixa: "Baixa", normal: "Normal" }[classificacaoBackend.toLowerCase()])
+      || "Sem dados";
+
+    async function gerarRelatorio() {
+      setErroPdf("");
+      if (!dataInicio || !dataFim || dataInicio > dataFim) {
+        setErroPdf("Selecione um período válido.");
+        return;
+      }
+      if (dataInicio.slice(0, 4) !== dataFim.slice(0, 4)) {
+        setErroPdf("O período precisa estar dentro do mesmo ano.");
+        return;
+      }
+
+      setGerandoPdf(true);
+      try {
+        const resposta = await fetch("http://localhost:3000/api/relatorio/gerar-relatorio", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dados: {
+            data_inicio: dataInicio,
+            data_fim: dataFim,
+            ano: Number(dataInicio.slice(0, 4)),
+          } }),
+        });
+
+        if (!resposta.ok) {
+          const erro = await resposta.json().catch(() => null);
+          throw new Error(erro?.erro || "Não foi possível gerar o relatório.");
+        }
+
+        const pdf = await resposta.blob();
+        const url = URL.createObjectURL(pdf);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `relatorio_${dataInicio}_${dataFim}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setMostrarPeriodo(false);
+      } catch (error) {
+        setErroPdf(error.message || "Falha ao conectar com o servidor.");
+      } finally {
+        setGerandoPdf(false);
+      }
+    }
 
     useEffect(() => {
         let ativo = true;
@@ -74,7 +133,7 @@ function Home() {
     <div className="min-h-screen flex bg-pink-100">
       {/* Sidebar direto, sem <div> em volta, para ela acompanhar a altura da página */}
       
-      <Sidebar nome={usuario?.nome}/>
+      <Sidebar nome={usuario?.nome} semanas={resumo?.qtd_semanas} />
 
       {/* min-w-0 evita que os cards estourem a largura; pt-20 libera espaço pro botão do menu no mobile */}
       <main className="flex-1 min-w-0 p-4 sm:p-6 pt-20 md:pt-6">
@@ -93,12 +152,34 @@ function Home() {
               textClassName="p-1 font-semibold text-sm sm:text-base"
               imagem="https://cdn-icons-png.flaticon.com/512/337/337946.png"
               desc="imagem icone pdf"
-              nome="Exportar relatório em PDF"
+              nome={gerandoPdf ? "Gerando PDF..." : "Exportar relatório em PDF"}
+              clickHandler={() => { setErroPdf(""); setMostrarPeriodo(true); }}
+              tipoDado="button"
             />
           }
         />
 
         <div className="max-w-6xl mx-auto mt-6 flex flex-col gap-4 sm:gap-6">
+          {mostrarPeriodo && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="titulo-relatorio">
+              <form className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onSubmit={(event) => { event.preventDefault(); gerarRelatorio(); }}>
+                <h2 id="titulo-relatorio" className="mb-4 text-xl font-bold text-pink-500">Período do relatório</h2>
+                <div className="flex flex-col gap-3">
+                  <label className="font-medium">Data inicial
+                    <input className="mt-1 w-full rounded-lg border border-gray-300 p-2" type="date" required value={dataInicio} onChange={(event) => setDataInicio(event.target.value)} />
+                  </label>
+                  <label className="font-medium">Data final
+                    <input className="mt-1 w-full rounded-lg border border-gray-300 p-2" type="date" required value={dataFim} onChange={(event) => setDataFim(event.target.value)} />
+                  </label>
+                </div>
+                {erroPdf && <p role="alert" className="mt-3 text-sm text-rose-700">{erroPdf}</p>}
+                <div className="mt-5 flex justify-end gap-3">
+                  <button type="button" className="rounded-full px-4 py-2 text-gray-700" disabled={gerandoPdf} onClick={() => setMostrarPeriodo(false)}>Cancelar</button>
+                  <button type="submit" disabled={gerandoPdf} className="rounded-full bg-pink-500 px-5 py-2 font-semibold text-white disabled:opacity-60">{gerandoPdf ? "Gerando..." : "Baixar PDF"}</button>
+                </div>
+              </form>
+            </div>
+          )}
           {/* Linha 1: resumo */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <CardInfo
