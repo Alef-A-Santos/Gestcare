@@ -18,7 +18,7 @@ export default class RelatoriosService {
     try {
       this.#VerificarCampos(dados);
       const response = await relatoriosRepository.Gerar(dados, user);
-      if(response.mensagem){
+      if(response.sem_registros){
         return response;
       }
       response.nome_gestante = user.nome;

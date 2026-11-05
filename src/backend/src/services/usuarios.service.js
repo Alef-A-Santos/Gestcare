@@ -1,9 +1,10 @@
 import UsuariosRepository from "../repository/usuarios.repository.js";
 import { criptografar } from "../utils/criptografia.js";
 import { delimiter, dirname, extname, join, resolve } from 'path'
-import { criarDiretorio } from "../utils/pdf.js";
+import { criarDiretorio, dirBase } from "../utils/pdf.js";
 import { testarSenha } from "../utils/verificarSenha.js";
 import { Upload } from "../utils/uploadArquivo.js";
+import { __dirname } from "../utils/pdf.js";
 const usuariosRepository = new UsuariosRepository();
 
 export default class UsuariosService {
@@ -128,7 +129,8 @@ export default class UsuariosService {
     try {
       const caminho = "foto_perfil";  
       const extArquivo =  extname(arquivo.originalname); // Pega a extensão do nome do arquivo
-      await criarDiretorio(caminho);
+      
+      await criarDiretorio(dirBase(caminho)); // Cria o diretório, caso não exista
       const caminho_arquivo = join("foto_perfil",`foto_perfil_${user.id_usuario}${extArquivo}`);
       await Upload(caminho_arquivo, arquivo.buffer);
 

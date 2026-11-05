@@ -11,10 +11,10 @@ export default class RelatoriosController {
         const { dados } = req.body;
         const { user } = req;
         const response = await relatoriosService.Gerar(dados, user);
-        if(response.mensagem) {
+        if(response.sem_registros) {
           return res.status(200).send(response);
         }
-        const caminho_relatorio = await GerarPdfTemplate(gerarTemplateRelatorio(response.response), `relatorio_${user.id_usuario}_${dados.data_inicio}_${dados.data_fim}`);
+        const caminho_relatorio = await GerarPdfTemplate(gerarTemplateRelatorio(response.response), `relatorio_${user.id_usuario}_${dados.data_inicio}_${dados.data_fim}_${new Date().getTime()}`);
         return res.status(200).sendFile(caminho_relatorio);
       } catch (error) {
         console.error(error);

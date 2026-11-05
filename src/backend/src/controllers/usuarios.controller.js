@@ -74,10 +74,7 @@ export default class UsuariosController {
   UploadFoto() {
     return async (req, res) => {
       try {
-        // const { user } = req;
-        const user  = {
-          id_usuario:21
-        };
+        const { user } = req;
         const caminho = await usuariosService.UploadFoto(req.file, user);
         res.status(201).send({
           mensagem: "Foto inserida com sucesso!",
