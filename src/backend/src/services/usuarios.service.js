@@ -1,6 +1,6 @@
 import UsuariosRepository from "../repository/usuarios.repository.js";
 import { criptografar } from "../utils/criptografia.js";
-import { resolve } from 'path'
+import { delimiter, dirname, extname, join, resolve } from 'path'
 import { criarDiretorio } from "../utils/pdf.js";
 import { testarSenha } from "../utils/verificarSenha.js";
 import { Upload } from "../utils/uploadArquivo.js";
@@ -124,13 +124,12 @@ export default class UsuariosService {
       throw new Error(error.message);
     }
   }
-  async UploadFoto(arquivo) {
+  async UploadFoto(arquivo, user) {
     try {
-      const caminho = resolve("documentos", "imagens");  
-
+      const caminho = "foto_perfil";  
+      const extArquivo =  extname(arquivo.originalname); // Pega a extensão do nome do arquivo
       await criarDiretorio(caminho);
-      console.log(caminho)
-      const caminho_arquivo = resolve(caminho, `teste.${arquivo.mimetype.split("/")[1]}`);
+      const caminho_arquivo = join("foto_perfil",`foto_perfil_${user.id_usuario}${extArquivo}`);
       await Upload(caminho_arquivo, arquivo.buffer);
 
       const response = await usuariosRepository.UploadFoto(caminho_arquivo, 33);

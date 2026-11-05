@@ -34,7 +34,7 @@ export async function GerarPdfTemplate (template, pdf_name) {
 export function criarDiretorio(diretorio) {
   return new Promise (
     (resolve, reject) => 
-      open(diretorio, (error, fd) => {
+      open(resolve(__dirname, "..", "..", diretorio), (error, fd) => {
 
         if(error && error.code === "ENOENT"){
           // Cria o arquivo caso não exista(ENOENT == No Such File or Directory)

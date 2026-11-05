@@ -98,4 +98,17 @@ export default  class UsuariosRepository {
       if(db) db.release();
     }
   }
+  async BuscarUrlFotoUsuario(user) {
+    let db;
+    try {
+      db = await connectDB();
+      const [url] = await db.query("SELECT url_foto FROM usuarios WHERE id_usuario = ?", [user.id_usuario]);
+
+      return url;
+    } catch (error) {
+      throw error;
+    }finally{
+      if(db) db.release();
+    }
+  }
 }

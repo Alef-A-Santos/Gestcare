@@ -1,5 +1,6 @@
 import UsuariosService from "../services/usuarios.service.js";
 import { resolve } from "path";
+import { caminhoBase } from "../utils/uploadArquivo.js";
 
 const usuariosService = new UsuariosService();
 
@@ -73,16 +74,20 @@ export default class UsuariosController {
   UploadFoto() {
     return async (req, res) => {
       try {
-        console.log(req.body);
-        console.log(req.file);
-        // console.log(req);
-        const caminho = await usuariosService.UploadFoto(req.file);
+        // const { user } = req;
+        const user  = {
+          id_usuario:21
+        };
+        const caminho = await usuariosService.UploadFoto(req.file, user);
         res.status(201).send({
           mensagem: "Foto inserida com sucesso!",
           caminho_foto: caminho,
         });
       } catch (error) {
         console.error(error);
+        if(error.code === "LIMIT_FILE_SIZE"){
+          res.status(400).send({ erro: "A imagem é muito grande! Limite 5MB." });
+        }
         res.status(500).send({ erro: "Erro Interno no servidor!" });
       }
     };
@@ -90,9 +95,9 @@ export default class UsuariosController {
   BuscarFoto() {
     return async (req, res) => {
       try {
-        const { caminho_foto } = req.params;
-        console.log(caminho_foto)
-        return res.status(200).sendFile(resolve(caminho_foto.replaceAll("-", "/")));
+        const { url } = req.query;
+
+        return res.status(200).sendFile(resolve(caminhoBase, url));
       } catch (error) {
         console.error(error);
         res.status(500).send({ erro: "Erro Interno no servidor!" });
