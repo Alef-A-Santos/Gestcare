@@ -11,6 +11,7 @@ export default class RelatoriosController {
         const { dados } = req.body;
         const { user } = req;
         const response = await relatoriosService.Gerar(dados, user);
+        console.log(response)
         const caminho_relatorio = await GerarPdfTemplate(gerarTemplateRelatorio(response.response), `relatorio_${user.id_usuario}_${dados.data_inicio}_${dados.data_fim}`);
         return res.status(200).sendFile(caminho_relatorio);
       } catch (error) {
