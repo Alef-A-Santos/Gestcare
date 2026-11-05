@@ -1,6 +1,7 @@
 import connectDB from "../database/db.js";
 
 export default class RelatoriosRepository {
+ 
   async Gerar(dados, user) {
     let db;
     try {
@@ -24,7 +25,7 @@ export default class RelatoriosRepository {
 
       const [[registro_mais_alto]] = await db.query(
         `WITH max as (
-	          SELECT MAX(valor) as media, id_usuario 
+            SELECT MAX(valor) as media, id_usuario 
             FROM registro_glicemia 
             WHERE id_usuario = ?  
               AND data_hora BETWEEN ? AND ?
@@ -38,11 +39,13 @@ export default class RelatoriosRepository {
         `,
         [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
+      console.log(registro_mais_alto.data_hora)
+
 
 
       const [[registro_mais_baixo]] = await db.query(
         `WITH min as (
-	          SELECT MIN(valor) as media, id_usuario 
+            SELECT MIN(valor) as media, id_usuario 
             FROM registro_glicemia 
             WHERE id_usuario = ?  
               AND data_hora BETWEEN ? AND ?
@@ -55,6 +58,7 @@ export default class RelatoriosRepository {
         LIMIT 1;`,
         [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
+      console.log(registro_mais_baixo.data_hora)
 
       const [[contagem_registros]] = await db.query(
         `SELECT COUNT(id_glicemia) as qtd_registros 
@@ -96,6 +100,7 @@ export default class RelatoriosRepository {
       if (db) db.release();
     }
   }
+  
   async CalcularMediaPeriodo(dados, user, db) {
     try {
       const [[result]] = await db.query(

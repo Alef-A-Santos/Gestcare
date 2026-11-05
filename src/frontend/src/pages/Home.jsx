@@ -1,4 +1,4 @@
-import Sidebar from "../components/Sidebar";
+﻿import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import CardInfo from "../components/CardInfo";
 import CardMedia from "../components/CardMedia";
@@ -10,18 +10,10 @@ import UserName from "../components/UserName";
 import Botao from "../components/Botao";
 import { useEffect, useState } from "react";
 
-const refeicoes = [
-  "Café da manhã",
-  "Lanche da manhã",
-  "Almoço",
-  "Lanche da tarde",
-  "Jantar",
-  "Ceia",
-];
-
 function Home() {
     const [usuario, setUsuario] = useState(null);
     const [resumo, setResumo] = useState(null);
+    const [refeicoes, setRefeicoes] = useState([]);
     const [erro, setErro] = useState("");
     const hoje = new Date();
     const dataLocal = (data) => `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
@@ -45,11 +37,11 @@ function Home() {
     async function gerarRelatorio() {
       setErroPdf("");
       if (!dataInicio || !dataFim || dataInicio > dataFim) {
-        setErroPdf("Selecione um período válido.");
+        setErroPdf("Selecione um perÃ­odo vÃ¡lido.");
         return;
       }
       if (dataInicio.slice(0, 4) !== dataFim.slice(0, 4)) {
-        setErroPdf("O período precisa estar dentro do mesmo ano.");
+        setErroPdf("O perÃ­odo precisa estar dentro do mesmo ano.");
         return;
       }
 
@@ -68,7 +60,7 @@ function Home() {
 
         if (!resposta.ok) {
           const erro = await resposta.json().catch(() => null);
-          throw new Error(erro?.erro || "Não foi possível gerar o relatório.");
+          throw new Error(erro?.erro || "NÃ£o foi possÃ­vel gerar o relatÃ³rio.");
         }
 
         const pdf = await resposta.blob();
@@ -100,7 +92,7 @@ function Home() {
 
                 const dadosUsuario = await respostaUsuario.json().catch(() => null);
                 if (!respostaUsuario.ok) {
-                    throw new Error(dadosUsuario?.erro || "Não foi possível carregar os dados do usuário.");
+                    throw new Error(dadosUsuario?.erro || "NÃ£o foi possÃ­vel carregar os dados do usuÃ¡rio.");
                 }
 
                 const usuarioSessao = dadosUsuario?.user ?? null;
@@ -108,13 +100,27 @@ function Home() {
 
                 if (usuarioSessao?.perfil !== "gestante") return;
 
+                if (usuarioSessao?.id) {
+                    const agora = new Date();
+                    const dataHoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}-${String(agora.getDate()).padStart(2, "0")}`;
+                    const respostaRefeicoes = await fetch(
+                        `http://localhost:3000/api/diario/listar-refeicoes/usuario/${encodeURIComponent(usuarioSessao.id)}?data=${dataHoje}`,
+                        { method: "GET", credentials: "include" }
+                    );
+                    const dadosRefeicoes = await respostaRefeicoes.json().catch(() => null);
+                    if (!respostaRefeicoes.ok) {
+                        throw new Error(dadosRefeicoes?.erro || "Falha ao carregar diÃ¡rio alimentar.");
+                    }
+                    if (ativo) setRefeicoes(dadosRefeicoes?.refeicoes ?? []);
+                }
+
                 const respostaResumo = await fetch("http://localhost:3000/api/dashboard/resumo", {
                     method: "GET",
                     credentials: "include",
                 });
                 const dadosResumo = await respostaResumo.json().catch(() => null);
                 if (!respostaResumo.ok) {
-                    throw new Error(dadosResumo?.erro || "Não foi possível carregar o resumo do dashboard.");
+                    throw new Error(dadosResumo?.erro || "NÃ£o foi possÃ­vel carregar o resumo do dashboard.");
                 }
                 if (ativo) setResumo(dadosResumo?.resumo ?? null);
             } catch (error) {
@@ -127,14 +133,18 @@ function Home() {
     }, []);
   return (
     <div className="min-h-screen flex bg-pink-100">
-      {/* Sidebar direto, sem <div> em volta, para ela acompanhar a altura da página */}
+      {/* Sidebar direto, sem <div> em volta, para ela acompanhar a altura da pÃ¡gina */}
       
-      <Sidebar nome={usuario?.nome} semanas={resumo?.qtd_semanas} />
+      <Sidebar
+        nome={usuario?.nome}
+        semanas={resumo?.qtd_semanas}
+        caminhoFoto={usuario?.caminho_foto || usuario?.foto_perfil}
+      />
 
-      {/* min-w-0 evita que os cards estourem a largura; pt-20 libera espaço pro botão do menu no mobile */}
+      {/* min-w-0 evita que os cards estourem a largura; pt-20 libera espaÃ§o pro botÃ£o do menu no mobile */}
       <main className="flex-1 min-w-0 p-4 sm:p-6 pt-20 md:pt-6">
         <Header
-          titulo={"Olá"}
+          titulo={"Olá  "}
           component={
           <UserName
               className={"text-pink-400 text-3xl sm:text-4xl font-bold"}
@@ -148,7 +158,7 @@ function Home() {
               textClassName="p-1 font-semibold text-sm sm:text-base"
               imagem="https://cdn-icons-png.flaticon.com/512/337/337946.png"
               desc="imagem icone pdf"
-              nome={gerandoPdf ? "Gerando PDF..." : "Exportar relatório em PDF"}
+              nome={gerandoPdf ? "Gerando PDF..." : "Exportar relatÃ³rio em PDF"}
               clickHandler={() => { setErroPdf(""); setMostrarPeriodo(true); }}
               tipoDado="button"
             />
@@ -159,7 +169,7 @@ function Home() {
           {mostrarPeriodo && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="titulo-relatorio">
               <form className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onSubmit={(event) => { event.preventDefault(); gerarRelatorio(); }}>
-                <h2 id="titulo-relatorio" className="mb-4 text-xl font-bold text-pink-500">Período do relatório</h2>
+                <h2 id="titulo-relatorio" className="mb-4 text-xl font-bold text-pink-500">PerÃ­odo do relatÃ³rio</h2>
                 <div className="flex flex-col gap-3">
                   <label className="font-medium">Data inicial
                     <input className="mt-1 w-full rounded-lg border border-gray-300 p-2" type="date" required value={dataInicio} onChange={(event) => setDataInicio(event.target.value)} />
@@ -179,7 +189,7 @@ function Home() {
           {/* Linha 1: resumo */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <CardInfo
-              UltimaAfericao={resumo?.ultima_medicao?.valor != null ? `${resumo.ultima_medicao.valor} mg/dL` : "Sem medições"}
+              UltimaAfericao={resumo?.ultima_medicao?.valor != null ? `${resumo.ultima_medicao.valor} mg/dL` : "Sem mediÃ§Ãµes"}
               nivel={classificacaoUltima}
               data={resumo?.ultima_medicao?.data_hora ? new Date(resumo.ultima_medicao.data_hora).toLocaleDateString("pt-BR") : ""}
               horario={resumo?.ultima_medicao?.data_hora ? new Date(resumo.ultima_medicao.data_hora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}
@@ -190,20 +200,20 @@ function Home() {
             />
             <CardGestacao
               className="lg:col-span-2 xl:col-span-1"
-              semanas={resumo?.qtd_semanas || "Sem dados de gestação"}
+              semanas={resumo?.qtd_semanas || "Sem dados de gestaÃ§Ã£o"}
               dias=""
               trimestre=""
               dataParto=""
             />
           </div>
 
-          {/* Linha 2: diário e marco */}
+          {/* Linha 2: diÃ¡rio e marco */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <CardDiario refeicoes={refeicoes} />
             <CardMarco
               semana="20+"
-              comparacao="Do tamanho de um mamão papaya"
-              descricao="ouvidos atentos à sua voz e movimentos cheios de energia."
+              comparacao="Do tamanho de um mamÃ£o papaya"
+              descricao="ouvidos atentos Ã  sua voz e movimentos cheios de energia."
             />
           </div>
 
@@ -211,7 +221,7 @@ function Home() {
           <div className="max-w-md w-full mx-auto">
             <CardLembrete
               lembrete={resumo?.proximos_lembretes?.[0]
-                ? `${resumo.proximos_lembretes[0].titulo} — ${String(resumo.proximos_lembretes[0].horario).slice(0, 5)}`
+                ? `${resumo.proximos_lembretes[0].titulo} â€” ${String(resumo.proximos_lembretes[0].horario).slice(0, 5)}`
                 : null}
               aoCriar={() => {}}
             />
