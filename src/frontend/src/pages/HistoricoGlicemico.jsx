@@ -52,7 +52,7 @@ function HistoricoGlicemico() {
 
         <Card
           titulo="Registros"
-          className="mt-6 sm:mt-10 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px]"
+          className="mt-6 sm:mt-20 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px]"
         >
           <Tabela
             colunas={COLUNAS}
