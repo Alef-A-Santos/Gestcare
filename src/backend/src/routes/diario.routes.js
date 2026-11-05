@@ -10,3 +10,4 @@ router.patch("/alterar-refeicao/:id_refeicao", diarioController.AlterarRefeicao(
 router.delete("/remover-refeicao/:id_refeicao", diarioController.RemoverRefeicao());
 
 export default router;
+
