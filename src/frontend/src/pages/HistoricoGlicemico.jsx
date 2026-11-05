@@ -42,9 +42,9 @@ function HistoricoGlicemico() {
           component2={
             <button
               type="button"
-              className="w-full md:w-auto justify-center bg-teal-600 text-white font-poppins font-semibold rounded-2xl px-5 py-3 flex items-center gap-2 cursor-pointer transition-transform duration-300 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-800 shadow-lg"
+              className="bg-teal-600 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
             >
-              <FiPlus size={20} aria-hidden="true" />
+              <FiPlus size={22} aria-hidden="true" />
               Registrar glicemia
             </button>
           }
