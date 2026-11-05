@@ -3,13 +3,12 @@ import Header from "../components/Header";
 import CardInfo from "../components/CardInfo";
 import CardMedia from "../components/CardMedia";
 import CardGestacao from "../components/CardGestacao";
-import CardDiario from "../components/CardDiario";
+import CardDiario from "../components/Carddiario";
 import CardMarco from "../components/CardMarco";
 import CardLembrete from "../components/CardLembrete";
 import UserName from "../components/UserName";
 import Botao from "../components/Botao";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 const refeicoes = [
   "Café da manhã",
@@ -24,7 +23,6 @@ function Home() {
     const [usuario, setUsuario] = useState(null);
     const [resumo, setResumo] = useState(null);
     const [erro, setErro] = useState("");
-    const [carregando, setCarregando] = useState(true);
     const hoje = new Date();
     const dataLocal = (data) => `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
     const primeiroDiaMes = dataLocal(new Date(hoje.getFullYear(), hoje.getMonth(), 1));
@@ -121,8 +119,6 @@ function Home() {
                 if (ativo) setResumo(dadosResumo?.resumo ?? null);
             } catch (error) {
                 if (ativo) setErro(error.message || "Falha ao conectar com o servidor.");
-            } finally {
-                if (ativo) setCarregando(false);
             }
         }
 
@@ -221,16 +217,6 @@ function Home() {
             />
           </div>
           {erro && <p role="alert" className="text-center text-rose-700">{erro}</p>}
-          {!carregando && !resumo?.ultima_medicao && (
-            <Link to="/historico" className="mx-auto rounded-full bg-teal-600 px-6 py-3 font-semibold text-white shadow hover:bg-teal-700">
-              Registrar primeira glicemia
-            </Link>
-          )}
-          {!carregando && !resumo?.qtd_semanas && (
-            <Link to="/Cadastro" className="mx-auto rounded-full bg-pink-400 px-6 py-3 font-semibold text-white shadow hover:bg-pink-500">
-              Cadastrar dados da gestação
-            </Link>
-          )}
         </div>
       </main>
     </div>
