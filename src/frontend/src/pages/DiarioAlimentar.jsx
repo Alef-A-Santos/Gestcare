@@ -62,7 +62,7 @@ function DiarioAlimentar() {
 
       <section className="flex justify-center items-start w-full py-6">
         <div className="w-full max-w-xl md:max-w-3xl xl:max-w-4xl bg-gray-100 border border-gray-700 rounded-3xl px-6 py-5 sm:px-10 lg:px-14 mt-8">
-          <h3 className="font-poppins text-pink-400 text-2xl sm:text-3xl text-center mb-6">
+          <h3 className="font-poppins text-pink-400 text-4xl sm:text-4xl text-center font-semibold mb-6">
             Refeições registrada
           </h3>
 
