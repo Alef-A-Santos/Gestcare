@@ -37,7 +37,7 @@ function Home() {
     async function gerarRelatorio() {
       setErroPdf("");
       if (!dataInicio || !dataFim || dataInicio > dataFim) {
-        setErroPdf("Selecione um perÃ­odo vÃ¡lido.");
+        setErroPdf("Selecione um periodo valído.");
         return;
       }
       if (dataInicio.slice(0, 4) !== dataFim.slice(0, 4)) {
@@ -58,9 +58,21 @@ function Home() {
           } }),
         });
 
+        const tipoResposta = resposta.headers.get("content-type") || "";
+        if (tipoResposta.includes("application/json")) {
+          const resultado = await resposta.json().catch(() => null);
+          if (resultado?.sem_registros) {
+            setErroPdf(resultado.mensagem || "Não há dados para gerar o relatório no período selecionado.");
+            return;
+          }
+          if (!resposta.ok) {
+            throw new Error(resultado?.erro || "Não foi possível gerar o relatório.");
+          }
+          throw new Error(resultado?.erro || "Não foi possível gerar o relatório.");
+        }
+
         if (!resposta.ok) {
-          const erro = await resposta.json().catch(() => null);
-          throw new Error(erro?.erro || "NÃ£o foi possÃ­vel gerar o relatÃ³rio.");
+          throw new Error("Não foi possível gerar o relatório.");
         }
 
         const pdf = await resposta.blob();
@@ -158,7 +170,7 @@ function Home() {
               textClassName="p-1 font-semibold text-sm sm:text-base"
               imagem="https://cdn-icons-png.flaticon.com/512/337/337946.png"
               desc="imagem icone pdf"
-              nome={gerandoPdf ? "Gerando PDF..." : "Exportar relatÃ³rio em PDF"}
+              nome={gerandoPdf ? "Gerando PDF..." : "Exportar relatório em PDF"}
               clickHandler={() => { setErroPdf(""); setMostrarPeriodo(true); }}
               tipoDado="button"
             />
@@ -169,7 +181,7 @@ function Home() {
           {mostrarPeriodo && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="titulo-relatorio">
               <form className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" onSubmit={(event) => { event.preventDefault(); gerarRelatorio(); }}>
-                <h2 id="titulo-relatorio" className="mb-4 text-xl font-bold text-pink-500">PerÃ­odo do relatÃ³rio</h2>
+                <h2 id="titulo-relatorio" className="mb-4 text-xl font-bold text-pink-500">Peri­odo do relatório</h2>
                 <div className="flex flex-col gap-3">
                   <label className="font-medium">Data inicial
                     <input className="mt-1 w-full rounded-lg border border-gray-300 p-2" type="date" required value={dataInicio} onChange={(event) => setDataInicio(event.target.value)} />
@@ -189,7 +201,7 @@ function Home() {
           {/* Linha 1: resumo */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <CardInfo
-              UltimaAfericao={resumo?.ultima_medicao?.valor != null ? `${resumo.ultima_medicao.valor} mg/dL` : "Sem mediÃ§Ãµes"}
+              UltimaAfericao={resumo?.ultima_medicao?.valor != null ? `${resumo.ultima_medicao.valor} mg/dL` : "Sem mediçõess"}
               nivel={classificacaoUltima}
               data={resumo?.ultima_medicao?.data_hora ? new Date(resumo.ultima_medicao.data_hora).toLocaleDateString("pt-BR") : ""}
               horario={resumo?.ultima_medicao?.data_hora ? new Date(resumo.ultima_medicao.data_hora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}
@@ -200,20 +212,20 @@ function Home() {
             />
             <CardGestacao
               className="lg:col-span-2 xl:col-span-1"
-              semanas={resumo?.qtd_semanas || "Sem dados de gestaÃ§Ã£o"}
+              semanas={resumo?.qtd_semanas || "Sem dados de gestação"}
               dias=""
               trimestre=""
               dataParto=""
             />
           </div>
 
-          {/* Linha 2: diÃ¡rio e marco */}
+          {/* Linha 2: diario e marco */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <CardDiario refeicoes={refeicoes} />
             <CardMarco
               semana="20+"
               comparacao="Do tamanho de um mamÃ£o papaya"
-              descricao="ouvidos atentos Ã  sua voz e movimentos cheios de energia."
+              descricao="ouvidos atentos a sua voz e movimentos cheios de energia."
             />
           </div>
 
