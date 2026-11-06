@@ -11,6 +11,7 @@ router.get('/listar-usuarios', autenticar_dev ,usuariosController.Listar());
 router.post('/cadastrar-usuario', autenticar_dev, usuariosController.Cadastrar());
 router.delete('/deletar-usuario/:id', autenticar_dev, usuariosController.Deletar());
 router.patch('/editar-usuario/:id', autenticar_dev, usuariosController.Atualizar());
+router.get('/listar-usuario-acompanhante', autenticar_gestante, usuariosController.ListarUsuarioAcompanhante());
 router.post('/upload-foto', autenticar_gestante, upload.single("foto_perfil"),usuariosController.UploadFoto());
 router.get('/buscar-foto', autenticar_gestante, usuariosController.BuscarFoto());
 

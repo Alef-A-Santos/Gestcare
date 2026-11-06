@@ -1,10 +1,11 @@
 import UsuariosRepository from "../repository/usuarios.repository.js";
 import { criptografar } from "../utils/criptografia.js";
-import { delimiter, dirname, extname, join, resolve } from 'path'
+import { extname, join } from 'path'
 import { criarDiretorio, dirBase } from "../utils/pdf.js";
 import { testarSenha } from "../utils/verificarSenha.js";
 import { Upload } from "../utils/uploadArquivo.js";
 import { __dirname } from "../utils/pdf.js";
+
 const usuariosRepository = new UsuariosRepository();
 
 export default class UsuariosService {
@@ -137,6 +138,14 @@ export default class UsuariosService {
       const response = await usuariosRepository.UploadFoto(caminho_arquivo, 33);
 
       return caminho_arquivo;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async ListarUsuarioAcompanhante (email) {
+    try {
+      const acompanhante = await usuariosRepository.ListarUsuarioAcompanhante(email);
+      return acompanhante;
     } catch (error) {
       throw error;
     }

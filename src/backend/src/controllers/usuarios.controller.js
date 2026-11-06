@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { caminhoBase } from "../utils/uploadArquivo.js";
 
 const usuariosService = new UsuariosService();
+const mensagemErroInterno = "Erro interno no servidor";
 
 export default class UsuariosController {
   Listar() {
@@ -12,7 +13,9 @@ export default class UsuariosController {
         return res.status(200).send(response);
       } catch (error) {
         console.error(error);
-        return res.status(500).send({ erro: error.message });
+        return res
+          .status(500)
+          .send({ erro: error.message || mensagemErroInterno });
       }
     };
   }
@@ -30,7 +33,7 @@ export default class UsuariosController {
         if (status) {
           return res.status(status).send({ erro });
         }
-        return res.status(500).send({ erro: erro });
+        return res.status(500).send({ erro: erro || mensagemErroInterno });
       }
     };
   }
@@ -47,7 +50,7 @@ export default class UsuariosController {
         if (status) {
           return res.status(status).send({ erro });
         }
-        return res.status(500).send({ erro: erro });
+        return res.status(500).send({ erro: erro || mensagemErroInterno });
       }
     };
   }
@@ -67,7 +70,7 @@ export default class UsuariosController {
         if (status) {
           return res.status(status).send({ erro });
         }
-        return res.status(500).send({ erro: erro });
+        return res.status(500).send({ erro: erro || mensagemErroInterno });
       }
     };
   }
@@ -82,10 +85,12 @@ export default class UsuariosController {
         });
       } catch (error) {
         console.error(error);
-        if(error.code === "LIMIT_FILE_SIZE"){
-          res.status(400).send({ erro: "A imagem é muito grande! Limite 5MB." });
+        if (error.code === "LIMIT_FILE_SIZE") {
+          res
+            .status(400)
+            .send({ erro: "A imagem é muito grande! Limite 5MB." });
         }
-        res.status(500).send({ erro: "Erro Interno no servidor!" });
+        res.status(500).send({ erro: mensagemErroInterno });
       }
     };
   }
@@ -97,7 +102,20 @@ export default class UsuariosController {
         return res.status(200).sendFile(resolve(caminhoBase, url));
       } catch (error) {
         console.error(error);
-        res.status(500).send({ erro: "Erro Interno no servidor!" });
+        res.status(500).send({ erro: mensagemErroInterno });
+      }
+    };
+  }
+  ListarUsuarioAcompanhante() {
+    return async (req, res) => {
+      try {
+        const { email } = req.query;
+        const response = await usuariosService.ListarUsuarioAcompanhante(email);
+
+        return res.status(200).send(response);
+      } catch (error) {
+        console.error(error)
+        return res.status(500).send({ erro: mensagemErroInterno });
       }
     };
   }

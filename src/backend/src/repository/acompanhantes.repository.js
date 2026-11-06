@@ -10,7 +10,7 @@ export default class AcompanhantesRepository {
             SELECT id_usuario,nome FROM usuarios)
 
             SELECT acompanhantes.id_acompanhante, usuarios.nome as nome_acompanhante, usuarios.email as email_acompanhante, acompanhantes.id_gestante, gestante.nome as nome_gestante 
-            FROM  acompanhantes inner join gestante on acompanhantes.id_gestante = gestante.id_usuario inner join usuarios on acompanhantes.id_acompanhante = usuarios.id_usuario`,
+            FROM  acompanhantes INNER JOIN gestante on acompanhantes.id_gestante = gestante.id_usuario INNER JOIN usuarios on acompanhantes.id_acompanhante = usuarios.id_usuario`,
       );
       return result;
     } catch (error) {
@@ -27,7 +27,7 @@ export default class AcompanhantesRepository {
         `with gestante as (
             SELECT id_usuario,nome FROM usuarios)
             SELECT acompanhantes.id_acompanhante, usuarios.nome, acompanhantes.id_gestante, gestante.nome AS nome_acompanhante,  usuarios.perfil, usuarios.email
-            FROM  acompanhantes inner join gestante on acompanhantes.id_gestante = gestante.id_usuario inner join usuarios on acompanhantes.id_acompanhante = usuarios.id_usuario
+            FROM  acompanhantes INNER JOIN gestante on acompanhantes.id_gestante = gestante.id_usuario INNER JOIN usuarios on acompanhantes.id_acompanhante = usuarios.id_usuario
             WHERE gestante.id_usuario = ?`,
         [id_gestante],
       );

@@ -1,114 +1,148 @@
-import connectDB from '../database/db.js';
+import connectDB from "../database/db.js";
 
 let mensagemErro = "Erro interno do servidor.";
 
-export default  class UsuariosRepository {
+export default class UsuariosRepository {
   async Listar() {
     let db;
-    try { 
+    try {
       db = await connectDB();
-      const [result] = await db.query('SELECT id_usuario, nome, email, perfil, ativo FROM usuarios ORDER BY nome ASC');
+      const [result] = await db.query(
+        "SELECT id_usuario, nome, email, perfil, ativo FROM usuarios ORDER BY nome ASC",
+      );
 
       return result;
-    }catch(error) {
+    } catch (error) {
       throw new Error("Falha ao listar usuários.");
-    }finally{
+    } finally {
       //Fecha a conexão com o banco de dados
-      if(db) db.release();
+      if (db) db.release();
     }
   }
   async Cadastrar(nome, email, senha, perfil) {
     let db;
     try {
       db = await connectDB();
-      const [result] = await db.query("INSERT INTO usuarios(nome, email, senha, perfil) VALUES(?, ?, ?, ?)", [nome, email, senha, perfil]);
+      const [result] = await db.query(
+        "INSERT INTO usuarios(nome, email, senha, perfil) VALUES(?, ?, ?, ?)",
+        [nome, email, senha, perfil],
+      );
       return result;
-    }catch(error) {
+    } catch (error) {
       mensagemErro = "Falha ao cadastrar usuário.";
-      if(error.code === "ER_DUP_ENTRY") {
+      if (error.code === "ER_DUP_ENTRY") {
         mensagemErro = "Usuário já cadastrado!";
-        throw  Error(JSON.stringify({erro:mensagemErro, status:400}));
+        throw Error(JSON.stringify({ erro: mensagemErro, status: 400 }));
       }
-      throw new Error(JSON.stringify({erro:mensagemErro}));
-    }finally {
-      if(db) db.release();
+      throw new Error(JSON.stringify({ erro: mensagemErro }));
+    } finally {
+      if (db) db.release();
     }
   }
-  async BuscarUsuario(email, id){
+  async BuscarUsuario(email, id) {
     let db;
     try {
       let blocoWhere = "WHERE";
-      if(email && id) {
+      if (email && id) {
         blocoWhere += " email = ? AND id_usuario = ?";
-      } else if(email){
+      } else if (email) {
         blocoWhere += " email = ?";
-      }else if(id) {
+      } else if (id) {
         blocoWhere += " id_usuario = ?";
       }
 
-
-      const query = "SELECT * FROM usuarios " + blocoWhere; 
+      const query = "SELECT * FROM usuarios " + blocoWhere;
       db = await connectDB();
       const [result] = await db.query(query, [email || id]);
 
-      return result; 
-    }catch(error){
+      return result;
+    } catch (error) {
       const mensagem = error.message || "Falha ao buscar usuário";
       throw new Error(mensagem);
-    }finally {
-      if(db) db.release;
+    } finally {
+      if (db) db.release;
     }
   }
   async Deletar(id) {
     let db;
     try {
       db = await connectDB();
-      const [result] = await db.query("DELETE FROM usuarios WHERE id_usuario = ?", [id]);
+      const [result] = await db.query(
+        "DELETE FROM usuarios WHERE id_usuario = ?",
+        [id],
+      );
       return result;
-    }catch(error) {
+    } catch (error) {
       const mensagem = error.message || "Falha ao deletar o usuário";
       throw new Error(mensagem);
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
   async Atualizar(id, { nome, email, senha, perfil, ativo }) {
     let db;
-    try{
+    try {
       db = await connectDB();
-      const [ result ] = await  db.query("UPDATE usuarios SET nome = ?, email = ?, senha = ?, perfil = ?, ativo = ? WHERE id_usuario = ?", [nome, email, senha, perfil, ativo, id]);
+      const [result] = await db.query(
+        "UPDATE usuarios SET nome = ?, email = ?, senha = ?, perfil = ?, ativo = ? WHERE id_usuario = ?",
+        [nome, email, senha, perfil, ativo, id],
+      );
       return result;
-    }catch(error) {
+    } catch (error) {
       const mensagemErro = error.message || "Falha na atualização dos dados!";
-      throw new Error(mensagemErro); 
-    }finally{
-      if(db) db.release();
+      throw new Error(mensagemErro);
+    } finally {
+      if (db) db.release();
     }
   }
   async UploadFoto(caminho, id_usuario) {
     let db;
     try {
       db = await connectDB();
-      const [result] = await db.query("UPDATE usuarios SET url_foto = ? WHERE id_usuario = ?", [caminho, id_usuario]);
+      const [result] = await db.query(
+        "UPDATE usuarios SET url_foto = ? WHERE id_usuario = ?",
+        [caminho, id_usuario],
+      );
 
       return result;
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
   async BuscarUrlFotoUsuario(user) {
     let db;
     try {
       db = await connectDB();
-      const [url] = await db.query("SELECT url_foto FROM usuarios WHERE id_usuario = ?", [user.id_usuario]);
+      const [url] = await db.query(
+        "SELECT url_foto FROM usuarios WHERE id_usuario = ?",
+        [user.id_usuario],
+      );
 
       return url;
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
+    }
+  }
+  async ListarUsuarioAcompanhante(email) {
+    let db;
+    try {
+      let query =
+        "SELECT id_usuario, nome FROM usuarios WHERE perfil = 'acompanhante'";
+      if (email) query += " AND email LIKE ?";
+      db = await connectDB();
+      const [result] = await db.query(query,
+      [`%${email}%` || ""],
+      );
+
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      if (db) db.release();
     }
   }
 }
