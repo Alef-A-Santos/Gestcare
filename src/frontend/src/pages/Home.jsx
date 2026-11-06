@@ -24,7 +24,7 @@ function Home() {
         titulo={"Olá"}
         component={
           <UserName
-            className={"text-pink-400 text-3xl sm:text-4xl font-bold"}
+            className={"text-pink-400 text-4xl sm:text-4xl font-bold"}
             nome={"Maria Fonseca"}
           />
         }
