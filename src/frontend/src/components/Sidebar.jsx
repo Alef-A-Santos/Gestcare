@@ -50,7 +50,7 @@
     }, []);
 
     const foto = fotoEnviada || (caminhoFoto
-      ? `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(caminhoFoto)}`
+      ? `http://localhost:3000/api/usuarios/buscar-foto?url=${(caminhoFoto)}`
       : null);
 
     const enviarFoto = async (event) => {

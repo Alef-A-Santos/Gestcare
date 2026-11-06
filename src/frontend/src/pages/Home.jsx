@@ -41,7 +41,7 @@ function Home() {
         return;
       }
       if (dataInicio.slice(0, 4) !== dataFim.slice(0, 4)) {
-        setErroPdf("O perÃ­odo precisa estar dentro do mesmo ano.");
+        setErroPdf("O peri­odo precisa estar dentro do mesmo ano.");
         return;
       }
 
@@ -104,7 +104,7 @@ function Home() {
 
                 const dadosUsuario = await respostaUsuario.json().catch(() => null);
                 if (!respostaUsuario.ok) {
-                    throw new Error(dadosUsuario?.erro || "NÃ£o foi possÃ­vel carregar os dados do usuÃ¡rio.");
+                    throw new Error(dadosUsuario?.erro || "NÃ£o foi possi­vel carregar os dados do usuÃ¡rio.");
                 }
 
                 const usuarioSessao = dadosUsuario?.user ?? null;
@@ -121,7 +121,7 @@ function Home() {
                     );
                     const dadosRefeicoes = await respostaRefeicoes.json().catch(() => null);
                     if (!respostaRefeicoes.ok) {
-                        throw new Error(dadosRefeicoes?.erro || "Falha ao carregar diÃ¡rio alimentar.");
+                        throw new Error(dadosRefeicoes?.erro || "Falha ao carregar diario alimentar.");
                     }
                     if (ativo) setRefeicoes(dadosRefeicoes?.refeicoes ?? []);
                 }
@@ -132,7 +132,7 @@ function Home() {
                 });
                 const dadosResumo = await respostaResumo.json().catch(() => null);
                 if (!respostaResumo.ok) {
-                    throw new Error(dadosResumo?.erro || "NÃ£o foi possÃ­vel carregar o resumo do dashboard.");
+                    throw new Error(dadosResumo?.erro || "NÃ£o foi possi­vel carregar o resumo do dashboard.");
                 }
                 if (ativo) setResumo(dadosResumo?.resumo ?? null);
             } catch (error) {
