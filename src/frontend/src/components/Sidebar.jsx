@@ -75,7 +75,7 @@
           throw new Error("O servidor não retornou o caminho da foto.");
         }
 
-        const urlFoto = `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(dados.caminho_foto)}`;
+        const urlFoto = `http://localhost:3000/api/usuarios/buscar-foto?url=${(dados.caminho_foto)}`;
         setFotoEnviada(`${urlFoto}&t=${Date.now()}`);
       } catch (error) {
         console.error(error);
