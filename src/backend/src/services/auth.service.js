@@ -89,10 +89,13 @@ export default class AuthService {
       const dadosUsuario = {
         id: usuario[0].id_usuario,
         nome: usuario[0].nome,
-        email: usuario[0].email,
         perfil: usuario[0].perfil,
         url_foto: usuario[0].url_foto,
       };
+
+      if(usuario[0].perfil === "acompanhante") {
+        dadosUsuario.id_gestante = await usuariosRepository.BuscarIdGestante(usuario[0].id_usuario)
+      }
 
       return {
         mensagem: "Usuário autenticado com sucesso!",

@@ -8,6 +8,7 @@ export default class DicasController {
         const dicas = await dicasService.ListarDicas();
         return res.status(200).json({ dicas });
       } catch (error) {
+        console.error(error);
         return res.status(400).json({ erro: error.message });
       }
     };
@@ -20,6 +21,7 @@ export default class DicasController {
         const dicas = await dicasService.ListarDicasPorCategoria(categoria);
         return res.status(200).json({ dicas });
       } catch (error) {
+        console.error(error);
         return res.status(400).json({ erro: error.message });
       }
     };
@@ -32,7 +34,30 @@ export default class DicasController {
         const dicas = await dicasService.ListarDicasPorGestante(id_usuario);
         return res.status(200).json({ dicas });
       } catch (error) {
+        console.error(error);
         return res.status(400).json({ erro: error.message });
+      }
+    };
+  }
+
+  ListarDicasParaAcompanhante() {
+    return async (req, res) => {
+      try {
+        const { id_gestante } = req.params;
+        const { user } = req;
+        const dicas = await dicasService.ListarDicasParaAcompanhante(
+          id_gestante,
+          user,
+        );
+        return res.status(200).send({ dicas });
+      } catch (error) {
+        console.error(error);
+        if (error.camposFaltando) {
+          return res.status(400).send({ erro: error.message });
+        }
+        return res
+          .status(500)
+          .send({ erro: "Falha no servidor ao listar dicas!" });
       }
     };
   }
@@ -42,8 +67,11 @@ export default class DicasController {
       try {
         // mesmo padrão do cadastro de usuários: dados dentro de req.body.dados
         const dica = await dicasService.CriarDica(req.body.dados);
-        return res.status(201).json({ mensagem: "Dica criada com sucesso.", dica });
+        return res
+          .status(201)
+          .json({ mensagem: "Dica criada com sucesso.", dica });
       } catch (error) {
+        console.error(error);
         return res.status(400).json({ erro: error.message });
       }
     };
@@ -54,8 +82,11 @@ export default class DicasController {
       try {
         const { id_dica } = req.params;
         const dica = await dicasService.AlterarDica(id_dica, req.body.dados);
-        return res.status(200).json({ mensagem: "Dica alterada com sucesso.", dica });
+        return res
+          .status(200)
+          .json({ mensagem: "Dica alterada com sucesso.", dica });
       } catch (error) {
+        console.error(error);
         const status = error.message === "Dica não encontrada." ? 404 : 400;
         return res.status(status).json({ erro: error.message });
       }
@@ -68,7 +99,9 @@ export default class DicasController {
         const { id_dica } = req.params;
         const { link } = req.body.dados;
         const dica = await dicasService.VincularLinkDica(id_dica, link);
-        return res.status(200).json({ mensagem: "Link vinculado com sucesso.", dica });
+        return res
+          .status(200)
+          .json({ mensagem: "Link vinculado com sucesso.", dica });
       } catch (error) {
         const status = error.message === "Dica não encontrada." ? 404 : 400;
         return res.status(status).json({ erro: error.message });

@@ -1,37 +1,39 @@
 import { Router } from "express";
-import GlicemiaRoutes from './glicemia.routes.js';
-import UsuariosRoutes from './usuarios.routes.js';
-import AcompanhantesRoutes from './acompanhantes.routes.js';
-import AuthRoutes from './auth.routes.js';
-import RelatorioRoutes from './relatorios.routes.js';
-import DispositivosRoutes from './dispositivos.routes.js';
-import LembretesRoutes from './lembretes.routes.js';
-import DashboardRoutes from './dashboard.routes.js';
-import DicasRoutes from './dicas.routes.js';
+import GlicemiaRoutes from "./glicemia.routes.js";
+import UsuariosRoutes from "./usuarios.routes.js";
+import AcompanhantesRoutes from "./acompanhantes.routes.js";
+import AuthRoutes from "./auth.routes.js";
+import RelatorioRoutes from "./relatorios.routes.js";
+import DispositivosRoutes from "./dispositivos.routes.js";
+import LembretesRoutes from "./lembretes.routes.js";
+import DashboardRoutes from "./dashboard.routes.js";
+import DicasRoutes from "./dicas.routes.js";
+import DiarioRoutes from "./diario.routes.js";
+
 const router = Router();
 
 // As linhas abaixo básicamente dizem para que quando uma requisição for feita para o endpoint específicado
 // para utilizar o router(ou a função) correspondente
-router.use('/acompanhantes', AcompanhantesRoutes);
-router.use('/auth', AuthRoutes);
-router.use('/relatorio', RelatorioRoutes);
-router.use('/dispositivos', DispositivosRoutes);
-router.use('/lembretes', LembretesRoutes);
-router.use('/dashboard', DashboardRoutes);
-router.use('/dicas', DicasRoutes);
-router.use('/dispositivos', DispositivosRoutes);
+router.use("/acompanhantes", AcompanhantesRoutes);
+router.use("/auth", AuthRoutes);
+router.use("/relatorio", RelatorioRoutes);
+router.use("/dispositivos", DispositivosRoutes);
+router.use("/lembretes", LembretesRoutes);
+router.use("/dashboard", DashboardRoutes);
+router.use("/dicas", DicasRoutes);
+router.use("/diario", DiarioRoutes);
+router.use("/dispositivos", DispositivosRoutes);
 router.use(`/glicemia`, GlicemiaRoutes);
-router.use('/usuarios', UsuariosRoutes);
-router.use('/relatorio', RelatorioRoutes);
-router.use('/lembretes', LembretesRoutes);
-
+router.use("/usuarios", UsuariosRoutes);
+router.use("/relatorio", RelatorioRoutes);
+router.use("/lembretes", LembretesRoutes);
 
 // Rota de teste
-router.use('/teste-api', (_, res) => {
+router.use("/teste-api", (_, res) => {
   res.status(200).json({
-    status:"OK",
-    mensagem:"Servidor rodando!"
+    status: "OK",
+    mensagem: "Servidor rodando!",
   });
-})
+});
 
 export default router;

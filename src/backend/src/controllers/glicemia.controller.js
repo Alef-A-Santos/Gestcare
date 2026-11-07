@@ -37,6 +37,28 @@ export default class GlicemiaController {
     };
   }
 
+  ListarParaAcompanhante() {
+    return async (req, res) => {
+      try {
+        const { user } = req;
+        const { id_gestante } = req.params;
+        const registros = await glicemiaService.ListarParaAcompanhante(
+          id_gestante,
+          user,
+        );
+        return res.status(200).send({ registros });
+      } catch (error) {
+        console.error(error);
+        if (error.camposFaltando) {
+          return res.status(400).send({ erro: error.message });
+        }
+        return res
+          .status(500)
+          .send({ erro: "Falha no servidor ao listar registros." });
+      }
+    };
+  }
+
   Remover() {
     return async (req, res) => {
       try {

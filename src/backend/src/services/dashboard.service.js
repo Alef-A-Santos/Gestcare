@@ -3,10 +3,13 @@ import GestacaoRepository from "../repository/gestacao.repository.js";
 import GlicemiaRespository from "../repository/glicemia.repository.js";
 import LembretesRepository from "../repository/lembretes.repository.js";
 import static_json from "../assets/json/frases.json" with { type: "json" };
+import UsuariosRepository from "../repository/usuarios.repository.js";
 
 const glicemiaRespository = new GlicemiaRespository();
 const lembretesRepository = new LembretesRepository();
 const diarioAlimentarRepository = new DiarioRepository();
+const error = new Error();
+
 const diasSemana = {
   domingo: 0,
   "segunda-feira": 1,
@@ -38,7 +41,7 @@ export default class DashboardService {
         await GestacaoRepository.getQuantidadeSemanas(user);
       const frase_semana = static_json.FRASES[semana];
       const refeicoes =
-        await diarioAlimentarRepository.buscarRefeicoesDia(user);
+        await diarioAlimentarRepository.buscarRefeicoesDia(user.id_usuario);
       const data_prev = await GestacaoRepository.getDataPrevParto(user);
       const trimestre = this.#obterTrimestre(
         new Date(data_prev.data_prev_parto),
@@ -56,6 +59,22 @@ export default class DashboardService {
         data_prev_parto: data_prev.data_prev_mascarada,
       };
 
+      return resumo;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async ResumoAcompanhante(id_gestante) {
+    try {
+      if(!id_gestante) {
+        error.camposFaltando = true;
+        error.message = "Gestante não identificada para busca do resumo!";
+      }
+      const user = {
+        id_usuario: id_gestante
+      }
+      const resumo = await this.Resumo(user); 
+  
       return resumo;
     } catch (error) {
       throw error;

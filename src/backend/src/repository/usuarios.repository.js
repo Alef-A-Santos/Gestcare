@@ -145,4 +145,14 @@ export default class UsuariosRepository {
       if (db) db.release();
     }
   }
+  async BuscarIdGestanteAcompanhante(id_acompanhante) {
+    let db;
+    try {
+      db = await connectDB();
+      const [[result]] = await db.query(`SELECT id_gestante FROM acompanhantes WHERE id_acompanhante = ?`, [id_acompanhante]);
+      return result.id_gestante;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

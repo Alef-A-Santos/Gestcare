@@ -46,6 +46,25 @@ export default class DiarioRepository {
     }
   }
 
+  async ListarDicasParaAcompanhante(id_gestante, id_acompanhante){
+    let db;
+    try {
+      db = await connectDB();
+      const [diario] = await db.query(`
+        SELECT da.tipo_refeicao, da.descricao_alimentos, da.foto_url, da.data_hora 
+        FROM diario_alimentar da 
+          INNER JOIN usuarios u ON da.id_usuario = u.id_usuario 
+          INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario
+        WHERE a.id_acompanhante = ? AND a.id_gestante = ? `,[id_acompanhante, id_gestante]);
+
+      return diario;
+    } catch (error) {
+      throw error;
+    }finally{
+      if(db) db.release();
+    }
+  }
+
   async buscarRefeicaoPorId(id_refeicao) {
     let db;
     try {
@@ -106,11 +125,11 @@ export default class DiarioRepository {
       if (db) db.release();
     }
   }
-  async buscarRefeicoesDia(user) {
+  async buscarRefeicoesDia(id_gestante) {
     let db;
     try {
       db = await connectDB();
-      const [refeicoes] = await db.query(`SELECT tipo_refeicao, descricao_alimentos FROM diario_alimentar WHERE id_usuario = ? AND DATE(data_hora) = DATE(NOW())`, [user.id_usuario]);
+      const [refeicoes] = await db.query(`SELECT tipo_refeicao, descricao_alimentos FROM diario_alimentar WHERE id_usuario = ? AND DATE(data_hora) = DATE(NOW())`, [id_gestante]);
       return refeicoes; 
     } catch (error) {
       throw error;
