@@ -17,6 +17,7 @@ import UserName from "./UserName";
 import SidebarItens from "./SidebarItens";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useUsuario } from "../context/UsuarioContext";
 
 // Ajuste os caminhos (to) para os mesmos do seu App.jsx
 const itens = [
@@ -29,21 +30,49 @@ const itens = [
 ];
 
 function Sidebar({
-  nome = "Maria Fonseca",
+  nome,
   semanas,
   caminhoFoto,
 }) {
   const navigate = useNavigate();
+  const usuario = useUsuario();
+  const nomeExibido = nome ?? usuario?.nome ?? "";
+  // /api/auth/me returns the database field as `url_foto`.
+  const fotoUrl = caminhoFoto ?? usuario?.url_foto;
 
   const [fotoEnviada, setFotoEnviada] = useState(null);
   const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
+  const [semanasResumo, setSemanasResumo] = useState(null);
+
+  useEffect(() => {
+    let ativo = true;
+
+    async function carregarSemanas() {
+      if (semanas != null && semanas !== "") return;
+      try {
+        const resposta = await fetch("http://localhost:3000/api/dashboard/resumo", {
+          credentials: "include",
+        });
+        if (!resposta.ok) return;
+        const dados = await resposta.json();
+        if (ativo) setSemanasResumo(dados?.resumo?.qtd_semanas ?? null);
+      } catch {
+        // A sidebar continua utilizável mesmo se o resumo estiver indisponível.
+      }
+    }
+
+    carregarSemanas();
+    return () => { ativo = false; };
+  }, [semanas]);
+
+  const semanasExibidas = semanas ?? semanasResumo;
 
   // Formatar semanas de gestação
   const gestacaoFormatada = (() => {
-    if (semanas == null || semanas === "") return null;
+    if (semanasExibidas == null || semanasExibidas === "") return null;
 
-    const valor = String(semanas).trim();
+    const valor = String(semanasExibidas).trim();
 
     const totalDias = valor.match(/(\d+)\s*dias?/i);
 
@@ -76,8 +105,8 @@ function Sidebar({
   // URL da foto de perfil
   const foto =
     fotoEnviada ||
-    (caminhoFoto
-      ? `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(caminhoFoto)}`
+    (fotoUrl
+      ? `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(fotoUrl)}`
       : null);
 
   // Enviar foto de perfil
@@ -289,7 +318,7 @@ function Sidebar({
 
             <UserName
               className="text-2xl font-playfair font-bold text-center mt-3"
-              nome={nome}
+              nome={nomeExibido}
             />
 
             <h4 className="text-xl mt-2 text-center font-poppins">

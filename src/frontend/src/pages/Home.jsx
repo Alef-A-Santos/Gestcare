@@ -10,9 +10,31 @@ import CardMarco from "../components/CardMarco";
 import CardLembrete from "../components/CardLembrete";
 import UserName from "../components/UserName";
 import Botao from "../components/Botao";
+import { useUsuario } from "../context/UsuarioContext";
+
+const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+function formatarDataParto(valor) {
+  if (!valor) return "";
+
+  const texto = String(valor).trim();
+  // Datas em YYYY-MM-DD (inclusive timestamp ISO) devem ser interpretadas
+  // como data de calendário para evitar mudança de dia por fuso horário.
+  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+
+  const brasileira = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+  if (brasileira) {
+    const [, dia, mes, ano] = brasileira;
+    return `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${ano.length === 2 ? `20${ano}` : ano}`;
+  }
+
+  const data = new Date(texto);
+  return Number.isNaN(data.getTime()) ? texto : data.toLocaleDateString("pt-BR");
+}
 
 function Home() {
-  const [usuario, setUsuario] = useState(null);
+  const usuario = useUsuario();
   const [resumo, setResumo] = useState(null);
   const [refeicoes, setRefeicoes] = useState([]);
   const [erro, setErro] = useState("");
@@ -75,7 +97,7 @@ function Home() {
 
     try {
       const resposta = await fetch(
-        "http://localhost:3000/api/relatorio/gerar-relatorio",
+        `${API}/relatorio/gerar-relatorio`,
         {
           method: "POST",
           credentials: "include",
@@ -153,97 +175,51 @@ function Home() {
     let ativo = true;
 
     async function carregarDashboard() {
-      try {
-        // Buscar usuário autenticado
-        const respostaUsuario = await fetch(
-          "http://localhost:3000/api/auth/me",
-          {
-            method: "GET",
-            credentials: "include",
-          }
+      // Aguarda o contexto de autenticação. A rota de resumo do backend só
+      // atende gestantes, portanto os demais perfis não devem consultá-la.
+      if (!usuario) return;
+      if (String(usuario.perfil || "").trim().toLowerCase() !== "gestante") return;
+
+      // As duas fontes são independentes: falha no diário não pode impedir
+      // que glicemia, gestação e lembretes sejam carregados.
+      const carregarRefeicoes = async () => {
+        if (!usuario.id_usuario) return;
+        const resposta = await fetch(
+          `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(usuario.id_usuario)}`,
+          { method: "GET", credentials: "include" }
         );
-
-        const dadosUsuario = await respostaUsuario
-          .json()
-          .catch(() => null);
-
-        if (!respostaUsuario.ok) {
-          throw new Error(
-            dadosUsuario?.erro ||
-              "Não foi possível carregar os dados do usuário."
-          );
+        const dados = await resposta.json().catch(() => null);
+        if (!resposta.ok) {
+          throw new Error(dados?.erro || "Falha ao carregar diário alimentar.");
         }
-
-        const usuarioSessao = dadosUsuario?.user ?? null;
-
+        const hoje = dataLocal(new Date());
+        const lista = Array.isArray(dados?.refeicoes) ? dados.refeicoes : [];
         if (ativo) {
-          setUsuario(usuarioSessao);
+          setRefeicoes(lista.filter((refeicao) =>
+            refeicao.data_hora && String(refeicao.data_hora).slice(0, 10) === hoje
+          ));
         }
+      };
 
-        // Carregar dados somente para gestantes
-        if (usuarioSessao?.perfil !== "gestante") return;
-
-        // Buscar refeições do dia
-        if (usuarioSessao?.id) {
-          const agora = new Date();
-          const dataHoje = dataLocal(agora);
-
-          const respostaRefeicoes = await fetch(
-            `http://localhost:3000/api/diario/listar-refeicoes/usuario/${encodeURIComponent(
-              usuarioSessao.id
-            )}?data=${dataHoje}`,
-            {
-              method: "GET",
-              credentials: "include",
-            }
-          );
-
-          const dadosRefeicoes = await respostaRefeicoes
-            .json()
-            .catch(() => null);
-
-          if (!respostaRefeicoes.ok) {
-            throw new Error(
-              dadosRefeicoes?.erro ||
-                "Falha ao carregar diário alimentar."
-            );
-          }
-
-          if (ativo) {
-            setRefeicoes(dadosRefeicoes?.refeicoes ?? []);
-          }
-        }
-
-        // Buscar resumo do dashboard
-        const respostaResumo = await fetch(
-          "http://localhost:3000/api/dashboard/resumo",
-          {
-            method: "GET",
-            credentials: "include",
-          }
+      const carregarResumo = async () => {
+        const resposta = await fetch(
+          `${API}/dashboard/resumo`,
+          { method: "GET", credentials: "include" }
         );
-
-        const dadosResumo = await respostaResumo
-          .json()
-          .catch(() => null);
-
-        if (!respostaResumo.ok) {
-          throw new Error(
-            dadosResumo?.erro ||
-              "Não foi possível carregar o resumo do dashboard."
-          );
+        const dados = await resposta.json().catch(() => null);
+        if (!resposta.ok) {
+          throw new Error(dados?.erro || "Não foi possível carregar o resumo do dashboard.");
         }
+        if (ativo) setResumo(dados?.resumo ?? null);
+      };
 
-        if (ativo) {
-          setResumo(dadosResumo?.resumo ?? null);
-        }
-      } catch (error) {
-        if (ativo) {
-          setErro(
-            error.message || "Falha ao conectar com o servidor."
-          );
-        }
-      }
+      const resultados = await Promise.allSettled([carregarRefeicoes(), carregarResumo()]);
+      if (!ativo) return;
+      const falhas = resultados
+        .filter((resultado) => resultado.status === "rejected")
+        .map((resultado) => resultado.reason?.message)
+        .filter(Boolean);
+      if (falhas.length) setErro(falhas.join(" "));
     }
 
     carregarDashboard();
@@ -251,7 +227,7 @@ function Home() {
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [usuario]);
 
   // Dados formatados para os cards
   const ultimaMedicao = resumo?.ultima_medicao;
@@ -281,6 +257,8 @@ function Home() {
       : "Sem dados";
 
   const semanas = resumo?.qtd_semanas || "Sem dados";
+  const dataParto = formatarDataParto(resumo?.data_prev_parto);
+  const marcoSemana = resumo?.frase_semana || "Sem dados para esta semana.";
 
   const proximoLembrete = resumo?.proximos_lembretes?.[0];
 
@@ -429,8 +407,8 @@ function Home() {
               className="lg:col-span-2 xl:col-span-1"
               semanas={semanas}
               dias=""
-              trimestre=""
-              dataParto=""
+              trimestre={resumo?.trimestre || ""}
+              dataParto={dataParto}
             />
 
           </div>
@@ -446,8 +424,8 @@ function Home() {
                   ? `${resumo.qtd_semanas}+`
                   : "Sem dados"
               }
-              comparacao="Do tamanho de um mamão papaya"
-              descricao="Ouvidos atentos à sua voz e movimentos cheios de energia."
+              comparacao=""
+              descricao={marcoSemana}
             />
 
           </div>
