@@ -1,4 +1,4 @@
-import  DicasRepository from "../repository/dicas.repository.js";
+import DicasRepository from "../repository/dicas.repository.js";
 
 const CATEGORIAS_VALIDAS = [
   "alimentacao",
@@ -7,7 +7,7 @@ const CATEGORIAS_VALIDAS = [
   "medicacao",
   "sinais_de_alerta",
 ];
-const dicasRepository = new DicasRepository()
+const dicasRepository = new DicasRepository();
 export default class DicasService {
   async ListarDicas() {
     return await dicasRepository.buscarDicas();
@@ -16,7 +16,7 @@ export default class DicasService {
   async ListarDicasPorCategoria(categoria) {
     if (!CATEGORIAS_VALIDAS.includes(categoria)) {
       throw new Error(
-        `Categoria inválida. Use uma de: ${CATEGORIAS_VALIDAS.join(", ")}`
+        `Categoria inválida. Use uma de: ${CATEGORIAS_VALIDAS.join(", ")}`,
       );
     }
     return await dicasRepository.buscarDicasPorCategoria(categoria);
@@ -35,7 +35,7 @@ export default class DicasService {
     }
     if (!CATEGORIAS_VALIDAS.includes(categoria)) {
       throw new Error(
-        `Categoria inválida. Use uma de: ${CATEGORIAS_VALIDAS.join(", ")}`
+        `Categoria inválida. Use uma de: ${CATEGORIAS_VALIDAS.join(", ")}`,
       );
     }
     // id_usuario opcional: sem ele, a dica é geral (para todos os usuários)
@@ -53,7 +53,7 @@ export default class DicasService {
     }
     if (!CATEGORIAS_VALIDAS.includes(categoria)) {
       throw new Error(
-        `Categoria inválida. Use uma de: ${CATEGORIAS_VALIDAS.join(", ")}`
+        `Categoria inválida. Use uma de: ${CATEGORIAS_VALIDAS.join(", ")}`,
       );
     }
     const dica = await dicasRepository.atualizarDica(id, {
@@ -89,5 +89,25 @@ export default class DicasService {
       throw new Error("Dica não encontrada.");
     }
     return dica;
+  }
+
+  async ListarDicasParaAcompanhante(id_gestante, user) {
+    try {
+      if (!id_gestante) {
+        const error = new Error();
+        error.message = "Gestante não informada para busca dos registros!";
+        error.camposFaltando = true;
+        throw error;
+      }
+
+      const response = await dicasRepository.ListarDicasParaAcompanhante(
+        id_gestante,
+        user.id_Usuario,
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 }

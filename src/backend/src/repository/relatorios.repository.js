@@ -40,8 +40,6 @@ export default class RelatoriosRepository {
         [user.id_usuario, dados.data_inicio, dados.data_fim, dados.ano],
       );
 
-
-
       const [[registro_mais_baixo]] = await db.query(
         `WITH min as (
             SELECT MIN(valor) as media, id_usuario 

@@ -20,7 +20,24 @@ const camposObrigatorios = [
 export default class LembretesService {
   async ListarLembretesUsuario(user) {
     const response = await lembretesRepository.ListarLembretesUsuario(user);
-    return { lembretes:response };
+    return { lembretes: response };
+  }
+  async ListarLembretesParaAcompanhante(id_gestante, user) {
+    try {
+      if (!id_gestante) {
+        error.hasMissingValues = true;
+        error.message = "Gestante não informada para a busca dos lembretes!";
+        throw error;
+      }
+      const lembretes =
+        await lembretesRepository.ListarLembretesParaAcompanhante(
+          id_gestante,
+          user.id_usuario,
+        );
+      return lembretes;
+    } catch (error) {
+      throw error;
+    }
   }
   async Criar(user, dados) {
     let db;
@@ -41,8 +58,9 @@ export default class LembretesService {
         throw error;
       }
 
-      const dispositivos = await dispositivosRepository.ListarDispositivosUsuario(user);
-      if(!dispositivos.length) {
+      const dispositivos =
+        await dispositivosRepository.ListarDispositivosUsuario(user);
+      if (!dispositivos.length) {
         error.notFound = true;
         error.message = "Você não possuí dispositivos cadastrados!";
         throw error;
@@ -68,7 +86,7 @@ export default class LembretesService {
       const jobCreated = await jobsScheduler.Criar(
         config,
         response.insertId,
-        ()=>this.#enviar(dados.titulo, dados.categoria, user),
+        () => this.#enviar(dados.titulo, dados.categoria, user),
         true, // Parâmetro para salvar o job no map
       );
 
@@ -91,7 +109,7 @@ export default class LembretesService {
         const jobDelecao = jobsScheduler.Criar(
           {
             ...config,
-            minute: config.minute + 10 % 60,
+            minute: config.minute + (10 % 60),
           },
           "temp",
           desativar,
@@ -110,48 +128,58 @@ export default class LembretesService {
   async AlterarStatus(id, user, status) {
     let db;
     try {
-      if(!status || !id){
+      if (!status || !id) {
         error.hasMissingValues = true;
         error.message = "Informe o status e o lembrete!";
         throw error;
       }
       db = await connectDB();
 
-      const [[lembrete]] = await db.query(`SELECT COUNT(id_lembrete) as qtd_lembrete FROM lembretes WHERE id_lembrete = ? AND id_usuario = ?`,[
-        id, user.id_usuario
-      ]);
+      const [[lembrete]] = await db.query(
+        `SELECT COUNT(id_lembrete) as qtd_lembrete FROM lembretes WHERE id_lembrete = ? AND id_usuario = ?`,
+        [id, user.id_usuario],
+      );
 
-      if(!lembrete.qtd_lembrete) {
+      if (!lembrete.qtd_lembrete) {
         error.notFound = true;
         error.message = "Lembrete  não encontrado!";
         throw error;
       }
 
-      const response = await lembretesRepository.AlterarStatusLembrete(id, user, status, db);
+      const response = await lembretesRepository.AlterarStatusLembrete(
+        id,
+        user,
+        status,
+        db,
+      );
 
-      status == 0?this.#desativarJob(id):this.#recriarJob(id, user);
+      status == 0 ? this.#desativarJob(id) : this.#recriarJob(id, user);
 
-      return { mensagem: "Status alterado com sucesso!"};
-    }catch(error) {
+      return { mensagem: "Status alterado com sucesso!" };
+    } catch (error) {
       throw error;
-    }finally { 
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
   async Deletar(id, user) {
     const response = await lembretesRepository.Deletar(id, user);
     this.#desativarJob(id);
-    if(response.affectedRows == 0) {
-      throw error;      
+    if (response.affectedRows == 0) {
+      throw error;
     }
     return { mensagem: "Lembrete deletado com sucesso!" };
   }
   async Editar(id, user, dados) {
-    let db,
-    novaConfig;
+    let db, novaConfig;
     try {
-      const camposConfig = ["horario","recorrencia","periodicamente","horario_fixo"];
-      if(!dados || !Object.keys(dados)){
+      const camposConfig = [
+        "horario",
+        "recorrencia",
+        "periodicamente",
+        "horario_fixo",
+      ];
+      if (!dados || !Object.keys(dados)) {
         error.hasMissingValues = true;
         error.message = "Insra os campos para alteração!";
         throw error;
@@ -159,18 +187,19 @@ export default class LembretesService {
 
       db = await connectDB();
       db.beginTransaction();
-      const [[exist]] = await db.query(`SELECT count(id_lembrete) as qtd FROM lembretes WHERE id_lembrete = ? AND id_usuario = ?`,[
-        id, user.id_usuario
-      ]);
+      const [[exist]] = await db.query(
+        `SELECT count(id_lembrete) as qtd FROM lembretes WHERE id_lembrete = ? AND id_usuario = ?`,
+        [id, user.id_usuario],
+      );
 
-      if(!exist.qtd){
+      if (!exist.qtd) {
         error.notFound = true;
         error.message = "Lembrete  não encontrado!";
         throw error;
       }
 
       const hasCamposConfig = camposConfig.some((campo) => dados[campo]);
-      if(hasCamposConfig){
+      if (hasCamposConfig) {
         novaConfig = criarConfig(
           dados.horario,
           dados.recorrencia,
@@ -179,26 +208,38 @@ export default class LembretesService {
         );
       }
 
-      const lembreteAtualizado = await lembretesRepository.Editar(id, user, dados, novaConfig, db);
-      if(!lembreteAtualizado || !Object.keys(lembreteAtualizado)){
+      const lembreteAtualizado = await lembretesRepository.Editar(
+        id,
+        user,
+        dados,
+        novaConfig,
+        db,
+      );
+      if (!lembreteAtualizado || !Object.keys(lembreteAtualizado)) {
         error.fail = true;
         error.message = "Falha ao editar lembrete!Tente novamente mais tarde.";
         throw error;
       }
 
-      if(novaConfig) {
-        const editado = jobsScheduler.Editar(id, novaConfig, () => this.#enviar(lembreteAtualizado.titulo, lembreteAtualizado.categoria, user));
+      if (novaConfig) {
+        const editado = jobsScheduler.Editar(id, novaConfig, () =>
+          this.#enviar(
+            lembreteAtualizado.titulo,
+            lembreteAtualizado.categoria,
+            user,
+          ),
+        );
       }
 
       db.commit();
       return {
-        mensagem:"Lembrete editado com sucesso!"
-      }
-    }catch(error) {
-      if(db) db.rollback();
+        mensagem: "Lembrete editado com sucesso!",
+      };
+    } catch (error) {
+      if (db) db.rollback();
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
 
@@ -210,11 +251,16 @@ export default class LembretesService {
   // Função para recriação do job
   async #recriarJob(id, user) {
     const lembrete = await lembretesRepository.BuscarPorId(id);
-    const config  = JSON.parse(lembrete.config_node_schedule);
-    return jobsScheduler.Criar(config, id, () => this.#enviar(lembrete.titulo, lembrete.categoria, user), true)
+    const config = JSON.parse(lembrete.config_node_schedule);
+    return jobsScheduler.Criar(
+      config,
+      id,
+      () => this.#enviar(lembrete.titulo, lembrete.categoria, user),
+      true,
+    );
   }
   // Função de envio
-  async #enviar(titulo, categoria, user){
+  async #enviar(titulo, categoria, user) {
     return await EnviarLembrete(titulo, categoria, user);
-  } 
+  }
 }

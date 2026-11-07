@@ -16,6 +16,23 @@ export default class LembretesController {
       }
     };
   }
+  ListarLembretesParaAcompanhante() {
+    return async (req, res) => {
+      try {
+        const { user } = req;
+        const { id_gestante } = req.params;
+        const lembretes =
+          await lembretesService.ListarLembretesParaAcompanhante(
+            id_gestante,
+            user,
+          );
+        return res.status(200).send({ lembretes });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send({ erro: mensagemErroInterno });
+      }
+    };
+  }
   Criar() {
     return async (req, res) => {
       try {

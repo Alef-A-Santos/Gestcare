@@ -10,6 +10,20 @@ export default class DashboardController {
         const resumo = await dashboardService.Resumo(user);
         return res.status(200).send({resumo});
       } catch (error) {
+        console.error(error)
+        return res.status(500).send({erro: "Erro ao buscar resumo!"});
+      }
+    };
+  }
+  ResumoAcompanhante() {
+    return async (req, res) => {
+      try {
+        const { id_gestante } =  req.params; 
+        const resumo = await dashboardService.ResumoAcompanhante(id_gestante);
+        return res.status(200).send({resumo});
+      } catch (error) {
+        console.error(error);
+        if(error.camposFaltando) return res.status(400).send({erro: error.message });
         return res.status(500).send({erro: "Erro ao buscar resumo!"});
       }
     };

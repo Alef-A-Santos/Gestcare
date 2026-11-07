@@ -1,7 +1,7 @@
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
-
+import { formatarData } from "../utils/formatter.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const caminho_imagem = resolve(
   __dirname,
@@ -35,11 +35,6 @@ const meses = {
 
 const templateTrSemRegistro = `<tr colspan="3"><td>Sem registros</td></tr>`;
 
-const formatarData = (data) =>
-  Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(data);
 
 export function gerarTemplateRelatorio(dados) {
   return `
