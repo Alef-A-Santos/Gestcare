@@ -10,6 +10,7 @@ export default class DashboardController {
         const resumo = await dashboardService.Resumo(user);
         return res.status(200).send({resumo});
       } catch (error) {
+        console.error(error)
         return res.status(500).send({erro: "Erro ao buscar resumo!"});
       }
     };

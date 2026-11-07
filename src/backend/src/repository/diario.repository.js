@@ -70,7 +70,7 @@ export default class DiarioRepository {
         `UPDATE diario_alimentar
             SET tipo_refeicao = ?, descricao_alimentos = ?, foto_url = ?, data_hora = ?
           WHERE id_refeicao = ? AND ativo = 1`,
-        [tipo_refeicao, descricao_alimentos, foto_url, data_hora, id_refeicao]
+        [tip7o_refeicao, descricao_alimentos, foto_url, data_hora, id_refeicao]
       );
       const [rows] = await db.query(
         `SELECT * FROM diario_alimentar WHERE id_refeicao = ?`,
@@ -104,6 +104,18 @@ export default class DiarioRepository {
       throw error;
     } finally {
       if (db) db.release();
+    }
+  }
+  async buscarRefeicoesDia(user) {
+    let db;
+    try {
+      db = await connectDB();
+      const [refeicoes] = await db.query(`SELECT tipo_refeicao, descricao_alimentos FROM diario_alimentar WHERE id_usuario = ? AND DATE(data_hora) = DATE(NOW())`, [user.id_usuario]);
+      return refeicoes; 
+    } catch (error) {
+      throw error;
+    }finally {
+      if(db) db.release();
     }
   }
 }

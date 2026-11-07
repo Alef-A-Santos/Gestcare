@@ -51,7 +51,7 @@ export default class UsuariosRepository {
         blocoWhere += " id_usuario = ?";
       }
 
-      const query = "SELECT * FROM usuarios " + blocoWhere;
+      const query = "SELECT id_usuario, perfil, email, nome, url_foto, ativo, senha FROM usuarios " + blocoWhere;
       db = await connectDB();
       const [result] = await db.query(query, [email || id]);
 
@@ -60,7 +60,7 @@ export default class UsuariosRepository {
       const mensagem = error.message || "Falha ao buscar usuário";
       throw new Error(mensagem);
     } finally {
-      if (db) db.release;
+      if (db) db.release();
     }
   }
   async Deletar(id) {
@@ -115,12 +115,12 @@ export default class UsuariosRepository {
     let db;
     try {
       db = await connectDB();
-      const [url] = await db.query(
+      const [[url]] = await db.query(
         "SELECT url_foto FROM usuarios WHERE id_usuario = ?",
         [user.id_usuario],
       );
 
-      return url;
+      return url.url_foto;
     } catch (error) {
       throw error;
     } finally {

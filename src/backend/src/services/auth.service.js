@@ -91,6 +91,7 @@ export default class AuthService {
         nome: usuario[0].nome,
         email: usuario[0].email,
         perfil: usuario[0].perfil,
+        url_foto: usuario[0].url_foto,
       };
 
       return {
