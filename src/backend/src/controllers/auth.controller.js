@@ -55,7 +55,11 @@ export default class AuthController {
       } catch (error) {
         console.error(error);
         // const { erro, status } = JSON.parse(error.messageCampo obrigatórios:);
-        if (error.hasMissingValues || error.invalidPasswd || error.usuarioCadastrado) {
+        if (
+          error.hasMissingValues ||
+          error.invalidPasswd ||
+          error.usuarioCadastrado
+        ) {
           return res.status(400).send({ erro: error.message });
         }
 
@@ -111,11 +115,9 @@ export default class AuthController {
           return res.status(400).send({ erro: error.message });
         }
 
-        return res
-          .status(500)
-          .send({
-            erro: error.emailNotSended ? error.message : "Falha no servidor",
-          });
+        return res.status(500).send({
+          erro: error.emailNotSended ? error.message : "Falha no servidor",
+        });
       }
     };
   }
@@ -123,13 +125,24 @@ export default class AuthController {
     return async (req, res) => {
       try {
         const { user } = req;
-        user.url_foto = await usuariosRepository.BuscarUrlFotoUsuario(user) || "";
+        if (user.perfil === "acompanhante" && !user.id_gestante)
+          user.id_gestante =
+            await usuariosRepository.BuscarIdGestanteAcompanhante(
+              user.id_usuario,
+            );
+
+        user.url_foto =
+          (await usuariosRepository.BuscarUrlFotoUsuario(user)) || "";
         return res.status(200).send({ user });
       } catch (error) {
         console.error(error);
-        return res.status(500).send({ erro: "Falha ao autenticar usuário! Tente novamente mais tarde."});
+        return res
+          .status(500)
+          .send({
+            erro: "Falha ao autenticar usuário! Tente novamente mais tarde.",
+          });
       }
-    }
+    };
   }
   AlterarSenha() {
     return async (req, res) => {
@@ -137,40 +150,44 @@ export default class AuthController {
         const { dados } = req.body;
         const response = await authService.AlterarSenha(dados);
         return res.status(200).send({ response });
-      }catch(error) {
+      } catch (error) {
         console.error(error);
-        
-        if(error.hasMissingValues || error.isInvalida) {
+
+        if (error.hasMissingValues || error.isInvalida) {
           return res.status(400).send({ erro: error.message });
         }
 
-        return res.status(500).send({ erro: "Erro interno ao alterar a senha! Tente novamente mais tarde."  });
+        return res
+          .status(500)
+          .send({
+            erro: "Erro interno ao alterar a senha! Tente novamente mais tarde.",
+          });
       }
     };
   }
-  Autenticar() {
-    return async (req, res) => {
-      return res.status(200).send({user:req.user});
-    }
-  }
-  EnviarCodigo(){
+  // Autenticar() {
+  //   return async (req, res) => {
+  //     return res.status(200).send({user:req.user});
+  //   }
+  // }
+  EnviarCodigo() {
     return async (req, res) => {
       try {
         const { dados } = req.body;
-        const response = await authService.EnviarCodigo(dados); 
+        const response = await authService.EnviarCodigo(dados);
         return res.status(200).send(response);
       } catch (error) {
         console.error(error);
 
-         if(error.notFound) {
-          return res.status(404).send({ erro : error.message });
+        if (error.notFound) {
+          return res.status(404).send({ erro: error.message });
         }
 
-        if(error.hasMissingValues) {
-          return res.status(400).send({ erro : error.message });
+        if (error.hasMissingValues) {
+          return res.status(400).send({ erro: error.message });
         }
-        return res.status(500).send({erro: mensagemErroInterno});
+        return res.status(500).send({ erro: mensagemErroInterno });
       }
-    }
+    };
   }
 }

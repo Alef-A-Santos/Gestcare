@@ -13,8 +13,26 @@ export default class LembretesRepository {
       if(db) db.release();
     }
   }
+  async ListarLembretesParaAcompanhante(id_gestante, id_acompanhante) {
+    let db;
+    try {
+      db = await connectDB();
+      const [lembretes]  = await db.query(`
+        SELECT l.titulo, l.horario, l.recorrencia, l.categoria 
+        FROM lembretes l 
+          INNER JOIN usuarios u ON l.id_usuario = u.id_usuario 
+          INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario
+        WHERE a.id_acompanhante = ? AND a.id_gestante = ? `,[id_acompanhante, id_gestante]);
+
+      return lembretes;
+    } catch (error) {
+      throw error;
+    }finally{
+      if(db) db.release();
+    }
+  }
   async Criar(user, dados, config, db){
-    const [result] = await db.query("INSERT INTO lembretes(id_usuario, titulo, categoria, horario, recorrencia, config_node_schedule, ativo) VALUES(?, ?, ?, ?, ?, ?, 1)",[
+    const [result] = await db.query("INSERT INTO lembretes(id_usuario, titulo, categoria, horario, recorrencia, config_node_schedule, ativo, criado_em) VALUES(?, ?, ?, ?, ?, ?, 1, NOW())",[
       user.id_usuario,
       dados.titulo,
       dados.categoria,
@@ -132,6 +150,8 @@ export default class LembretesRepository {
       return lembretes;
     }catch(error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 }

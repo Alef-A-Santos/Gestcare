@@ -117,12 +117,25 @@ export default class GestacaoRepository {
             TIMESTAMPDIFF(WEEK, DATE_ADD(data_prev_parto, INTERVAL -9 MONTH), SYSDATE()), 
             " semana(s) ", 
             TIMESTAMPDIFF(DAY, DATE_ADD(data_prev_parto, INTERVAL -9 MONTH), SYSDATE()), 
-            " dia(s)") AS qtd_semanas
+            " dia(s)") AS qtd_semanas, TIMESTAMPDIFF(WEEK, DATE_ADD(data_prev_parto, INTERVAL -9 MONTH), SYSDATE()) as semana
           FROM gestacao WHERE id_usuario = ? AND ativo = 1`,[user.id_usuario]);
 
       return quantidadeSemanas;
     }catch(error){
       throw error;
+    }
+  }
+  static async getDataPrevParto(user) {
+    let db;
+    try {
+      db = await connectDB();
+      const [[data_pev]] = await db.query("SELECT data_prev_parto, DATE_FORMAT(DATE(data_prev_parto), 'XX/%m/%Y') as data_prev_mascarada FROM gestacao WHERE id_usuario = ?", [user.id_usuario]);
+
+      return data_pev;
+    } catch (error) {
+      throw error;
+    }finally{
+      if(db) db.release();
     }
   }
 }

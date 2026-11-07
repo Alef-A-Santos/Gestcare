@@ -26,19 +26,26 @@ function normalizarDataHora(valor) {
   return dataHora;
 }
 
-function validarEMontar({ tipo_refeicao, descricao_alimentos, foto_url, data_hora } = {}) {
+function validarEMontar({
+  tipo_refeicao,
+  descricao_alimentos,
+  foto_url,
+  data_hora,
+} = {}) {
   if (!tipo_refeicao || !descricao_alimentos || !data_hora) {
     throw new Error(
-      "Tipo da refeição, descrição dos alimentos e data/hora são obrigatórios."
+      "Tipo da refeição, descrição dos alimentos e data/hora são obrigatórios.",
     );
   }
   if (!TIPOS_REFEICAO_VALIDOS.includes(tipo_refeicao)) {
     throw new Error(
-      `Tipo de refeição inválido. Use um de: ${TIPOS_REFEICAO_VALIDOS.join(", ")}`
+      `Tipo de refeição inválido. Use um de: ${TIPOS_REFEICAO_VALIDOS.join(", ")}`,
     );
   }
   if (descricao_alimentos.length > 255) {
-    throw new Error("A descrição dos alimentos deve ter no máximo 255 caracteres.");
+    throw new Error(
+      "A descrição dos alimentos deve ter no máximo 255 caracteres.",
+    );
   }
   if (foto_url) {
     try {
@@ -80,9 +87,32 @@ export default class DiarioService {
     if (data && !/^\d{4}-\d{2}-\d{2}$/.test(data)) {
       throw new Error("Data inválida. Use o formato AAAA-MM-DD.");
     }
-    return await diarioRepository.buscarRefeicoesPorUsuario(id_usuario, data || null);
+    return await diarioRepository.buscarRefeicoesPorUsuario(
+      id_usuario,
+      data || null,
+    );
   }
 
+  async ListarDicasParaAcompanhante(id_gestante, user) {
+    try {
+      if (!id_gestante) {
+        const error = new Error();
+        error.message =
+          "Gestante não informada para a busca do diário alimentar!";
+        error.camposFaltando = true;
+        throw error;
+      }
+
+      const response = await diarioRepository.ListarDicasParaAcompanhante(
+        id_gestante,
+        user.id_usuario,
+      );
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
   async AlterarRefeicao(id_refeicao, dados = {}) {
     const existente = await diarioRepository.buscarRefeicaoPorId(id_refeicao);
     if (!existente) {

@@ -24,6 +24,28 @@ export default class GlicemiaRespository {
     }
   }
 
+  async ListarParaAcompanhante(id_gestante, id_acompanhante) {
+    let db;
+    try {
+      db = await connectDB();
+      const [registros] = await db.query(
+        `
+        SELECT rg.valor, rg.data_hora, rg.classificacao 
+        FROM registro_glicemia rg 
+          INNER JOIN usuarios u ON rg.id_usuario = u.id_usuario 
+          INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario
+        WHERE a.id_acompanhante = ? AND a.id_gestante = ? `,
+        [id_acompanhante, id_gestante],
+      );
+
+      return registros;
+    } catch (error) {
+      throw error;
+    } finally {
+      if (db) db.release();
+    }
+  }
+
   async Remover(user, id, db) {
     try {
       // o id_usuario no WHERE garante que ela só apaga o próprio registro
@@ -37,18 +59,21 @@ export default class GlicemiaRespository {
     }
   }
   async BuscarUltimaMedicao(user) {
-    let db; 
+    let db;
     try {
       db = await connectDB();
-      const [[result]] = await db.query(`
+      const [[result]] = await db.query(
+        `
         SELECT valor, data_hora, classificacao 
         FROM registro_glicemia 
         WHERE id_usuario = ? 
         ORDER BY data_hora DESC 
-        LIMIT 1`, [user.id_usuario]);
+        LIMIT 1`,
+        [user.id_usuario],
+      );
 
       return result;
-    }catch(error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -56,15 +81,18 @@ export default class GlicemiaRespository {
     let db;
     try {
       db = await connectDB();
-      const [[result]] = await db.query(`
+      const [[result]] = await db.query(
+        `
         SELECT ROUND(AVG(valor),2) as media
         FROM registro_glicemia 
         WHERE id_usuario = ? 
         ORDER BY data_hora DESC 
-        LIMIT 7`, [user.id_usuario]);
+        LIMIT 7`,
+        [user.id_usuario],
+      );
 
-        return result;
-    }catch(error) {
+      return result;
+    } catch (error) {
       throw error;
     }
   }

@@ -32,6 +32,25 @@ export default class DiarioController {
       }
     };
   }
+  ListarDicasParaAcompanhante() {
+    return async (req, res) => {
+      try {
+        const { user } = req;
+        const { id_gestante } = req.params;
+        const diario = await diarioService.ListarDicasParaAcompanhante(
+          id_gestante,
+          user,
+        );
+        return res.status(200).send({ diario });
+      } catch (error) {
+        return res
+          .status(500)
+          .send({
+            erro: "Falha interna no servidor ao buscar diário alimentar!",
+          });
+      }
+    };
+  }
 
   AlterarRefeicao() {
     return async (req, res) => {
@@ -39,7 +58,7 @@ export default class DiarioController {
         const { id_refeicao } = req.params;
         const refeicao = await diarioService.AlterarRefeicao(
           id_refeicao,
-          req.body.dados
+          req.body.dados,
         );
         return res
           .status(200)

@@ -135,7 +135,7 @@ export default class UsuariosService {
       const caminho_arquivo = join("foto_perfil",`foto_perfil_${user.id_usuario}${extArquivo}`);
       await Upload(caminho_arquivo, arquivo.buffer);
 
-      const response = await usuariosRepository.UploadFoto(caminho_arquivo, 33);
+      const response = await usuariosRepository.UploadFoto(caminho_arquivo, user.id_usuario);
 
       return caminho_arquivo;
     } catch (error) {
