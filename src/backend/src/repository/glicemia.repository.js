@@ -4,8 +4,8 @@ export default class GlicemiaRespository {
   async Cadastrar(user, dados, db) {
     try {
       const [result] = await db.query(
-        "INSERT INTO registro_glicemia(id_usuario, valor, data_hora, classificacao) values(?,?,Now(),?)",
-        [user.id_usuario, dados.valor, dados.classificacao],
+        `INSERT INTO registro_glicemia(id_usuario, valor, data_hora, classificacao) values(?,?,?,?)`,
+        [user.id_usuario, dados.valor, dados.data_hora, dados.classificacao],
       );
       return result;
     } catch (error) {
