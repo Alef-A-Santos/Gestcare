@@ -63,7 +63,7 @@ function HistoricoGlicemico() {
     }
   }, [idUsuario]);
 
-  useEffect(() => { carregarRegistros(); }, [carregarRegistros]);
+  useEffect(() =>  {const func = () => { carregarRegistros() }; func()  }, [carregarRegistros]);
 
   const colunas = [
     { chave: "dataHora", titulo: "Data" },

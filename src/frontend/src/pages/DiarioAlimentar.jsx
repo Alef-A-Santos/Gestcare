@@ -67,7 +67,7 @@ function DiarioAlimentar() {
   }, [idUsuario]);
 
   useEffect(() => {
-    carregarRefeicoes();
+     const func = () => { carregarRefeicoes() }; func() 
   }, [carregarRefeicoes]);
 
   function abrirNovo() {
