@@ -153,6 +153,8 @@ export default class UsuariosRepository {
       return result?.id_gestante;
     } catch (error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 }

@@ -64,6 +64,8 @@ export default class AcompanhantesRepository {
       return "Acompanhante removido com sucesso!";
     } catch (error) {
       throw new Error("Falha ao remover acompanhante.");
+    } finally {
+      if(db) db.release();
     }
   }
   async Editar(id_antigo_acompanhante, id_novo_acompanhante, user) {
@@ -77,6 +79,8 @@ export default class AcompanhantesRepository {
       return "Acompanhante alterado com sucesso!";
     } catch (error) {
       throw new Error("Falha ao alterar acompanhante.");
+    } finally {
+      if(db) db.release();
     }
   }
 }

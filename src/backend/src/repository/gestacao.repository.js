@@ -123,6 +123,8 @@ export default class GestacaoRepository {
       return quantidadeSemanas;
     }catch(error){
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
   static async getDataPrevParto(user) {

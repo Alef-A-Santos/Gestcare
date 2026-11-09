@@ -34,6 +34,8 @@ export default class GlicemiaService {
       };
     } catch (error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 
@@ -50,6 +52,8 @@ export default class GlicemiaService {
       return { glicemias };
     } catch (error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 
@@ -92,6 +96,8 @@ export default class GlicemiaService {
       return { mensagem: "glicemia removida com sucesso :D" };
     } catch (error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 }
