@@ -150,7 +150,7 @@ export default class UsuariosRepository {
     try {
       db = await connectDB();
       const [[result]] = await db.query(`SELECT id_gestante FROM acompanhantes WHERE id_acompanhante = ?`, [id_acompanhante]);
-      return result.id_gestante;
+      return result?.id_gestante;
     } catch (error) {
       throw error;
     }
