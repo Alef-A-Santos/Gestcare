@@ -152,7 +152,7 @@ function DiarioAlimentar() {
           <button
             type="button"
             onClick={abrirNovo}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-teal-600 px-5 py-4 font-semibold text-white shadow-xl transition hover:bg-teal-700 md:w-auto"
+            className="bg-teal-600 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
           >
             <FiPlus aria-hidden="true" /> Adicionar refeição
           </button>

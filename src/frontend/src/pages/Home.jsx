@@ -270,7 +270,7 @@ function Home() {
 
   return (
     <div className="min-h-screen flex bg-pink-100">
-      <main className="flex-1 min-w-0 p-4 sm:p-6 pt-20 md:pt-6">
+      <main className="flex-1 min-w-0 p-3 sm:p-3 pt-20 md:pt-3">
         <Header
           titulo={"Olá"}
           component={
