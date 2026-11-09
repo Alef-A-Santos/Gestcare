@@ -75,7 +75,7 @@ function CartaoLembrete({ lembrete, onToggle, onRemover }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className={`break-words font-medium leading-snug sm:truncate ${lembrete.ativo ? "text-black" : "text-gray-500"}`}>
+        <p className={`font-medium leading-snug sm:truncate ${lembrete.ativo ? "text-black" : "text-gray-500"}`}>
           {lembrete.titulo}
         </p>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -153,7 +153,7 @@ function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
         className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl sm:p-6"
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 id="titulo-modal" className="font-playfair text-2xl font-semibold">
+          <h2 id="titulo-modal" className="font-playfair text-2xl font-semibold text-pink-400">
             Novo lembrete
           </h2>
           <button type="button" onClick={onFechar} aria-label="Fechar" className="cursor-pointer text-gray-400 hover:text-gray-600">
@@ -258,7 +258,7 @@ function Lembretes() {
             tipoDado="button"
             clickHandler={() => setModalAberto(true)}
             Component={IconeMais}
-            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-[#ff6fae] px-8 py-3 text-base text-white shadow transition hover:bg-[#f2559b] hover:shadow-md sm:w-auto sm:text-lg "
+            className="bg-pink-400 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
           />
         }
       />
@@ -266,7 +266,7 @@ function Lembretes() {
       <div className="grid gap-4 sm:gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         {/* Sua rotina */}
         <section className="rounded-3xl bg-[#f5f5f5] p-4 shadow-md sm:p-6 mt-6">
-          <h2 className="mb-4 font-playfair text-xl font-semibold sm:text-2xl">Sua rotina</h2>
+          <h2 className="mb-6 font-playfair text-3xl  font-semibold sm:text-3xl text-pink-400 ">Sua rotina</h2>
 
           {ordenados.length === 0 ? (
             <p className="rounded-2xl bg-white p-8 text-center text-gray-500">
@@ -289,7 +289,7 @@ function Lembretes() {
         {/* Coluna direita */}
         <div className="flex flex-col gap-4 sm:gap-6">
           <section className="rounded-3xl bg-[#f5f5f5] p-4 shadow-md sm:p-6 mt-6">
-            <h2 className="mb-4 font-playfair text-xl font-semibold sm:text-2xl">Resumo da semana</h2>
+            <h2 className="mb-6 font-playfair text-xl font-semibold sm:text-3xl text-pink-400">Resumo da semana</h2>
 
             <div className="mb-5 grid max-w-md grid-cols-7 gap-1.5 sm:gap-2">
               {DIAS_SEMANA.map((letra, i) => {
