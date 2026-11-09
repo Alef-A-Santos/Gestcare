@@ -7,7 +7,7 @@ function CardGestacao({ semanas, dias, trimestre, dataParto, className = "" }) {
 
   return (
     <Card titulo="Gestação" className={className}>
-      <p className="text-center text-teal-500 font-bold text-2xl">{semanasFormatadas}</p>
+      <p className="text-center text-teal-500 font-bold text-3xl">{semanasFormatadas}</p>
       {dataParto && (
         <p className="text-lg font-poppins text-zinc-500 mt-3 text-center">
           {trimestre && <>{trimestre} · </>}parto previsto em{" "}

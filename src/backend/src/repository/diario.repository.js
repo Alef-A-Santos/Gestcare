@@ -1,15 +1,15 @@
 import connectDB from "../database/db.js";
 
 export default class DiarioRepository {
-  async criarRefeicao({ id_usuario, tipo_refeicao, descricao_alimentos, foto_url, data_hora }) {
+  async criarRefeicao({ id_usuario, tipo_refeicao, descricao_alimentos, data_hora }) {
     let db;
     try {
       db = await connectDB();
       const [result] = await db.query(
         `INSERT INTO diario_alimentar
-           (id_usuario, tipo_refeicao, descricao_alimentos, foto_url, data_hora)
-         VALUES (?, ?, ?, ?, ?)`,
-        [id_usuario, tipo_refeicao, descricao_alimentos, foto_url, data_hora]
+           (id_usuario, tipo_refeicao, descricao_alimentos, data_hora)
+         VALUES (?, ?, ?, ?)`,
+        [id_usuario, tipo_refeicao, descricao_alimentos, data_hora]
       );
       const [rows] = await db.query(
         `SELECT * FROM diario_alimentar WHERE id_refeicao = ?`,
@@ -51,7 +51,7 @@ export default class DiarioRepository {
     try {
       db = await connectDB();
       const [diario] = await db.query(`
-        SELECT da.tipo_refeicao, da.descricao_alimentos, da.foto_url, da.data_hora 
+        SELECT da.tipo_refeicao, da.descricao_alimentos, da.data_hora 
         FROM diario_alimentar da 
           INNER JOIN usuarios u ON da.id_usuario = u.id_usuario 
           INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario
@@ -81,15 +81,15 @@ export default class DiarioRepository {
     }
   }
 
-  async atualizarRefeicao(id_refeicao, { tipo_refeicao, descricao_alimentos, foto_url, data_hora }) {
+  async atualizarRefeicao(id_refeicao, { tipo_refeicao, descricao_alimentos, data_hora }) {
     let db;
     try {
       db = await connectDB();
       await db.query(
         `UPDATE diario_alimentar
-            SET tipo_refeicao = ?, descricao_alimentos = ?, foto_url = ?, data_hora = ?
+            SET tipo_refeicao = ?, descricao_alimentos = ?, data_hora = ?
           WHERE id_refeicao = ? AND ativo = 1`,
-        [tip7o_refeicao, descricao_alimentos, foto_url, data_hora, id_refeicao]
+        [tipo_refeicao, descricao_alimentos, data_hora, id_refeicao]
       );
       const [rows] = await db.query(
         `SELECT * FROM diario_alimentar WHERE id_refeicao = ?`,
