@@ -79,9 +79,7 @@ function Sidebar({
     if (totalDias) {
       const dias = Number(totalDias[1]);
       const semanasCompletas = Math.floor(dias / 7);
-      const diasRestantes = dias % 7;
-
-      return `${semanasCompletas} semanas e ${diasRestantes} dias`;
+      return `${semanasCompletas} semanas`;
     }
 
     const numeroSemanas = valor.match(/\d+/);

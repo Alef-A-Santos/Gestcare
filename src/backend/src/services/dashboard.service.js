@@ -54,6 +54,7 @@ export default class DashboardService {
         proximos_lembretes,
         qtd_semanas,
         refeicoes,
+        semana,
         trimestre,
         frase_semana,
         data_prev_parto: data_prev.data_prev_mascarada,

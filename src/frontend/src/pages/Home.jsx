@@ -406,7 +406,6 @@ function Home() {
             <CardGestacao
               className="lg:col-span-2 xl:col-span-1"
               semanas={semanas}
-              dias=""
               trimestre={resumo?.trimestre || ""}
               dataParto={dataParto}
             />
