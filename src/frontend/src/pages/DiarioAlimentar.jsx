@@ -19,7 +19,6 @@ const novoFormulario = () => ({
   data_hora: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
     .slice(0, 16),
-  foto_url: "",
 });
 
 function formatarDataHora(valor) {
@@ -85,7 +84,6 @@ function DiarioAlimentar() {
       tipo_refeicao: refeicao.tipo_refeicao,
       descricao_alimentos: refeicao.descricao_alimentos || "",
       data_hora: dataHora,
-      foto_url: refeicao.foto_url || "",
     });
     setErro("");
     setFormularioAberto(true);
@@ -103,7 +101,6 @@ function DiarioAlimentar() {
     const id = refeicaoEditando?.id_refeicao;
     const payload = {
       ...formulario,
-      foto_url: formulario.foto_url.trim() || null,
       data_hora: formulario.data_hora,
       ...(!editar && { id_usuario: idUsuario }),
     };
@@ -195,10 +192,6 @@ function DiarioAlimentar() {
               <label className="flex flex-col gap-1 font-medium text-gray-700 sm:col-span-2">
                 Alimentos (até 255 caracteres)
                 <textarea required maxLength={255} rows={3} value={formulario.descricao_alimentos} onChange={(event) => setFormulario({ ...formulario, descricao_alimentos: event.target.value })} className="resize-y rounded-lg border border-gray-300 p-3" placeholder="Descreva o que você comeu" />
-              </label>
-              <label className="flex flex-col gap-1 font-medium text-gray-700 sm:col-span-2">
-                Link da foto (opcional)
-                <input type="url" value={formulario.foto_url} onChange={(event) => setFormulario({ ...formulario, foto_url: event.target.value })} className="rounded-lg border border-gray-300 p-3" placeholder="https://..." />
               </label>
             </div>
             {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}

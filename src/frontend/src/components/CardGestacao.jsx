@@ -1,9 +1,12 @@
 import Card from "./Card";
 
-function CardGestacao({ semanas, dias, trimestre, dataParto, className = "" }) {
-  const semanasFormatadas = typeof semanas === "string"
-    ? semanas
-    : <><span className="text-5xl font-poppins font-bold">{semanas}</span><span className="text-xl font-poppins ml-2">sem {dias}d</span></>;
+function CardGestacao({ semanas, trimestre, dataParto, className = "" }) {
+  const semanasSemDias = typeof semanas === "string"
+    ? semanas.replace(/\s*(?:e\s*)?\d+\s*dias?\b.*$/i, "").trim()
+    : semanas;
+  const semanasFormatadas = typeof semanasSemDias === "string"
+    ? semanasSemDias
+    : <><span className="text-5xl font-poppins font-bold">{semanasSemDias}</span><span className="text-xl font-poppins ml-2">semanas</span></>;
 
   return (
     <Card titulo="Gestação" className={className}>
