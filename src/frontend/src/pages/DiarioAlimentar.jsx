@@ -67,7 +67,7 @@ function DiarioAlimentar() {
   }, [idUsuario]);
 
   useEffect(() => {
-    carregarRefeicoes();
+     () => carregarRefeicoes() ( )
   }, [carregarRefeicoes]);
 
   function abrirNovo() {
@@ -152,7 +152,7 @@ function DiarioAlimentar() {
           <button
             type="button"
             onClick={abrirNovo}
-            className="bg-teal-600 text-white rounded-2xl text-[18px] font-semibold  p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
+            className="bg-teal-600 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
           >
             <FiPlus aria-hidden="true" /> Adicionar refeição
           </button>
