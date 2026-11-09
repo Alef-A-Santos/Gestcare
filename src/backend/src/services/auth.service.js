@@ -94,7 +94,7 @@ export default class AuthService {
       };
 
       if(usuario[0].perfil === "acompanhante") {
-        dadosUsuario.id_gestante = await usuariosRepository.BuscarIdGestante(usuario[0].id_usuario)
+        dadosUsuario.id_gestante = await usuariosRepository.BuscarIdGestanteAcompanhante(usuario[0].id_usuario)
       }
 
       return {
