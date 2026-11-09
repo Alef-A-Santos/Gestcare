@@ -29,7 +29,6 @@ function normalizarDataHora(valor) {
 function validarEMontar({
   tipo_refeicao,
   descricao_alimentos,
-  foto_url,
   data_hora,
 } = {}) {
   if (!tipo_refeicao || !descricao_alimentos || !data_hora) {
@@ -47,17 +46,9 @@ function validarEMontar({
       "A descrição dos alimentos deve ter no máximo 255 caracteres.",
     );
   }
-  if (foto_url) {
-    try {
-      new URL(foto_url);
-    } catch {
-      throw new Error("A foto informada não é uma URL válida.");
-    }
-  }
   return {
     tipo_refeicao,
     descricao_alimentos,
-    foto_url: foto_url || null,
     data_hora: normalizarDataHora(data_hora),
   };
 }
