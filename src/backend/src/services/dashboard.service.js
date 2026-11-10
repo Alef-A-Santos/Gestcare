@@ -57,7 +57,10 @@ export default class DashboardService {
         semana,
         trimestre,
         frase_semana,
-        data_prev_parto: data_prev.data_prev_mascarada,
+        data_prev_parto: Intl.DateTimeFormat("pt-BR", {
+          month: "long",
+          year: "numeric"
+        }).format(new Date(data_prev.data_prev_parto)),
       };
 
       return resumo;
@@ -67,15 +70,15 @@ export default class DashboardService {
   }
   async ResumoAcompanhante(id_gestante) {
     try {
-      if(!id_gestante) {
+      if (!id_gestante) {
         error.camposFaltando = true;
         error.message = "Gestante não identificada para busca do resumo!";
       }
       const user = {
         id_usuario: id_gestante
       }
-      const resumo = await this.Resumo(user); 
-  
+      const resumo = await this.Resumo(user);
+
       return resumo;
     } catch (error) {
       throw error;
