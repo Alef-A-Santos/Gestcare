@@ -185,19 +185,16 @@ function Home() {
       const carregarRefeicoes = async () => {
         if (!usuario.id_usuario) return;
         const resposta = await fetch(
-          `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(usuario.id_usuario)}`,
+          `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(usuario.id_usuario)}?data=${dataLocal(new Date())}&limit=50&offset=0`,
           { method: "GET", credentials: "include" }
         );
         const dados = await resposta.json().catch(() => null);
         if (!resposta.ok) {
           throw new Error(dados?.erro || "Falha ao carregar diário alimentar.");
         }
-        const hoje = dataLocal(new Date());
         const lista = Array.isArray(dados?.refeicoes) ? dados.refeicoes : [];
         if (ativo) {
-          setRefeicoes(lista.filter((refeicao) =>
-            refeicao.data_hora && String(refeicao.data_hora).slice(0, 10) === hoje
-          ));
+          setRefeicoes(lista);
         }
       };
 

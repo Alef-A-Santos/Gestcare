@@ -71,20 +71,23 @@ export default class DiarioService {
     }
   }
 
-  async ListarRefeicoes(id_usuario, data) {
+  async ListarRefeicoes(id_usuario, data, limit, offset) {
     if (!id_usuario) {
       throw new Error("O id do usuário é obrigatório.");
     }
     if (data && !/^\d{4}-\d{2}-\d{2}$/.test(data)) {
       throw new Error("Data inválida. Use o formato AAAA-MM-DD.");
     }
-    return await diarioRepository.buscarRefeicoesPorUsuario(
+    const { rows, total } = await diarioRepository.buscarRefeicoesPorUsuario(
       id_usuario,
       data || null,
+      limit,
+      offset,
     );
+    return { refeicoes: rows, total };
   }
 
-  async ListarDicasParaAcompanhante(id_gestante, user) {
+  async ListarDicasParaAcompanhante(id_gestante, user, limit, offset) {
     try {
       if (!id_gestante) {
         const error = new Error();
@@ -94,16 +97,17 @@ export default class DiarioService {
         throw error;
       }
 
-      const response = await diarioRepository.ListarDicasParaAcompanhante(
+      return await diarioRepository.ListarDicasParaAcompanhante(
         id_gestante,
         user.id_usuario,
+        limit,
+        offset,
       );
-
-      return response;
     } catch (error) {
       throw error;
     }
   }
+
   async AlterarRefeicao(id_refeicao, dados = {}) {
     const existente = await diarioRepository.buscarRefeicaoPorId(id_refeicao);
     if (!existente) {

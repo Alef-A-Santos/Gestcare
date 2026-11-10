@@ -23,22 +23,30 @@ export default class DiarioRepository {
     }
   }
 
-  async buscarRefeicoesPorUsuario(id_usuario, data = null) {
+  async buscarRefeicoesPorUsuario(id_usuario, data = null, limit, offset) {
     let db;
     try {
       db = await connectDB();
-      let sql = `SELECT * FROM diario_alimentar WHERE id_usuario = ? AND ativo = 1`;
+      let where = `WHERE id_usuario = ? AND ativo = 1`;
       const params = [id_usuario];
 
       if (data) {
         // intervalo em vez de DATE(data_hora) para aproveitar índices
-        sql += ` AND data_hora >= ? AND data_hora < DATE_ADD(?, INTERVAL 1 DAY)`;
+        where += ` AND data_hora >= ? AND data_hora < DATE_ADD(?, INTERVAL 1 DAY)`;
         params.push(data, data);
       }
 
-      sql += ` ORDER BY data_hora DESC`;
-      const [rows] = await db.query(sql, params);
-      return rows;
+      const [[{ total }]] = await db.query(
+        `SELECT COUNT(*) AS total FROM diario_alimentar ${where}`,
+        params
+      );
+      const [rows] = await db.query(
+        `SELECT * FROM diario_alimentar ${where}
+          ORDER BY data_hora DESC, id_refeicao DESC
+          LIMIT ? OFFSET ?`,
+        [...params, limit, offset]
+      );
+      return { rows, total };
     } catch (error) {
       throw error;
     } finally {
@@ -46,22 +54,33 @@ export default class DiarioRepository {
     }
   }
 
-  async ListarDicasParaAcompanhante(id_gestante, id_acompanhante){
+  async ListarDicasParaAcompanhante(id_gestante, id_acompanhante, limit, offset) {
     let db;
     try {
       db = await connectDB();
-      const [diario] = await db.query(`
-        SELECT da.tipo_refeicao, da.descricao_alimentos, da.data_hora 
-        FROM diario_alimentar da 
-          INNER JOIN usuarios u ON da.id_usuario = u.id_usuario 
+      const from = `
+        FROM diario_alimentar da
+          INNER JOIN usuarios u ON da.id_usuario = u.id_usuario
           INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario
-        WHERE a.id_acompanhante = ? AND a.id_gestante = ? `,[id_acompanhante, id_gestante]);
+        WHERE a.id_acompanhante = ? AND a.id_gestante = ? AND da.ativo = 1`;
+      const params = [id_acompanhante, id_gestante];
 
-      return diario;
+      const [[{ total }]] = await db.query(
+        `SELECT COUNT(*) AS total ${from}`,
+        params
+      );
+      const [diario] = await db.query(
+        `SELECT da.tipo_refeicao, da.descricao_alimentos, da.data_hora ${from}
+          ORDER BY da.data_hora DESC, da.id_refeicao DESC
+          LIMIT ? OFFSET ?`,
+        [...params, limit, offset]
+      );
+
+      return { diario, total };
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
 
@@ -125,16 +144,17 @@ export default class DiarioRepository {
       if (db) db.release();
     }
   }
+
   async buscarRefeicoesDia(id_gestante) {
     let db;
     try {
       db = await connectDB();
       const [refeicoes] = await db.query(`SELECT tipo_refeicao, descricao_alimentos FROM diario_alimentar WHERE id_usuario = ? AND DATE(data_hora) = DATE(NOW())`, [id_gestante]);
-      return refeicoes; 
+      return refeicoes;
     } catch (error) {
       throw error;
-    }finally {
-      if(db) db.release();
+    } finally {
+      if (db) db.release();
     }
   }
 }
