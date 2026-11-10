@@ -165,7 +165,7 @@ function DiarioAlimentar() {
       />
 
       <section className="mx-auto mt-8 w-full max-w-4xl rounded-3xl border border-gray-300 bg-gray-50 px-6 py-6 shadow-sm sm:px-10">
-        <h3 className="mb-6 text-center font-poppins text-3xl font-semibold text-pink-400">
+        <h3 className="mb-6 text-center font-playfair text-4xl font-bold text-pink-400">
           Refeições registradas
         </h3>
 
@@ -220,15 +220,15 @@ function DiarioAlimentar() {
                 <div className="flex items-start gap-3">
                   <span aria-hidden="true" className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-pink-400" />
                   <div className="font-poppins">
-                    <h4 className="font-semibold text-pink-500">{refeicao.tipo_refeicao}</h4>
-                    <p className="mt-1 text-gray-800">{refeicao.descricao_alimentos}</p>
-                    <time className="mt-1 block text-sm text-gray-500">{formatarDataHora(refeicao.data_hora)}</time>
-                    {refeicao.foto_url && <a className="mt-1 inline-block text-sm text-teal-700 underline" href={refeicao.foto_url} target="_blank" rel="noreferrer">Ver foto</a>}
+                    <h4 className="font-semibold text-pink-500 text-2xl">{refeicao.tipo_refeicao}</h4>
+                    <p className="mt-2 text-teal-700 text-[20px] font-semibold">{refeicao.descricao_alimentos}</p>
+                    <time className="mt-3 block text-gray-500 text-2xl">{formatarDataHora(refeicao.data_hora)}</time>
+                    {refeicao.foto_url && <a className="mt-1 inline-block text-sm text-teal-700 text-[15px] underline" href={refeicao.foto_url} target="_blank" rel="noreferrer">Ver foto</a>}
                   </div>
                 </div>
                 <div className="flex gap-2 self-end sm:self-start">
-                  <button type="button" onClick={() => abrirEdicao(refeicao)} aria-label={`Editar ${refeicao.tipo_refeicao}`} className="rounded-lg p-2 text-teal-700 hover:bg-teal-50"><FiEdit2 /></button>
-                  <button type="button" onClick={() => excluirRefeicao(refeicao)} aria-label={`Excluir ${refeicao.tipo_refeicao}`} className="rounded-lg p-2 text-red-700 hover:bg-red-50"><FiTrash2 /></button>
+                  <button type="button" onClick={() => abrirEdicao(refeicao)} aria-label={`Editar ${refeicao.tipo_refeicao}`} className="rounded-lg p-2 text-teal-700 text-2xl hover:bg-teal-50"><FiEdit2 /></button>
+                  <button type="button" onClick={() => excluirRefeicao(refeicao)} aria-label={`Excluir ${refeicao.tipo_refeicao}`} className="rounded-lg p-2 text-red-700 text-2xl hover:bg-red-50"><FiTrash2 /></button>
                 </div>
               </li>
             ))}
