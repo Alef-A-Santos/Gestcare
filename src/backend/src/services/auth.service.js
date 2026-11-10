@@ -293,8 +293,6 @@ export default class AuthService {
       };
     } catch (error) {
       throw error;
-    }finally{
-      if(db) db.release();
     }
   }
   async AlterarSenha(dados) {

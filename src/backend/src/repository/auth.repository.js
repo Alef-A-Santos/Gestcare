@@ -34,8 +34,6 @@ export default class AuthRepository {
       return user;
     } catch (error) {
       throw error;
-    } finally {
-      if (db) db.release();
     }
   }
   async Validar(auth, dados) {
@@ -91,6 +89,8 @@ export default class AuthRepository {
       return result;
     } catch (error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 }

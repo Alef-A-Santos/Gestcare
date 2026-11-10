@@ -75,6 +75,8 @@ export default class GlicemiaRespository {
       return result;
     } catch (error) {
       throw error;
+    }  finally{
+      if(db) db.release();
     }
   }
   async GerarMediaUtimasSeteMedicoes(user) {
@@ -94,6 +96,8 @@ export default class GlicemiaRespository {
       return result;
     } catch (error) {
       throw error;
+    } finally {
+      if(db) db.release();
     }
   }
 }
