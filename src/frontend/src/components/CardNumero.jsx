@@ -30,7 +30,7 @@ function CardNumero({ numero, titulo, descricao, destaque = false, aoLigar }) {
   return (
     <article className={`${base} bg-white border border-teal-100 flex-col justify-between`}>
       <div>
-        <p className="font-poppins text-5xl font-semibold text-teal-700 leading-none">{numero}</p>
+        <p className="font-poppins text-5xl font-semibold text-pink-400 leading-none">{numero}</p>
         <h3 className="font-semibold text-teal-800 mt-3 text-2xl">{titulo}</h3>
         <p className="text-sm text-teal-700/80 mt-1 text-[15px]">{descricao}</p>
       </div>

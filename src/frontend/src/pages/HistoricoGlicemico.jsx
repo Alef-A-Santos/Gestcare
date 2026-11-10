@@ -123,7 +123,7 @@ function HistoricoGlicemico() {
         }
       />
 
-      <Card titulo="Registros" className="mt-6 sm:mt-10 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px]">
+      <Card titulo="Registros" className="mt-6 sm:mt-10 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px] ">
         {erro && !formularioAberto && <p role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-center text-red-700">{erro}</p>}
         {formularioAberto && (
           <form onSubmit={registrarGlicemia} className="mb-7 rounded-2xl border border-teal-200 bg-white p-5">
