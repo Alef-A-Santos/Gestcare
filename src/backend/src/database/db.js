@@ -14,7 +14,8 @@ async function connectDB(){
       user: configDotenv.DB_USER,
       password:configDotenv.DB_PASSWD,
       database: configDotenv.DB_NAME,
-      connectTimeout: 3000
+      connectTimeout: 3000,
+      connectionLimit: 100
     })
 
     const db = await pool.getConnection();
