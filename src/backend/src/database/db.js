@@ -15,6 +15,8 @@ async function connectDB(){
       password:configDotenv.DB_PASSWD,
       database: configDotenv.DB_NAME,
       connectTimeout: 3000,
+      maxIdle:0,
+      enableKeepAlive:false,
       connectionLimit: 100
     })
 

@@ -131,7 +131,7 @@ export default class GestacaoRepository {
     let db;
     try {
       db = await connectDB();
-      const [[data_pev]] = await db.query("SELECT data_prev_parto, DATE_FORMAT(DATE(data_prev_parto), 'XX/%m/%Y') as data_prev_mascarada FROM gestacao WHERE id_usuario = ?", [user.id_usuario]);
+      const [[data_pev]] = await db.query("SELECT data_prev_parto FROM gestacao WHERE id_usuario = ?", [user.id_usuario]);
 
       return data_pev;
     } catch (error) {
