@@ -1,11 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
-import { FiPlus, FiTrash2, FiX } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus, FiTrash2, FiX } from "react-icons/fi";
 import Header from "../components/Header";
 import Card from "../components/Card";
 import Tabela from "../components/Tabela";
 import { useUsuario } from "../context/UsuarioContext";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const ITENS_POR_PAGINA = 10;
+
+function Paginacao({ pagina, totalPaginas, aoMudar }) {
+  return (
+    <nav aria-label="Paginação dos registros" className="mt-5 flex items-center justify-center gap-4">
+      <button type="button" onClick={() => aoMudar(pagina - 1)} disabled={pagina === 1} className="inline-flex items-center gap-1 rounded-lg border border-teal-200 px-3 py-2 text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-50">
+        <FiChevronLeft aria-hidden="true" /> Anterior
+      </button>
+      <span aria-live="polite" className="text-sm text-gray-600">Página {pagina} de {totalPaginas}</span>
+      <button type="button" onClick={() => aoMudar(pagina + 1)} disabled={pagina === totalPaginas} className="inline-flex items-center gap-1 rounded-lg border border-teal-200 px-3 py-2 text-teal-800 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-50">
+        Avançar <FiChevronRight aria-hidden="true" />
+      </button>
+    </nav>
+  );
+}
 
 function formatarDataHora(valor) {
   if (!valor) return "";
@@ -34,6 +49,8 @@ function HistoricoGlicemico() {
   const usuario = useUsuario();
   const idUsuario = usuario?.id_usuario;
   const [registros, setRegistros] = useState([]);
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
   const [formularioAberto, setFormularioAberto] = useState(false);
   const [valor, setValor] = useState("");
   const [dataHora, setDataHora] = useState(dataHoraLocalAtual);
@@ -49,19 +66,20 @@ function HistoricoGlicemico() {
     setCarregando(true);
     setErro("");
     try {
-      const resposta = await fetch(`${API}/glicemia/listar-glicemia`, { credentials: "include" });
+      const resposta = await fetch(`${API}/glicemia/listar-glicemia?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`, { credentials: "include" });
       const dados = await lerResposta(resposta);
       setRegistros((dados?.glicemias || []).map((item) => ({
         ...item,
         id: item.id_glicemia,
         dataHora: formatarDataHora(item.data_hora),
       })));
+      setTotalPaginas(Math.max(1, dados?.paginacao?.total_paginas ?? 1));
     } catch (error) {
       setErro(error.message || "Falha ao carregar os registros.");
     } finally {
       setCarregando(false);
     }
-  }, [idUsuario]);
+  }, [idUsuario, pagina]);
 
   useEffect(() =>  {const func = () => { carregarRegistros() }; func()  }, [carregarRegistros]);
 
@@ -69,6 +87,7 @@ function HistoricoGlicemico() {
     { chave: "dataHora", titulo: "Data" },
     { chave: "valor", titulo: "Valor", render: (registro) => `${registro.valor} mg/dL` },
   ];
+  const paginaAtual = Math.min(pagina, totalPaginas);
 
   function abrirFormulario() {
     setValor("");
@@ -162,6 +181,7 @@ function HistoricoGlicemico() {
             )}
           />
         )}
+        {!carregando && registros.length > 0 && <Paginacao pagina={paginaAtual} totalPaginas={totalPaginas} aoMudar={setPagina} />}
       </Card>
     </>
   );

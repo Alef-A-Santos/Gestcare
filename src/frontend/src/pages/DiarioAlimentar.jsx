@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { FiEdit2, FiPlus, FiTrash2, FiX } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiEdit2, FiPlus, FiTrash2, FiX } from "react-icons/fi";
 import Header from "../components/Header";
 import { useUsuario } from "../context/UsuarioContext";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const ITENS_POR_PAGINA = 10;
 const TIPOS_REFEICAO = [
   "Café da Manhã",
   "Lanche da Manhã",
@@ -41,12 +42,15 @@ function DiarioAlimentar() {
   const usuario = useUsuario();
   const idUsuario = usuario?.id_usuario;
   const [refeicoes, setRefeicoes] = useState([]);
+  const [pagina, setPagina] = useState(1);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
   const [formularioAberto, setFormularioAberto] = useState(false);
   const [refeicaoEditando, setRefeicaoEditando] = useState(null);
   const [formulario, setFormulario] = useState(novoFormulario);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const paginaAtual = Math.min(pagina, totalPaginas);
 
   const carregarRefeicoes = useCallback(async () => {
     if (!idUsuario) return;
@@ -54,17 +58,18 @@ function DiarioAlimentar() {
     setErro("");
     try {
       const resposta = await fetch(
-        `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(idUsuario)}`,
+        `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(idUsuario)}?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`,
         { credentials: "include" },
       );
       const dados = await lerResposta(resposta);
       setRefeicoes(dados?.refeicoes ?? []);
+      setTotalPaginas(Math.max(1, dados?.paginacao?.total_paginas ?? 1));
     } catch (error) {
       setErro(error.message || "Falha ao carregar o diário alimentar.");
     } finally {
       setCarregando(false);
     }
-  }, [idUsuario]);
+  }, [idUsuario, pagina]);
 
   useEffect(() => {
      const func = () => { carregarRefeicoes() }; func() 
@@ -228,6 +233,17 @@ function DiarioAlimentar() {
               </li>
             ))}
           </ul>
+        )}
+        {!carregando && totalPaginas > 1 && (
+          <nav aria-label="Paginação das refeições" className="mt-5 flex items-center justify-center gap-4">
+            <button type="button" onClick={() => setPagina((atual) => Math.max(1, atual - 1))} disabled={pagina === 1} className="inline-flex items-center gap-1 rounded-lg border border-pink-200 px-3 py-2 text-pink-700 hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50">
+              <FiChevronLeft aria-hidden="true" /> Anterior
+            </button>
+            <span aria-live="polite" className="text-sm text-gray-600">Página {paginaAtual} de {totalPaginas}</span>
+            <button type="button" onClick={() => setPagina((atual) => Math.min(totalPaginas, atual + 1))} disabled={paginaAtual === totalPaginas} className="inline-flex items-center gap-1 rounded-lg border border-pink-200 px-3 py-2 text-pink-700 hover:bg-pink-50 disabled:cursor-not-allowed disabled:opacity-50">
+              Avançar <FiChevronRight aria-hidden="true" />
+            </button>
+          </nav>
         )}
       </section>
     </>
