@@ -1,4 +1,5 @@
 import DiarioService from "../services/diario.service.js";
+import { lerPaginacao, montarPaginacao } from "../utils/paginacao.js";
 
 const diarioService = new DiarioService();
 
@@ -25,29 +26,49 @@ export default class DiarioController {
       try {
         const { id_usuario } = req.params;
         const { data } = req.query; // opcional: ?data=2026-11-05
-        const refeicoes = await diarioService.ListarRefeicoes(id_usuario, data);
-        return res.status(200).json({ refeicoes });
+        // ?limit=10&offset=0
+        const { limit, offset } = lerPaginacao(req.query);
+        const { refeicoes, total } = await diarioService.ListarRefeicoes(
+          id_usuario,
+          data,
+          limit,
+          offset,
+        );
+        return res.status(200).json({
+          refeicoes,
+          paginacao: montarPaginacao(req, total, limit, offset),
+        });
       } catch (error) {
         return res.status(400).json({ erro: error.message });
       }
     };
   }
+
   ListarDicasParaAcompanhante() {
     return async (req, res) => {
       try {
         const { user } = req;
         const { id_gestante } = req.params;
-        const diario = await diarioService.ListarDicasParaAcompanhante(
-          id_gestante,
-          user,
-        );
-        return res.status(200).send({ diario });
+        // ?limit=10&offset=0
+        const { limit, offset } = lerPaginacao(req.query);
+        const { diario, total } =
+          await diarioService.ListarDicasParaAcompanhante(
+            id_gestante,
+            user,
+            limit,
+            offset,
+          );
+        return res.status(200).send({
+          diario,
+          paginacao: montarPaginacao(req, total, limit, offset),
+        });
       } catch (error) {
-        return res
-          .status(500)
-          .send({
-            erro: "Falha interna no servidor ao buscar diário alimentar!",
-          });
+        if (error.camposFaltando) {
+          return res.status(400).send({ erro: error.message });
+        }
+        return res.status(500).send({
+          erro: "Falha interna no servidor ao buscar diário alimentar!",
+        });
       }
     };
   }

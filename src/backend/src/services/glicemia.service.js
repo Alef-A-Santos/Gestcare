@@ -37,7 +37,7 @@ export default class GlicemiaService {
     }
   }
 
-  async Listar(user) {
+  async Listar(user, limit, offset) {
     let db;
     try {
       if (!user) {
@@ -46,14 +46,19 @@ export default class GlicemiaService {
         throw error;
       }
       db = await connectDB();
-      const glicemias = await glicemiaRespository.Listar(user, db);
-      return { glicemias };
+      const { rows, total } = await glicemiaRespository.Listar(
+        user,
+        db,
+        limit,
+        offset,
+      );
+      return { glicemias: rows, total };
     } catch (error) {
       throw error;
     }
   }
 
-  async ListarParaAcompanhante(id_gestante, user) {
+  async ListarParaAcompanhante(id_gestante, user, limit, offset) {
     try {
       if (!id_gestante) {
         const error = new Error();
@@ -63,12 +68,12 @@ export default class GlicemiaService {
         throw error;
       }
 
-      const response = await glicemiaRespository.ListarParaAcompanhante(
+      return await glicemiaRespository.ListarParaAcompanhante(
         id_gestante,
         user.id_usuario,
+        limit,
+        offset,
       );
-
-      return response;
     } catch (error) {
       throw error;
     }
