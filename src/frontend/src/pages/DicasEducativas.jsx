@@ -38,6 +38,23 @@ function DicasEducativas() {
       <Header
         titulo="Dicas Educativas"
         component={<FiBookOpen className="text-pink-400 text-5xl" aria-hidden="true" />}
+        component2={
+            <div className="mt-8 flex flex-col items-center gap-2">
+        <Botao
+          nome={qtd > 0 ? `+ Adicionar ${qtd} ${qtd === 1 ? "dica" : "dicas"} aos favoritos` : "+ Adicionar dicas aos favoritos"}
+          tipoDado="button"
+          clickHandler={favoritar}
+          disabled={qtd === 0}
+          className="bg-teal-600 text-white rounded-2xl text-[20px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
+          textClassName="text-[15px]"
+        />
+        <p className=" text-teal-700/80 text-[15px]" role="status">
+          {qtd === 0
+            ? "Toque nos cartões para escolher as dicas."
+            : `${qtd} ${qtd === 1 ? "dica selecionada" : "dicas selecionadas"}.`}
+        </p>
+      </div>
+        }
       />
 
       <h3 className="font-poppins text-3xl font-semibold text-teal-600 mt-2 mb-5">
@@ -62,21 +79,7 @@ function DicasEducativas() {
         <FiChevronDown className="mx-auto mt-3 text-2xl text-teal-700" aria-hidden="true" />
       </div>
 
-      <div className="mt-8 flex flex-col items-center gap-2">
-        <Botao
-          nome={qtd > 0 ? `+ Adicionar ${qtd} ${qtd === 1 ? "dica" : "dicas"} aos favoritos` : "+ Adicionar dicas aos favoritos"}
-          tipoDado="button"
-          clickHandler={favoritar}
-          disabled={qtd === 0}
-          className="rounded-full bg-teal-600 text-white font-medium px-8 py-3 cursor-pointer hover:bg-teal-700 transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-teal-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-teal-600"
-          textClassName="text-sm"
-        />
-        <p className="text-xs text-teal-700/80" role="status">
-          {qtd === 0
-            ? "Toque nos cartões para escolher as dicas."
-            : `${qtd} ${qtd === 1 ? "dica selecionada" : "dicas selecionadas"}.`}
-        </p>
-      </div>
+      
     </section>
   );
 }
