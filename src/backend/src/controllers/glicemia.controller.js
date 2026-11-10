@@ -1,4 +1,5 @@
 import GlicemiaService from "../services/glicemia.service.js";
+import { lerPaginacao, montarPaginacao } from "../utils/paginacao.js";
 
 const glicemiaService = new GlicemiaService();
 
@@ -25,8 +26,17 @@ export default class GlicemiaController {
     return async (req, res) => {
       try {
         const { user } = req;
-        const response = await glicemiaService.Listar(user);
-        return res.status(200).send(response);
+        // ?limit=10&offset=0
+        const { limit, offset } = lerPaginacao(req.query);
+        const { glicemias, total } = await glicemiaService.Listar(
+          user,
+          limit,
+          offset,
+        );
+        return res.status(200).send({
+          glicemias,
+          paginacao: montarPaginacao(req, total, limit, offset),
+        });
       } catch (error) {
         console.error(error);
         if (error.camposFaltando) {
@@ -42,11 +52,19 @@ export default class GlicemiaController {
       try {
         const { user } = req;
         const { id_gestante } = req.params;
-        const registros = await glicemiaService.ListarParaAcompanhante(
-          id_gestante,
-          user,
-        );
-        return res.status(200).send({ registros });
+        // ?limit=10&offset=0
+        const { limit, offset } = lerPaginacao(req.query);
+        const { registros, total } =
+          await glicemiaService.ListarParaAcompanhante(
+            id_gestante,
+            user,
+            limit,
+            offset,
+          );
+        return res.status(200).send({
+          registros,
+          paginacao: montarPaginacao(req, total, limit, offset),
+        });
       } catch (error) {
         console.error(error);
         if (error.camposFaltando) {

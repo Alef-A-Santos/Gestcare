@@ -12,33 +12,50 @@ export default class GlicemiaRespository {
       throw error;
     }
   }
-  async Listar(user, db) {
+
+  async Listar(user, db, limit, offset) {
     try {
-      const [rows] = await db.query(
-        "SELECT id_glicemia, valor, data_hora, classificacao FROM registro_glicemia WHERE id_usuario = ? ORDER BY data_hora DESC",
+      const [[{ total }]] = await db.query(
+        "SELECT COUNT(*) AS total FROM registro_glicemia WHERE id_usuario = ?",
         [user.id_usuario],
       );
-      return rows;
+      const [rows] = await db.query(
+        `SELECT id_glicemia, valor, data_hora, classificacao
+           FROM registro_glicemia
+          WHERE id_usuario = ?
+          ORDER BY data_hora DESC, id_glicemia DESC
+          LIMIT ? OFFSET ?`,
+        [user.id_usuario, limit, offset],
+      );
+      return { rows, total };
     } catch (error) {
       throw error;
     }
   }
 
-  async ListarParaAcompanhante(id_gestante, id_acompanhante) {
+  async ListarParaAcompanhante(id_gestante, id_acompanhante, limit, offset) {
     let db;
     try {
       db = await connectDB();
-      const [registros] = await db.query(
-        `
-        SELECT rg.valor, rg.data_hora, rg.classificacao 
-        FROM registro_glicemia rg 
-          INNER JOIN usuarios u ON rg.id_usuario = u.id_usuario 
+      const from = `
+        FROM registro_glicemia rg
+          INNER JOIN usuarios u ON rg.id_usuario = u.id_usuario
           INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario
-        WHERE a.id_acompanhante = ? AND a.id_gestante = ? `,
-        [id_acompanhante, id_gestante],
+        WHERE a.id_acompanhante = ? AND a.id_gestante = ?`;
+      const params = [id_acompanhante, id_gestante];
+
+      const [[{ total }]] = await db.query(
+        `SELECT COUNT(*) AS total ${from}`,
+        params,
+      );
+      const [registros] = await db.query(
+        `SELECT rg.valor, rg.data_hora, rg.classificacao ${from}
+          ORDER BY rg.data_hora DESC, rg.id_glicemia DESC
+          LIMIT ? OFFSET ?`,
+        [...params, limit, offset],
       );
 
-      return registros;
+      return { registros, total };
     } catch (error) {
       throw error;
     } finally {
