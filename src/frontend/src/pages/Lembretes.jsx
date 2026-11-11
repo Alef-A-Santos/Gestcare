@@ -12,6 +12,8 @@ import {
 } from "react-icons/fa";
 import Header from "../components/Header";
 import Botao from "../components/Botao";
+import { useUsuario } from "../context/UsuarioContext";
+
 
 /* ---------- configuração das categorias ---------- */
 const CATEGORIAS = {
@@ -22,18 +24,17 @@ const CATEGORIAS = {
   Hidratação: { icone: FaTint, tag: "bg-[#fbcfe3] text-[#d46a9a]", icon: "bg-[#f3e6ec] text-[#d46a9a]" },
 };
 
-const LEMBRETES_INICIAIS = [
-  { id: 1, titulo: "Medir glicemia em jejum", hora: "07:00", categoria: "Glicemia", ativo: true },
-  { id: 2, titulo: "Insulina NPH 10UI", hora: "07:30", categoria: "Medicação", ativo: true },
-  { id: 3, titulo: "Café da manhã", hora: "08:00", categoria: "Alimentação", ativo: true },
-  { id: 4, titulo: "Consulta pré-natal - UBS Central", hora: "08:00", categoria: "Consulta", ativo: true },
-  { id: 5, titulo: "Medir glicemia pós-almoço", hora: "13:30", categoria: "Glicemia", ativo: true },
-  { id: 6, titulo: "Beber água", hora: "15:00", categoria: "Hidratação", ativo: false },
-];
-
 const DIAS_SEMANA = ["D", "S", "T", "Q", "Q", "S", "S"];
 const NOMES_DIAS = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-const CHAVE_STORAGE = "gestcare_lembretes";
+const API = import.meta.env.VITE_BACK_URL || import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const CHAVE_PUSH = "gestcare_push_ativado";
+const CATEGORIAS_API = {
+  Glicemia: "glicemia",
+  "Medicação": "medicao",
+  Alimentação: "alimentacao",
+  Consulta: "consulta",
+  "Hidratação": "hidratacao",
+};
 
 // O Botao renderiza Component com text-3xl; aqui o ícone fica menor, como no protótipo
 const IconeMais = () => <FaPlus size={14} />;
@@ -209,24 +210,44 @@ function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
 
 /* ---------- página ---------- */
 function Lembretes() {
-  const [lembretes, setLembretes] = useState(() => {
-    try {
-      const salvo = localStorage.getItem(CHAVE_STORAGE);
-      return salvo ? JSON.parse(salvo) : LEMBRETES_INICIAIS;
-    } catch {
-      return LEMBRETES_INICIAIS;
-    }
-  });
+  const usuario = useUsuario();
+  const [lembretes, setLembretes] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(true);
+  const [notificacoesAtivas, setNotificacoesAtivas] = useState(() => localStorage.getItem(CHAVE_PUSH) === "true");
 
+  async function requisitar(url, opcoes = {}) {
+    const resposta = await fetch(`${API}${url}`, { credentials: "include", ...opcoes,
+      headers: { "Content-Type": "application/json", ...opcoes.headers } });
+    const dados = await resposta.json().catch(() => null);
+    if (!resposta.ok) throw new Error(dados?.erro || dados?.mensagem || "Não foi possível concluir a operação.");
+    return dados;
+  }
+
+  const normalizar = (l) => {
+    const categoria = Object.keys(CATEGORIAS_API).find((nome) => CATEGORIAS_API[nome] === l.categoria) || l.categoria;
+    return {
+      ...l,
+      id: l.id_lembrete,
+      hora: String(l.horario || "").slice(0, 5),
+      categoria: CATEGORIAS[categoria] ? categoria : "Glicemia",
+      ativo: Number(l.ativo) === 1 || l.ativo === true,
+    };
+  };
+  async function carregarLembretes() {
+    const dados = await requisitar("/lembretes/listar-lembretes-usuario");
+    setLembretes((dados?.lembretes || []).map(normalizar));
+  }
   useEffect(() => {
-    try {
-      localStorage.setItem(CHAVE_STORAGE, JSON.stringify(lembretes));
-    } catch {
-      /* storage indisponível: segue sem persistir */
-    }
-  }, [lembretes]);
-
+    if (!usuario) return;
+    let ativo = true;
+    requisitar("/lembretes/listar-lembretes-usuario")
+      .then((dados) => { if (ativo) setLembretes((dados?.lembretes || []).map(normalizar)); })
+      .catch((e) => { if (ativo) setErro(e.message); })
+      .finally(() => { if (ativo) setCarregando(false); });
+    return () => { ativo = false; };
+  }, [usuario]);
   const ordenados = useMemo(
     () => [...lembretes].sort((a, b) => a.hora.localeCompare(b.hora)),
     [lembretes]
@@ -235,18 +256,43 @@ function Lembretes() {
   const diaHoje = new Date().getDay();
 
   function alternar(id) {
-    setLembretes((lista) => lista.map((l) => (l.id === id ? { ...l, ativo: !l.ativo } : l)));
+    const lembrete = lembretes.find((l) => l.id === id);
+    if (!lembrete) return;
+    requisitar(`/lembretes/alterar-status-lembrete/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ status: !lembrete.ativo }) }).then(carregarLembretes).catch((e) => setErro(e.message));
   }
 
   function remover(id) {
-    setLembretes((lista) => lista.filter((l) => l.id !== id));
+    requisitar(`/lembretes/deletar-lembrete/${encodeURIComponent(id)}`, { method: "DELETE" }).then(carregarLembretes).catch((e) => setErro(e.message));
   }
 
-  function adicionar(novo) {
-    setLembretes((lista) => [...lista, { ...novo, id: Date.now(), ativo: true }]);
-    setModalAberto(false);
+  async function adicionar(novo) {
+    try {
+      // Garante que exista uma subscription cadastrada no backend, mesmo se o
+      // estado salvo no navegador estiver desatualizado.
+      await ativarNotificacoes();
+      await requisitar("/lembretes/criar-lembrete", { method: "POST", credentials: "include", body: JSON.stringify({ dados: {
+        titulo: novo.titulo, horario: novo.hora, categoria: CATEGORIAS_API[novo.categoria],
+        recorrencia: [0, 1, 2, 3, 4, 5, 6], horario_fixo: true, periodicamente: true,
+      } }) });
+      await carregarLembretes(); setModalAberto(false); setErro("");
+    } catch (e) { setErro(e.message); }
   }
-
+  async function ativarNotificacoes() {
+    try {
+      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) throw new Error("Este navegador não oferece suporte a notificações push.");
+      const chave = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!chave) throw new Error("Configure VITE_VAPID_PUBLIC_KEY com a chave pública VAPID do backend.");
+      if (await Notification.requestPermission() !== "granted") throw new Error("Permissão para notificações não concedida.");
+      const base64 = chave.replace(/-/g, "+").replace(/_/g, "/");
+      const raw = atob(base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), "="));
+      const key = Uint8Array.from(raw, (x) => x.charCodeAt(0));
+      const reg = await navigator.serviceWorker.register("/sw.js");
+      const subscription = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+      try { await requisitar("/dispositivos/cadastrar-dispositivo", { method: "POST", body: JSON.stringify({ subscription: subscription.toJSON() }) }); }
+      catch (e) { if (!/já cadastrado/i.test(e.message)) throw e; }
+      localStorage.setItem(CHAVE_PUSH, "true"); setNotificacoesAtivas(true); setErro("");
+    } catch (e) { setErro(e.message); throw e; }
+  }
   return (
     <main className="min-h-screen w-full min-w-0 flex-1 p-4 font-poppins sm:p-3 lg:p-3">
       {/* topo */}
@@ -268,7 +314,8 @@ function Lembretes() {
         <section className="rounded-3xl bg-[#f5f5f5] p-4 shadow-md sm:p-6 mt-6">
           <h2 className="mb-6 font-playfair text-3xl  font-semibold sm:text-3xl text-pink-400 ">Sua rotina</h2>
 
-          {ordenados.length === 0 ? (
+          {erro && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{erro}</p>}
+          {carregando ? <p className="rounded-2xl bg-white p-8 text-center text-gray-500">Carregando lembretes...</p> : ordenados.length === 0 ? (
             <p className="rounded-2xl bg-white p-8 text-center text-gray-500">
               Você ainda não tem lembretes. Toque em “Novo Lembrete” para começar.
             </p>
@@ -320,7 +367,7 @@ function Lembretes() {
 
           <aside className="rounded-2xl border border-[#f0a9c4] bg-[#fbcfe3]/60 p-4 text-sm text-[#9a3f69] sm:p-5 sm:text-base">
             Dica: manter horários regulares para medir a glicemia ajuda no controle do diabetes gestacional.
-            Ative as notificações para não esquecer!
+            <button type="button" onClick={() => ativarNotificacoes().catch(() => {})} className="ml-1 cursor-pointer font-semibold underline">{notificacoesAtivas ? "Notificações ativadas" : "Ative as notificações para não esquecer"}</button>
           </aside>
         </div>
       </div>
