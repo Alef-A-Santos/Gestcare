@@ -1,7 +1,7 @@
 import { FiPhoneCall, FiAlertTriangle } from "react-icons/fi";
 import Header from "../components/Header";
-import Botao from "../components/Botao";
-import UserName from "../components/UserName";
+//import Botao from "../components/Botao";
+//import UserName from "../components/UserName";
 import CardNumero from "../components/CardNumero";
 
 // Troque pelos dados reais da API (Acompanhantes) quando a tela estiver conectada.
@@ -39,20 +39,7 @@ const numerosEmergencia = [
   },
 ];
 
-const acompanhantes = [
-  {
-    id: 1,
-    nome: "Maria Souza",
-    parentesco: "Mãe",
-    telefone: "(19) 99999-0001",
-  },
-  {
-    id: 2,
-    nome: "João Santos",
-    parentesco: "Companheiro",
-    telefone: "(19) 99999-0002",
-  },
-];
+
 
 const sinaisDeAlerta = [
   "Tremores, suor frio, tontura ou confusão (possível hipoglicemia)",
@@ -66,12 +53,6 @@ function NumeroEmergencia() {
     window.location.assign(`tel:${telefone.replace(/\D/g, "")}`);
   };
 
-  const iniciais = (nome) =>
-    nome
-      .split(" ")
-      .map((parte) => parte[0])
-      .slice(0, 2)
-      .join("");
 
   return (
     <section className="font-[Poppins] w-full max-w-5xl mx-auto px-4 pb-10 text-teal-800">
@@ -90,7 +71,7 @@ function NumeroEmergencia() {
       </div>
 
       {/* Sinais de alerta + acompanhantes */}
-      <div className="grid gap-6 mt-8 md:grid-cols-2">
+      <div className="flex gap-6 mt-8 justify-center items-center">
         <div className="rounded-2xl bg-pink-50 border-l-4 border-pink-400 p-6">
           <h3 className="font-playfair text-2xl font-semibold text-pink-500 flex items-center gap-2">
             <FiAlertTriangle aria-hidden="true" />
@@ -105,46 +86,6 @@ function NumeroEmergencia() {
             {" "}
             Esta lista não substitui a orientação da sua equipe de saúde.
           </p>
-        </div>
-
-        <div className="rounded-2xl bg-white border border-teal-100 p-6">
-          <h3 className="font-[Playfair_Display] text-3xl font-semibold text-teal-700">
-            Seus acompanhantes
-          </h3>
-
-          <ul className="mt-4 divide-y divide-teal-100">
-            {acompanhantes.map((pessoa) => (
-              <li
-                key={pessoa.id}
-                className="flex items-center justify-between gap-3 py-3"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="w-11 h-11 rounded-full bg-teal-600 text-white flex items-center justify-center font-semibold"
-                    aria-hidden="true"
-                  >
-                    {iniciais(pessoa.nome)}
-                  </span>
-                  <div>
-                    <UserName
-                      nome={pessoa.nome}
-                      className="font-semibold text-teal-800 text-[18px]"
-                    />
-                    <p className="text-xs text-teal-700/80 text-[15px]">
-                      {pessoa.parentesco} • {pessoa.telefone}
-                    </p>
-                  </div>
-                </div>
-
-                <Botao
-                  nome="Ligar"
-                  tipoDado="button"
-                  clickHandler={() => ligar(pessoa.telefone)}
-                  className="rounded-full bg-pink-400 text-white text-sm text-[15px] font-medium px-5 py-2 cursor-pointer hover:bg-pink-500 transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-pink-200"
-                />
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>
