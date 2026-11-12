@@ -27,8 +27,7 @@ export default class DispositivosController {
         return res.status(201).send(response); 
       }catch(error) {
         console.error(error);
-        if(error.hasMissingValues || error.code === "ER_DUP_ENTRY") {
-          if(error.code === "ER_DUP_ENTRY") error.message = "Dispositivo já cadastrado!";
+        if(error.hasMissingValues || error.alreadyExist) {
           return res.status(400).send({erro:error.message});
         }
 

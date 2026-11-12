@@ -30,6 +30,13 @@ export default class DispositivosService {
       throw error;
     }
 
+    const dispositivoExist = await dispositivosRepository.BuscarDispositivoNome(nome);
+    if(dispositivoExist) {
+      error.alreadyExist = true;
+      error.message = "Dispositivo já cadastrado!";
+      throw error;
+    }
+
     const response = await dispositivosRepository.Cadastrar(
       user,
       subscription,
