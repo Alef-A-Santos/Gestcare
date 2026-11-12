@@ -11,6 +11,7 @@ import CardLembrete from "../components/CardLembrete";
 import UserName from "../components/UserName";
 import Botao from "../components/Botao";
 import { useUsuario } from "../context/UsuarioContext";
+import { useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -34,8 +35,10 @@ function formatarDataParto(valor) {
 }
 
 function Home() {
+  const navigate = useNavigate();
   const usuario = useUsuario();
   const [resumo, setResumo] = useState(null);
+  const [lembretesInicio, setLembretesInicio] = useState([]);
   const [refeicoes, setRefeicoes] = useState([]);
   const [erro, setErro] = useState("");
 
@@ -210,7 +213,40 @@ function Home() {
         if (ativo) setResumo(dados?.resumo ?? null);
       };
 
-      const resultados = await Promise.allSettled([carregarRefeicoes(), carregarResumo()]);
+      const carregarLembretes = async () => {
+        const resposta = await fetch(`${API}/lembretes/listar-lembretes-usuario`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const dados = await resposta.json().catch(() => null);
+        if (!resposta.ok) throw new Error(dados?.erro || "Falha ao carregar lembretes.");
+        if (ativo) {
+          const agora = new Date();
+          const hoje = agora.getDay();
+          const minutoAtual = agora.getHours() * 60 + agora.getMinutes();
+          const lista = (dados?.lembretes || [])
+            .filter((l) => Number(l.ativo) === 1 || l.ativo === true)
+            .map((l) => {
+              const dias = Array.isArray(l.recorrencia)
+                ? l.recorrencia.map(Number)
+                : /^\d(?:,\d)*$/.test(String(l.recorrencia || "").trim())
+                  ? String(l.recorrencia).split(",").map(Number)
+                  : [0, 1, 2, 3, 4, 5, 6];
+              const [hora = 0, minuto = 0] = String(l.horario || "00:00").split(":").map(Number);
+              const minutos = hora * 60 + minuto;
+              const diasAteProximo = dias.map((dia) => {
+                const diferenca = (dia - hoje + 7) % 7;
+                return diferenca === 0 && minutos <= minutoAtual ? 7 : diferenca;
+              });
+              return { ...l, _proximoEm: Math.min(...diasAteProximo) * 1440 + minutos };
+            })
+            .filter((l) => Number.isFinite(l._proximoEm))
+            .sort((a, b) => a._proximoEm - b._proximoEm);
+          setLembretesInicio(lista);
+        }
+      };
+
+      const resultados = await Promise.allSettled([carregarRefeicoes(), carregarResumo(), carregarLembretes()]);
       if (!ativo) return;
       const falhas = resultados
         .filter((resultado) => resultado.status === "rejected")
@@ -257,13 +293,9 @@ function Home() {
   const dataParto = formatarDataParto(resumo?.data_prev_parto);
   const marcoSemana = resumo?.frase_semana || "Sem dados para esta semana.";
 
-  const proximoLembrete = resumo?.proximos_lembretes?.[0];
-
-  const lembrete = proximoLembrete
-    ? `${proximoLembrete.titulo} — ${String(
-        proximoLembrete.horario
-      ).slice(0, 5)}`
-    : null;
+  const lembretesExibidos = (lembretesInicio.length
+    ? lembretesInicio
+    : (resumo?.proximos_lembretes || [])).slice(0, 5);
 
   return (
     <div className="min-h-screen flex bg-pink-100">
@@ -429,8 +461,8 @@ function Home() {
           {/* Linha 3: lembretes */}
           <div className="max-w-md w-full mx-auto">
             <CardLembrete
-              lembrete={lembrete}
-              aoCriar={() => {}}
+              lembretes={lembretesExibidos}
+              aoCriar={() => navigate("/lembretes")}
             />
           </div>
 

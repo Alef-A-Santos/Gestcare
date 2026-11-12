@@ -36,6 +36,12 @@ const CATEGORIAS_API = {
   "Hidratação": "hidratacao",
 };
 
+function obterRecorrencia(lembrete) {
+  if (Array.isArray(lembrete.recorrencia)) return lembrete.recorrencia.map(Number).filter(Number.isInteger);
+  const texto = String(lembrete.recorrencia || "").trim();
+  return /^\d(?:,\d)*$/.test(texto) ? texto.split(",").map(Number) : [];
+}
+
 // O Botao renderiza Component com text-3xl; aqui o ícone fica menor, como no protótipo
 const IconeMais = () => <FaPlus size={14} />;
 
@@ -80,7 +86,7 @@ function CartaoLembrete({ lembrete, onToggle, onRemover }) {
           {lembrete.titulo}
         </p>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-          <p className="text-sm text-gray-500">{lembrete.hora} - Todos os dias</p>
+          <p className="text-sm text-gray-500">{lembrete.hora} - {lembrete.frequencia}</p>
           <span className={`rounded-full px-3 py-0.5 text-xs font-medium sm:hidden ${cat.tag}`}>
             {lembrete.categoria}
           </span>
@@ -113,6 +119,8 @@ function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
   const [titulo, setTitulo] = useState("");
   const [hora, setHora] = useState("");
   const [categoria, setCategoria] = useState("Glicemia");
+  const [frequencia, setFrequencia] = useState("diaria");
+  const [diasSelecionados, setDiasSelecionados] = useState([]);
   const [erro, setErro] = useState("");
 
   useEffect(() => {
@@ -126,14 +134,16 @@ function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
 
   function enviar(e) {
     e.preventDefault();
-    if (!titulo.trim() || !hora) {
+    if (!titulo.trim() || !hora || (frequencia === "dias" && diasSelecionados.length === 0)) {
       setErro("Preencha o nome e o horário do lembrete.");
       return;
     }
-    onSalvar({ titulo: titulo.trim(), hora, categoria });
+    onSalvar({ titulo: titulo.trim(), hora, categoria, frequencia, diasSelecionados });
     setTitulo("");
     setHora("");
     setCategoria("Glicemia");
+    setFrequencia("diaria");
+    setDiasSelecionados([]);
     setErro("");
   }
 
@@ -188,6 +198,26 @@ function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
           </label>
         </div>
 
+        <label className="mb-4 block">
+          <span className="mb-1 block text-sm font-medium text-gray-600">Frequência</span>
+          <select className={campo} value={frequencia} onChange={(e) => setFrequencia(e.target.value)}>
+            <option value="diaria">Todos os dias</option>
+            <option value="dias">Dias específicos da semana</option>
+          </select>
+        </label>
+        {frequencia === "dias" && (
+          <fieldset className="mb-4">
+            <legend className="mb-2 block text-sm font-medium text-gray-600">Selecione os dias</legend>
+            <div className="grid grid-cols-7 gap-2">
+              {DIAS_SEMANA.map((dia, indice) => {
+                const selecionado = diasSelecionados.includes(indice);
+                return <button key={indice} type="button" aria-pressed={selecionado} aria-label={NOMES_DIAS[indice]} title={NOMES_DIAS[indice]}
+                  onClick={() => setDiasSelecionados((atuais) => selecionado ? atuais.filter((d) => d !== indice) : [...atuais, indice].sort())}
+                  className={`h-10 rounded-full font-medium transition ${selecionado ? "bg-[#1f9d8e] text-white" : "bg-[#f3e6ec] text-[#7a2d52]"}`}>{dia}</button>;
+              })}
+            </div>
+          </fieldset>
+        )}
         {erro && <p className="mb-3 text-sm text-red-500">{erro}</p>}
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
@@ -216,6 +246,27 @@ function Lembretes() {
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [notificacoesAtivas, setNotificacoesAtivas] = useState(() => localStorage.getItem(CHAVE_PUSH) === "true");
+  const [diaSelecionado, setDiaSelecionado] = useState(() => new Date().getDay());
+
+  useEffect(() => {
+    let ativo = true;
+    async function verificarInscricao() {
+      try {
+        const inscricao = "serviceWorker" in navigator && "Notification" in window && Notification.permission === "granted"
+          ? await navigator.serviceWorker.getRegistration("/")
+          : null;
+        const ativada = Boolean(inscricao && await inscricao.pushManager.getSubscription());
+        if (ativo) {
+          setNotificacoesAtivas(ativada);
+          localStorage.setItem(CHAVE_PUSH, String(ativada));
+        }
+      } catch {
+        if (ativo) setNotificacoesAtivas(false);
+      }
+    }
+    verificarInscricao();
+    return () => { ativo = false; };
+  }, []);
 
   async function requisitar(url, opcoes = {}) {
     const resposta = await fetch(`${API}${url}`, { credentials: "include", ...opcoes,
@@ -227,10 +278,20 @@ function Lembretes() {
 
   const normalizar = (l) => {
     const categoria = Object.keys(CATEGORIAS_API).find((nome) => CATEGORIAS_API[nome] === l.categoria) || l.categoria;
+    // O backend grava os dias no banco como "0,2,4"; converte de volta
+    // para números antes de montar a frequência exibida.
+    const recorrencia = Array.isArray(l.recorrencia)
+      ? l.recorrencia.map(Number)
+      : typeof l.recorrencia === "string" && /^\d(?:,\d)*$/.test(l.recorrencia)
+        ? l.recorrencia.split(",").map(Number)
+        : [];
     return {
       ...l,
       id: l.id_lembrete,
       hora: String(l.horario || "").slice(0, 5),
+      frequencia: recorrencia.length > 0 && recorrencia.length < 7
+        ? recorrencia.map((dia) => NOMES_DIAS[dia]).join(", ")
+        : "Todos os dias",
       categoria: CATEGORIAS[categoria] ? categoria : "Glicemia",
       ativo: Number(l.ativo) === 1 || l.ativo === true,
     };
@@ -254,6 +315,25 @@ function Lembretes() {
   );
   const totalAtivos = lembretes.filter((l) => l.ativo).length;
   const diaHoje = new Date().getDay();
+  const lembretesDoDiaSelecionado = lembretes.filter((lembrete) => {
+    if (!lembrete.ativo) return false;
+    const recorrencia = obterRecorrencia(lembrete);
+    return recorrencia.length === 0 || recorrencia.includes(diaSelecionado);
+  });
+  const proximoLembrete = lembretes.filter((lembrete) => lembrete.ativo).map((lembrete) => {
+    const agora = new Date();
+    const recorrencia = obterRecorrencia(lembrete);
+    const dias = recorrencia.length ? recorrencia : DIAS_SEMANA.map((_, i) => i);
+    const [hora = 0, minuto = 0] = String(lembrete.hora || "00:00").split(":").map(Number);
+    const datas = dias.map((dia) => {
+      const data = new Date(agora);
+      data.setDate(data.getDate() + ((dia - agora.getDay() + 7) % 7));
+      data.setHours(hora, minuto, 0, 0);
+      if (data <= agora) data.setDate(data.getDate() + 7);
+      return data;
+    });
+    return { lembrete, data: datas.sort((a, b) => a - b)[0] };
+  }).sort((a, b) => a.data - b.data)[0];
 
   function alternar(id) {
     const lembrete = lembretes.find((l) => l.id === id);
@@ -272,7 +352,8 @@ function Lembretes() {
       await ativarNotificacoes();
       await requisitar("/lembretes/criar-lembrete", { method: "POST", credentials: "include", body: JSON.stringify({ dados: {
         titulo: novo.titulo, horario: novo.hora, categoria: CATEGORIAS_API[novo.categoria],
-        recorrencia: [0, 1, 2, 3, 4, 5, 6], horario_fixo: true, periodicamente: true,
+        recorrencia: novo.frequencia === "dias" ? novo.diasSelecionados : [0, 1, 2, 3, 4, 5, 6],
+        horario_fixo: true, periodicamente: true,
       } }) });
       await carregarLembretes(); setModalAberto(false); setErro("");
     } catch (e) { setErro(e.message); }
@@ -286,7 +367,9 @@ function Lembretes() {
       const base64 = chave.replace(/-/g, "+").replace(/_/g, "/");
       const raw = atob(base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), "="));
       const key = Uint8Array.from(raw, (x) => x.charCodeAt(0));
-      const reg = await navigator.serviceWorker.register("/sw.js");
+      const reg = await navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" });
+      await reg.update();
+      await navigator.serviceWorker.ready;
       const subscription = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
       try { await requisitar("/dispositivos/cadastrar-dispositivo", { method: "POST", body: JSON.stringify({ subscription: subscription.toJSON() }) }); }
       catch (e) { if (!/já cadastrado/i.test(e.message)) throw e; }
@@ -317,7 +400,7 @@ function Lembretes() {
           {erro && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{erro}</p>}
           {carregando ? <p className="rounded-2xl bg-white p-8 text-center text-gray-500">Carregando lembretes...</p> : ordenados.length === 0 ? (
             <p className="rounded-2xl bg-white p-8 text-center text-gray-500">
-              Você ainda não tem lembretes. Toque em “Novo Lembrete” para começar.
+              Você ainda não tem lembretes. Toque em Novo Lembrete para começar.
             </p>
           ) : (
             <ul className="flex flex-col gap-3">
@@ -342,18 +425,33 @@ function Lembretes() {
               {DIAS_SEMANA.map((letra, i) => {
                 const cumprido = i <= diaHoje;
                 return (
-                  <span
+                  <button
+                    type="button"
+                    onClick={() => setDiaSelecionado(i)}
+                    aria-pressed={diaSelecionado === i}
                     key={i}
                     title={NOMES_DIAS[i]}
                     className={`flex h-9 w-full items-center justify-center rounded-full text-base sm:text-lg ${
                       cumprido ? "bg-[#a8f0d8] text-[#1f9d8e]" : "bg-[#fbcfe3] text-[#d46a9a]"
-                    } ${i === diaHoje ? "ring-2 ring-[#1f9d8e] ring-offset-2" : ""}`}
+                    } ${diaSelecionado === i ? "ring-2 ring-[#1f9d8e] ring-offset-2" : ""} cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500`}
                   >
-                    {letra}
-                  </span>
+                    {lembretes.some((lembrete) => {
+                      if (!lembrete.ativo) return false;
+                      const recorrencia = obterRecorrencia(lembrete);
+                      return recorrencia.length === 0 || recorrencia.includes(i);
+                    }) ? <span className="relative">{letra}<span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-pink-500" /></span> : letra}
+                  </button>
                 );
               })}
             </div>
+
+            {lembretesDoDiaSelecionado.length > 0 ? (
+              <ul className="mb-5 space-y-2 rounded-xl bg-white/70 p-4 text-sm text-zinc-700">
+                <li><span className="font-semibold">{NOMES_DIAS[diaSelecionado]}:</span>{" "}
+                  {lembretesDoDiaSelecionado.map((lembrete) => `${lembrete.titulo} (${lembrete.hora})`).join(", ")}
+                </li>
+              </ul>
+            ) : <p className="mb-5 text-sm text-zinc-500">Nenhum lembrete ativo na {NOMES_DIAS[diaSelecionado].toLowerCase()}.</p>}
 
             <p className="mb-4 flex items-center gap-3 text-base sm:text-lg">
               <FaCheckCircle className="text-[#1f9d8e]" />
@@ -361,7 +459,7 @@ function Lembretes() {
             </p>
 
             <div className="rounded-xl bg-[#fbcfe3] px-4 py-3 text-center text-[#7a2d52]">
-              Próxima consulta: 12 de setembro, 9:00
+              {proximoLembrete ? <>Próximo lembrete: <strong>{proximoLembrete.lembrete.titulo}</strong> em {proximoLembrete.data.toLocaleString("pt-BR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}</> : "Nenhum próximo lembrete"}
             </div>
           </section>
 
