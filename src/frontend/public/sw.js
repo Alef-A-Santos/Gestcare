@@ -17,6 +17,7 @@
   const categoria = String(data.categoria || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   event.waitUntil(self.registration.showNotification(data.titulo || "Lembrete Gestcare", {
     body: categorias[categoria] || (data.categoria ? `Categoria: ${data.categoria}` : "Está na hora do seu lembrete."),
+    icon: "./logo_rosa.png",
     tag: `gestcare-lembrete-${data.titulo || "rotina"}`,
     renotify: true,
   }));
