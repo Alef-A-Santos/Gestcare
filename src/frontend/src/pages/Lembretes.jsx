@@ -9,6 +9,7 @@ import {
   FaPlus,
   FaTrash,
   FaTimes,
+  FaPen,
 } from "react-icons/fa";
 import Header from "../components/Header";
 import Botao from "../components/Botao";
@@ -28,6 +29,7 @@ const DIAS_SEMANA = ["D", "S", "T", "Q", "Q", "S", "S"];
 const NOMES_DIAS = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 const API = import.meta.env.VITE_BACK_URL || import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const CHAVE_PUSH = "gestcare_push_ativado";
+const CHAVE_CATEGORIAS_LEMBRETES = "gestcare_categorias_lembretes";
 const CATEGORIAS_API = {
   Glicemia: "glicemia",
   "Medicação": "medicao",
@@ -35,6 +37,29 @@ const CATEGORIAS_API = {
   Consulta: "consulta",
   "Hidratação": "hidratacao",
 };
+const normalizarCategoria = (valor) => String(valor || "")
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const CATEGORIAS_POR_CHAVE = Object.fromEntries(
+  Object.keys(CATEGORIAS).map((nome) => [normalizarCategoria(nome), nome])
+);
+CATEGORIAS_POR_CHAVE.medicao = "Medicação";
+
+function chaveLembrete(lembrete) {
+  const recorrencia = Array.isArray(lembrete.recorrencia)
+    ? lembrete.recorrencia.join(",")
+    : String(lembrete.recorrencia || "");
+  return [lembrete.titulo, String(lembrete.horario || lembrete.hora || "").slice(0, 5), recorrencia]
+    .map((parte) => String(parte || "").trim().toLowerCase())
+    .join("|");
+}
+
+function lerCategoriasSalvas() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE_CATEGORIAS_LEMBRETES) || "{}");
+  } catch {
+    return {};
+  }
+}
 
 function obterRecorrencia(lembrete) {
   if (Array.isArray(lembrete.recorrencia)) return lembrete.recorrencia.map(Number).filter(Number.isInteger);
@@ -67,8 +92,9 @@ function Toggle({ ligado, onChange, rotulo }) {
   );
 }
 
-function CartaoLembrete({ lembrete, onToggle, onRemover }) {
-  const cat = CATEGORIAS[lembrete.categoria];
+function CartaoLembrete({ lembrete, onToggle, onRemover, onEditar }) {
+  const categoriaNome = CATEGORIAS_POR_CHAVE[normalizarCategoria(lembrete.categoria || lembrete.tipo)] || "Glicemia";
+  const cat = CATEGORIAS[categoriaNome];
   const Icone = cat.icone;
 
   return (
@@ -88,14 +114,23 @@ function CartaoLembrete({ lembrete, onToggle, onRemover }) {
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
           <p className="text-sm text-gray-500">{lembrete.hora} - {lembrete.frequencia}</p>
           <span className={`rounded-full px-3 py-0.5 text-xs font-medium sm:hidden ${cat.tag}`}>
-            {lembrete.categoria}
+            {categoriaNome}
           </span>
         </div>
       </div>
 
       <span className={`hidden rounded-full px-4 py-1 text-sm font-medium sm:inline-block ${cat.tag}`}>
-        {lembrete.categoria}
+        {categoriaNome}
       </span>
+
+      <button
+        type="button"
+        onClick={onEditar}
+        aria-label={`Editar lembrete ${lembrete.titulo}`}
+        className="cursor-pointer rounded-full p-2 text-gray-400 transition hover:bg-emerald-50 hover:text-[#1f9d8e]"
+      >
+        <FaPen size={14} />
+      </button>
 
       <button
         type="button"
@@ -115,13 +150,24 @@ function CartaoLembrete({ lembrete, onToggle, onRemover }) {
   );
 }
 
-function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
+function ModalNovoLembrete({ aberto, lembrete, onFechar, onSalvar }) {
   const [titulo, setTitulo] = useState("");
   const [hora, setHora] = useState("");
   const [categoria, setCategoria] = useState("Glicemia");
   const [frequencia, setFrequencia] = useState("diaria");
   const [diasSelecionados, setDiasSelecionados] = useState([]);
   const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    if (!aberto) return;
+    setTitulo(lembrete?.titulo || "");
+    setHora(lembrete?.hora || "");
+    setCategoria(lembrete?.categoria || "Glicemia");
+    const dias = lembrete ? obterRecorrencia(lembrete) : [];
+    setFrequencia(dias.length > 0 && dias.length < 7 ? "dias" : "diaria");
+    setDiasSelecionados(dias);
+    setErro("");
+  }, [aberto, lembrete]);
 
   useEffect(() => {
     if (!aberto) return;
@@ -165,7 +211,7 @@ function ModalNovoLembrete({ aberto, onFechar, onSalvar }) {
       >
         <div className="mb-5 flex items-center justify-between">
           <h2 id="titulo-modal" className="font-playfair text-2xl font-semibold text-pink-400">
-            Novo lembrete
+            {lembrete ? "Editar lembrete" : "Novo lembrete"}
           </h2>
           <button type="button" onClick={onFechar} aria-label="Fechar" className="cursor-pointer text-gray-400 hover:text-gray-600">
             <FaTimes />
@@ -243,6 +289,7 @@ function Lembretes() {
   const usuario = useUsuario();
   const [lembretes, setLembretes] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
+  const [lembreteEmEdicao, setLembreteEmEdicao] = useState(null);
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [notificacoesAtivas, setNotificacoesAtivas] = useState(() => localStorage.getItem(CHAVE_PUSH) === "true");
@@ -277,7 +324,8 @@ function Lembretes() {
   }
 
   const normalizar = (l) => {
-    const categoria = Object.keys(CATEGORIAS_API).find((nome) => CATEGORIAS_API[nome] === l.categoria) || l.categoria;
+    const categoriaSalva = lerCategoriasSalvas()[chaveLembrete(l)];
+    const categoria = CATEGORIAS_POR_CHAVE[normalizarCategoria(l.categoria || l.tipo || categoriaSalva)] || "Glicemia";
     // O backend grava os dias no banco como "0,2,4"; converte de volta
     // para números antes de montar a frequência exibida.
     const recorrencia = Array.isArray(l.recorrencia)
@@ -335,10 +383,19 @@ function Lembretes() {
     return { lembrete, data: datas.sort((a, b) => a - b)[0] };
   }).sort((a, b) => a.data - b.data)[0];
 
-  function alternar(id) {
+  async function alternar(id) {
     const lembrete = lembretes.find((l) => l.id === id);
     if (!lembrete) return;
-    requisitar(`/lembretes/alterar-status-lembrete/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ status: !lembrete.ativo }) }).then(carregarLembretes).catch((e) => setErro(e.message));
+    try {
+      // A API atual valida o status com truthiness; enviar 0 booleano falha,
+      // mas a string "0" é aceita e continua sendo convertida para zero no SQL.
+      await requisitar(`/lembretes/alterar-status-lembrete/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: lembrete.ativo ? "0" : 1 }),
+      });
+      await carregarLembretes();
+      setErro("");
+    } catch (e) { setErro(e.message); }
   }
 
   function remover(id) {
@@ -347,15 +404,43 @@ function Lembretes() {
 
   async function adicionar(novo) {
     try {
-      // Garante que exista uma subscription cadastrada no backend, mesmo se o
-      // estado salvo no navegador estiver desatualizado.
-      await ativarNotificacoes();
+      // Só solicita/cadastra a subscription quando as notificações ainda não
+      // estão ativadas para este usuário neste navegador.
+      if (!notificacoesAtivas) await ativarNotificacoes();
+      const recorrencia = novo.frequencia === "dias" ? novo.diasSelecionados : [0, 1, 2, 3, 4, 5, 6];
       await requisitar("/lembretes/criar-lembrete", { method: "POST", credentials: "include", body: JSON.stringify({ dados: {
-        titulo: novo.titulo, horario: novo.hora, categoria: CATEGORIAS_API[novo.categoria],
-        recorrencia: novo.frequencia === "dias" ? novo.diasSelecionados : [0, 1, 2, 3, 4, 5, 6],
+        titulo: novo.titulo, horario: novo.hora, categoria: CATEGORIAS_API[novo.categoria] || CATEGORIAS_API.Glicemia,
+        recorrencia,
         horario_fixo: true, periodicamente: true,
       } }) });
+      const categoriasSalvas = lerCategoriasSalvas();
+      categoriasSalvas[chaveLembrete({ titulo: novo.titulo, horario: novo.hora, recorrencia })] = novo.categoria;
+      localStorage.setItem(CHAVE_CATEGORIAS_LEMBRETES, JSON.stringify(categoriasSalvas));
       await carregarLembretes(); setModalAberto(false); setErro("");
+    } catch (e) { setErro(e.message); }
+  }
+  async function salvarEdicao(dados) {
+    if (!lembreteEmEdicao) return adicionar(dados);
+    try {
+      const recorrencia = dados.frequencia === "dias" ? dados.diasSelecionados : [0, 1, 2, 3, 4, 5, 6];
+      await requisitar(`/lembretes/editar-lembrete/${encodeURIComponent(lembreteEmEdicao.id)}`, {
+        method: "PUT",
+        body: JSON.stringify({ dados: {
+          titulo: dados.titulo,
+          horario: dados.hora,
+          categoria: CATEGORIAS_API[dados.categoria] || CATEGORIAS_API.Glicemia,
+          recorrencia,
+          periodicamente: true,
+          horario_fixo: true,
+        } }),
+      });
+      const categoriasSalvas = lerCategoriasSalvas();
+      categoriasSalvas[chaveLembrete({ titulo: dados.titulo, horario: dados.hora, recorrencia })] = dados.categoria;
+      localStorage.setItem(CHAVE_CATEGORIAS_LEMBRETES, JSON.stringify(categoriasSalvas));
+      await carregarLembretes();
+      setModalAberto(false);
+      setLembreteEmEdicao(null);
+      setErro("");
     } catch (e) { setErro(e.message); }
   }
   async function ativarNotificacoes() {
@@ -385,7 +470,7 @@ function Lembretes() {
           <Botao
             nome="Novo Lembrete"
             tipoDado="button"
-            clickHandler={() => setModalAberto(true)}
+            clickHandler={() => { setLembreteEmEdicao(null); setModalAberto(true); }}
             Component={IconeMais}
             className="bg-pink-400 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
           />
@@ -410,6 +495,7 @@ function Lembretes() {
                   lembrete={l}
                   onToggle={() => alternar(l.id)}
                   onRemover={() => remover(l.id)}
+                  onEditar={() => { setLembreteEmEdicao(l); setModalAberto(true); }}
                 />
               ))}
             </ul>
@@ -472,8 +558,9 @@ function Lembretes() {
 
       <ModalNovoLembrete
         aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
-        onSalvar={adicionar}
+        lembrete={lembreteEmEdicao}
+        onFechar={() => { setModalAberto(false); setLembreteEmEdicao(null); }}
+        onSalvar={salvarEdicao}
       />
     </main>
   );
