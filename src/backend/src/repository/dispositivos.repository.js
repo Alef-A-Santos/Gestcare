@@ -109,4 +109,15 @@ export default class DispositivosRepository {
       if (db) db.release();
     }
   }
+  async BuscarDispositivoNome(nome) {
+    let db;
+    try {
+      db = await connectDB();
+      const [[result]] = await db.query(`SELECT COUNT(id_dispositivo) as qtd FROM dispositivos WHERE nome = ?`, [nome]);
+
+      return result.qtd;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
