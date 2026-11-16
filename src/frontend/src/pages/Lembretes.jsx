@@ -14,6 +14,8 @@ import {
 import Header from "../components/Header";
 import Botao from "../components/Botao";
 import { useUsuario } from "../context/UsuarioContext";
+import Swal from "sweetalert2";
+import { mensagemErro } from "../utils/mensagemErro";
 
 
 /* ---------- configuração das categorias ---------- */
@@ -353,7 +355,7 @@ function Lembretes() {
     let ativo = true;
     requisitar("/lembretes/listar-lembretes-usuario")
       .then((dados) => { if (ativo) setLembretes((dados?.lembretes || []).map(normalizar)); })
-      .catch((e) => { if (ativo) setErro(e.message); })
+      .catch((e) => { if (ativo) setErro(mensagemErro(e)); })
       .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
   }, [usuario]);
@@ -395,11 +397,15 @@ function Lembretes() {
       });
       await carregarLembretes();
       setErro("");
-    } catch (e) { setErro(e.message); }
+    } catch (e) { setErro(mensagemErro(e)); }
   }
 
-  function remover(id) {
-    requisitar(`/lembretes/deletar-lembrete/${encodeURIComponent(id)}`, { method: "DELETE" }).then(carregarLembretes).catch((e) => setErro(e.message));
+  async function remover(id) {
+    try {
+      await requisitar(`/lembretes/deletar-lembrete/${encodeURIComponent(id)}`, { method: "DELETE" });
+      await carregarLembretes();
+      await Swal.fire({ icon: "success", title: "Lembrete excluído com sucesso!", confirmButtonColor: "#14b8a6" });
+    } catch (e) { setErro(mensagemErro(e)); }
   }
 
   async function adicionar(novo) {
@@ -417,7 +423,8 @@ function Lembretes() {
       categoriasSalvas[chaveLembrete({ titulo: novo.titulo, horario: novo.hora, recorrencia })] = novo.categoria;
       localStorage.setItem(CHAVE_CATEGORIAS_LEMBRETES, JSON.stringify(categoriasSalvas));
       await carregarLembretes(); setModalAberto(false); setErro("");
-    } catch (e) { setErro(e.message); }
+      await Swal.fire({ icon: "success", title: "Lembrete criado com sucesso!", confirmButtonColor: "#14b8a6" });
+    } catch (e) { setErro(mensagemErro(e)); }
   }
   async function salvarEdicao(dados) {
     if (!lembreteEmEdicao) return adicionar(dados);
@@ -441,7 +448,8 @@ function Lembretes() {
       setModalAberto(false);
       setLembreteEmEdicao(null);
       setErro("");
-    } catch (e) { setErro(e.message); }
+      await Swal.fire({ icon: "success", title: "Lembrete editado com sucesso!", confirmButtonColor: "#14b8a6" });
+    } catch (e) { setErro(mensagemErro(e)); }
   }
   async function ativarNotificacoes() {
     try {
@@ -459,7 +467,7 @@ function Lembretes() {
       try { await requisitar("/dispositivos/cadastrar-dispositivo", { method: "POST", body: JSON.stringify({ subscription: subscription.toJSON() }) }); }
       catch (e) { if (!/já cadastrado/i.test(e.message)) throw e; }
       localStorage.setItem(CHAVE_PUSH, "true"); setNotificacoesAtivas(true); setErro("");
-    } catch (e) { setErro(e.message); throw e; }
+    } catch (e) { setErro(mensagemErro(e)); throw e; }
   }
   return (
     <main className="min-h-screen w-full min-w-0 flex-1 p-4 font-poppins sm:p-3 lg:p-3">

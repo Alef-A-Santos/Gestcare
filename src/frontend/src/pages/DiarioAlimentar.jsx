@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiEdit2, FiPlus, FiTrash2, FiX } from "react-icons/fi";
 import Header from "../components/Header";
 import { useUsuario } from "../context/UsuarioContext";
+import { mensagemErro } from "../utils/mensagemErro";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const ITENS_POR_PAGINA = 10;
@@ -50,7 +51,14 @@ function DiarioAlimentar() {
   const [refeicaoEditando, setRefeicaoEditando] = useState(null);
   const [formulario, setFormulario] = useState(novoFormulario);
   const [totalPaginas, setTotalPaginas] = useState(1);
+  const [descricoesExpandidas, setDescricoesExpandidas] = useState({});
+  const formularioRef = useRef(null);
   const paginaAtual = Math.min(pagina, totalPaginas);
+
+  useEffect(() => {
+    if (!formularioAberto || !window.matchMedia("(max-width: 639px)").matches) return;
+    formularioRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [formularioAberto, refeicaoEditando]);
 
   const carregarRefeicoes = useCallback(async () => {
     if (!idUsuario) return;
@@ -65,7 +73,7 @@ function DiarioAlimentar() {
       setRefeicoes(dados?.refeicoes ?? []);
       setTotalPaginas(Math.max(1, dados?.paginacao?.total_paginas ?? 1));
     } catch (error) {
-      setErro(error.message || "Falha ao carregar o diário alimentar.");
+      setErro(mensagemErro(error, "Falha ao carregar o diário alimentar."));
     } finally {
       setCarregando(false);
     }
@@ -100,12 +108,18 @@ function DiarioAlimentar() {
       setErro("Não foi possível identificar o usuário da sessão.");
       return;
     }
+    const descricaoAlimentos = formulario.descricao_alimentos.trim();
+    if (!descricaoAlimentos) {
+      setErro("Informe os alimentos da refeição.");
+      return;
+    }
     setSalvando(true);
     setErro("");
     const editar = Boolean(refeicaoEditando);
     const id = refeicaoEditando?.id_refeicao;
     const payload = {
       ...formulario,
+      descricao_alimentos: descricaoAlimentos,
       data_hora: formulario.data_hora,
       ...(!editar && { id_usuario: idUsuario }),
     };
@@ -127,7 +141,7 @@ function DiarioAlimentar() {
       setRefeicaoEditando(null);
       await carregarRefeicoes();
     } catch (error) {
-      setErro(error.message || "Falha ao salvar a refeição.");
+      setErro(mensagemErro(error, "Falha ao salvar a refeição."));
     } finally {
       setSalvando(false);
     }
@@ -145,7 +159,7 @@ function DiarioAlimentar() {
       await lerResposta(resposta);
       setRefeicoes((atuais) => atuais.filter((item) => item.id_refeicao !== id));
     } catch (error) {
-      setErro(error.message || "Falha ao excluir a refeição.");
+      setErro(mensagemErro(error, "Falha ao excluir a refeição."));
     }
   }
 
@@ -174,7 +188,7 @@ function DiarioAlimentar() {
         )}
 
         {formularioAberto && (
-          <form onSubmit={salvarRefeicao} className="mb-7 rounded-2xl border border-teal-200 bg-white p-5">
+          <form ref={formularioRef} onSubmit={salvarRefeicao} className="mb-7 scroll-mt-4 rounded-2xl border border-teal-200 bg-white p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <h4 className="text-xl font-semibold text-teal-800">
                 {refeicaoEditando ? "Editar refeição" : "Nova refeição"}
@@ -192,7 +206,7 @@ function DiarioAlimentar() {
               </label>
               <label className="flex flex-col gap-1 font-medium text-gray-700">
                 Data e hora
-                <input required type="datetime-local" value={formulario.data_hora} onChange={(event) => setFormulario({ ...formulario, data_hora: event.target.value })} className="rounded-lg border border-gray-300 p-3" />
+                <input required type="datetime-local" max={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)} value={formulario.data_hora} onChange={(event) => setFormulario({ ...formulario, data_hora: event.target.value })} className="rounded-lg border border-gray-300 p-3" />
               </label>
               <label className="flex flex-col gap-1 font-medium text-gray-700 sm:col-span-2">
                 Alimentos (até 255 caracteres)
@@ -216,17 +230,35 @@ function DiarioAlimentar() {
         ) : (
           <ul className="flex flex-col">
             {refeicoes.map((refeicao) => (
-              <li key={refeicao.id_refeicao} className="flex flex-col justify-between gap-4 border-b border-pink-200 py-4 last:border-b-0 sm:flex-row sm:items-start">
-                <div className="flex items-start gap-3">
+              <li key={refeicao.id_refeicao} className="flex min-w-0 flex-col justify-between gap-4 border-b border-pink-200 py-4 last:border-b-0 sm:flex-row sm:items-start">
+                <div className="flex min-w-0 items-start gap-3">
                   <span aria-hidden="true" className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-pink-400" />
-                  <div className="font-poppins">
-                    <h4 className="font-semibold text-pink-500 text-2xl">{refeicao.tipo_refeicao}</h4>
-                    <p className="mt-2 text-teal-700 text-[20px] font-semibold">{refeicao.descricao_alimentos}</p>
-                    <time className="mt-3 block text-gray-500 text-2xl">{formatarDataHora(refeicao.data_hora)}</time>
+                  <div className="min-w-0 flex-1 font-poppins">
+                    <h4 className="break-words text-lg font-semibold text-pink-500 sm:text-2xl">{refeicao.tipo_refeicao}</h4>
+                    <p className={`mt-2 whitespace-pre-wrap break-all text-base font-semibold text-teal-700 sm:text-xl ${descricoesExpandidas[refeicao.id_refeicao] ? "" : "line-clamp-3"}`}>
+                      {refeicao.descricao_alimentos}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-1 sm:gap-2">
+                      <time className="break-words text-base text-gray-500 sm:text-2xl">{formatarDataHora(refeicao.data_hora)}</time>
+                      {refeicao.descricao_alimentos?.length > 100 && (
+                        <button
+                          type="button"
+                          onClick={() => setDescricoesExpandidas((atuais) => ({
+                            ...atuais,
+                            [refeicao.id_refeicao]: !atuais[refeicao.id_refeicao],
+                          }))}
+                          aria-label={descricoesExpandidas[refeicao.id_refeicao] ? "Recolher descrição" : "Expandir descrição"}
+                          aria-expanded={Boolean(descricoesExpandidas[refeicao.id_refeicao])}
+                          className="shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-teal-700 transition-colors hover:bg-teal-50 hover:text-teal-900 focus:outline-none sm:text-base"
+                        >
+                          {descricoesExpandidas[refeicao.id_refeicao] ? "Ver menos" : "Ver mais"}
+                        </button>
+                      )}
+                    </div>
                     {refeicao.foto_url && <a className="mt-1 inline-block text-sm text-teal-700 text-[15px] underline" href={refeicao.foto_url} target="_blank" rel="noreferrer">Ver foto</a>}
                   </div>
                 </div>
-                <div className="flex gap-2 self-end sm:self-start">
+                <div className="flex items-center gap-2 self-end sm:self-start">
                   <button type="button" onClick={() => abrirEdicao(refeicao)} aria-label={`Editar ${refeicao.tipo_refeicao}`} className="rounded-lg p-2 text-teal-700 text-2xl hover:bg-teal-50"><FiEdit2 /></button>
                   <button type="button" onClick={() => excluirRefeicao(refeicao)} aria-label={`Excluir ${refeicao.tipo_refeicao}`} className="rounded-lg p-2 text-red-700 text-2xl hover:bg-red-50"><FiTrash2 /></button>
                 </div>

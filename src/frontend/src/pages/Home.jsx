@@ -12,6 +12,7 @@ import UserName from "../components/UserName";
 import Botao from "../components/Botao";
 import { useUsuario } from "../context/UsuarioContext";
 import { useNavigate } from "react-router-dom";
+import { mensagemErro } from "../utils/mensagemErro";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -166,7 +167,7 @@ function Home() {
       setMostrarPeriodo(false);
     } catch (error) {
       setErroPdf(
-        error.message || "Falha ao conectar com o servidor."
+        mensagemErro(error, "Falha ao conectar com o servidor.")
       );
     } finally {
       setGerandoPdf(false);
@@ -250,7 +251,7 @@ function Home() {
       if (!ativo) return;
       const falhas = resultados
         .filter((resultado) => resultado.status === "rejected")
-        .map((resultado) => resultado.reason?.message)
+        .map((resultado) => mensagemErro(resultado.reason))
         .filter(Boolean);
       if (falhas.length) setErro(falhas.join(" "));
     }

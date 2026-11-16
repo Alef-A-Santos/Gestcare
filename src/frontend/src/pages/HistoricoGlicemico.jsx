@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Card from "../components/Card";
 import Tabela from "../components/Tabela";
 import { useUsuario } from "../context/UsuarioContext";
+import { mensagemErro } from "../utils/mensagemErro";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const ITENS_POR_PAGINA = 10;
@@ -75,7 +76,7 @@ function HistoricoGlicemico() {
       })));
       setTotalPaginas(Math.max(1, dados?.paginacao?.total_paginas ?? 1));
     } catch (error) {
-      setErro(error.message || "Falha ao carregar os registros.");
+      setErro(mensagemErro(error, "Falha ao carregar os registros."));
     } finally {
       setCarregando(false);
     }
@@ -111,7 +112,7 @@ function HistoricoGlicemico() {
       setFormularioAberto(false);
       await carregarRegistros();
     } catch (error) {
-      setErro(error.message || "Falha ao registrar a glicemia.");
+      setErro(mensagemErro(error, "Falha ao registrar a glicemia."));
     } finally {
       setSalvando(false);
     }
@@ -127,7 +128,7 @@ function HistoricoGlicemico() {
       await lerResposta(resposta);
       setRegistros((atuais) => atuais.filter((item) => item.id_glicemia !== registro.id_glicemia));
     } catch (error) {
-      setErro(error.message || "Falha ao excluir a glicemia.");
+      setErro(mensagemErro(error, "Falha ao excluir a glicemia."));
     }
   }
 
@@ -157,7 +158,7 @@ function HistoricoGlicemico() {
               </label>
               <label className="flex flex-col gap-1 font-medium text-gray-700">
                 Data e horário
-                <input required type="datetime-local" value={dataHora} onChange={(event) => setDataHora(event.target.value)} className="rounded-lg border border-gray-300 p-3" />
+                <input required type="datetime-local" max={dataHoraLocalAtual()} value={dataHora} onChange={(event) => setDataHora(event.target.value)} className="rounded-lg border border-gray-300 p-3" />
               </label>
             </div>
             {erro && <p role="alert" className="mt-3 text-sm text-red-700">{erro}</p>}

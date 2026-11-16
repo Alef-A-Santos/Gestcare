@@ -18,6 +18,7 @@ import SidebarItens from "./SidebarItens";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useUsuario } from "../context/UsuarioContext";
+import { mensagemErro } from "../utils/mensagemErro";
 
 // Ajuste os caminhos (to) para os mesmos do seu App.jsx
 const itens = [
@@ -169,7 +170,7 @@ function Sidebar({
     } catch (error) {
       Swal.fire({
         title: "Erro ao enviar foto",
-        text: error.message || "Tente novamente.",
+        text: mensagemErro(error, "Tente novamente."),
         icon: "error",
         confirmButtonColor: "#14b8a6",
       });
@@ -234,7 +235,7 @@ function Sidebar({
     } catch (error) {
       Swal.fire({
         title: "Não foi possível sair",
-        text: error.message || "Tente novamente.",
+        text: mensagemErro(error, "Tente novamente."),
         icon: "error",
         confirmButtonText: "Entendi",
         confirmButtonColor: "#14b8a6",

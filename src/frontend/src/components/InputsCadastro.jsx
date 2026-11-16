@@ -629,6 +629,8 @@ const InputCadastro = forwardRef((props, ref) => {
 
               tipoDado="month"
 
+              max={new Date().toISOString().slice(0, 7)}
+
               icone={
 
                 <MdCalendarMonth className="absolute text-teal-500 m-4 text-end" />
