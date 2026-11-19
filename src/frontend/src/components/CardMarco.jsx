@@ -10,10 +10,10 @@ function CardMarco({ semana, comparacao, descricao }) {
 
   return (
     <Card titulo="Marco da Semana">
-      <p className="text-teal-500 font-poppins mb-4 text-center font-bold text-2xl">Semana {semanaExibida}</p>
-      <p className="text-center font-poppins">
+      <p className="text-teal-500 font-poppins mb-4 text-center font-bold sm:text-3xl">Semana {semanaExibida}</p>
+      <p className="text-center font-poppins font-semibold md:text-[20px]">
         {comparacao && <span className="text-pink-400">{comparacao} — </span>}
-        <span className="text-zinc-700">{descricao}</span>
+        <span className="text-zinc-500">{descricao}</span>
       </p>
     </Card>
   );

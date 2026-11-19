@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { FiBookOpen, FiAlertCircle, FiChevronDown, FiMoon, FiCalendar } from "react-icons/fi";
+import { FiAlertCircle, FiMoon, FiCalendar } from "react-icons/fi";
 import { FaAppleAlt, FaRunning, FaTint } from "react-icons/fa";
 import Header from "../components/Header";
 import Botao from "../components/Botao";
 import CardDica from "../components/CardDica";
+import {LuNotebookPen } from "react-icons/lu";
 
 // Para usar as ilustrações do protótipo, importe a imagem e passe em "imagem"
 // (ex.: imagem: saladaImg). Sem "imagem", o cartão mostra o ícone.
@@ -37,10 +38,24 @@ function DicasEducativas() {
     <section className="font-[Poppins] w-full max-w-5xl mx-auto px-4 pb-10 text-teal-800">
       <Header
         titulo="Dicas Educativas"
-        component={<FiBookOpen className="text-pink-400 text-5xl" aria-hidden="true" />}
+        component={<LuNotebookPen className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />}
         component2={
             <div className="mt-8 flex flex-col items-center gap-2">
-        <Botao
+        
+       
+      </div>
+        }
+      />
+
+    
+      <div className="flex w-full  items-center  md:justify-between">
+        <div>
+          <h3 className="font-poppins text-4xl font-semibold text-teal-600 mt-2 mb-8">
+        Biblioteca de conteúdos
+      </h3>
+        </div>
+       <div className="flex flex-col items-center">
+          <Botao
           nome={qtd > 0 ? `+ Adicionar ${qtd} ${qtd === 1 ? "dica" : "dicas"} aos favoritos` : "+ Adicionar dicas aos favoritos"}
           tipoDado="button"
           clickHandler={favoritar}
@@ -48,18 +63,17 @@ function DicasEducativas() {
           className="bg-teal-600 text-white rounded-2xl text-[20px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
           textClassName="text-[15px]"
         />
-        <p className=" text-teal-700/80 text-[15px]" role="status">
+         <p className=" text-teal-700/80 text-[12px] text-center mb-5 mt-3" role="status">
           {qtd === 0
             ? "Toque nos cartões para escolher as dicas."
             : `${qtd} ${qtd === 1 ? "dica selecionada" : "dicas selecionadas"}.`}
         </p>
-      </div>
-        }
-      />
+       </div>
+      
 
-      <h3 className="font-poppins text-3xl font-semibold text-teal-600 mt-2 mb-5">
-        Biblioteca de conteúdos
-      </h3>
+        
+      </div>
+      
 
       {/* Painel rolável: a seta indica que há mais conteúdo */}
       <div className="rounded-3xl border-2 border-teal-200 bg-white/70 p-4 sm:p-6">
@@ -76,7 +90,7 @@ function DicasEducativas() {
           ))}
         </ul>
 
-        <FiChevronDown className="mx-auto mt-3 text-2xl text-teal-700" aria-hidden="true" />
+       
       </div>
 
       

@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import Tabela from "../components/Tabela";
 import { useUsuario } from "../context/UsuarioContext";
 import { mensagemErro } from "../utils/mensagemErro";
+import { VscSettingsCompact } from "react-icons/vsc";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const ITENS_POR_PAGINA = 10;
@@ -136,6 +137,9 @@ function HistoricoGlicemico() {
     <>
       <Header
         titulo="Histórico glicêmico"
+        component={
+                 <VscSettingsCompact className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
+               }
         component2={
           <button type="button" onClick={abrirFormulario} className="bg-teal-600 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl">
             <FiPlus size={22} aria-hidden="true" /> Registrar glicemia

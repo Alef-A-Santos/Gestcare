@@ -3,7 +3,7 @@ import Badge from "./Badge";
  
 function CardMedia({ media, nivel }) {
   return (
-    <Card titulo="Média — últimas 7 medições">
+    <Card titulo="Média das medições">
       <p className="text-4xl font-poppins font-bold text-teal-500 text-center">
         {media}
       </p>

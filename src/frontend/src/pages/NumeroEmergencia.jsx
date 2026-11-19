@@ -1,7 +1,5 @@
 import { FiPhoneCall, FiAlertTriangle } from "react-icons/fi";
 import Header from "../components/Header";
-//import Botao from "../components/Botao";
-//import UserName from "../components/UserName";
 import CardNumero from "../components/CardNumero";
 
 // Troque pelos dados reais da API (Acompanhantes) quando a tela estiver conectada.
@@ -59,7 +57,7 @@ function NumeroEmergencia() {
       <Header
         titulo="Números de Emergência"
         component={
-          <FiPhoneCall className="text-pink-400 text-5xl" aria-hidden="true" />
+          <FiPhoneCall className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
         }
       />
 

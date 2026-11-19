@@ -16,6 +16,7 @@ import Botao from "../components/Botao";
 import { useUsuario } from "../context/UsuarioContext";
 import Swal from "sweetalert2";
 import { mensagemErro } from "../utils/mensagemErro";
+import { FaRegBell } from "react-icons/fa";
 
 
 /* ---------- configuração das categorias ---------- */
@@ -474,6 +475,9 @@ function Lembretes() {
       {/* topo */}
       <Header
         titulo="Lembretes"
+           component={
+          <FaRegBell className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
+        }
         component2={
           <Botao
             nome="Novo Lembrete"

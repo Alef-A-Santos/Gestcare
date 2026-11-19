@@ -305,7 +305,7 @@ function Home() {
           titulo={"Olá"}
           component={
             <UserName
-              className="text-pink-400 text-5xl font-playfair sm:text-5xl font-bold"
+              className="text-pink-400 text-5xl font-playfair sm:text-5xl font-bold text-shadow-[1px_1px_2px]"
               nome={usuario?.nome || ""}
             />
           }
