@@ -2,6 +2,7 @@ import { FiPhoneCall, FiAlertTriangle } from "react-icons/fi";
 import Header from "../components/Header";
 import CardNumero from "../components/CardNumero";
 
+
 // Troque pelos dados reais da API (Acompanhantes) quando a tela estiver conectada.
 const numerosEmergencia = [
   {

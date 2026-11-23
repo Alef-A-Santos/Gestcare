@@ -20,7 +20,7 @@ function CardNumero({ numero, titulo, descricao, destaque = false, aoLigar }) {
           tipoDado="button"
           clickHandler={() => aoLigar(numero)}
           Component={FiPhoneCall}
-          className="flex items-center gap-3 bg-white text-pink-500 font-semibold rounded-full px-6 py-3 cursor-pointer hover:bg-pink-50 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60"
+          className="flex items-center gap-3 bg-white text-pink-500 font-semibold rounded-full px-6 py-3 cursor-pointer hover:bg-pink-50 focus:outline-none focus-visible:ring-4 focus-visible:ring-white/60 animate-pulse"
           textClassName="text-base"
         />
       </article>
