@@ -31,10 +31,11 @@ function Cadastro() {
 
   return (
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative overflow-x-hidden lg:overflow-hidden">
+      
       {/* LOGO */}
-      <div className="flex w-20 h-20 absolute m-7 z-10">
-        <Logo img="src/assets/logos/logo_rosa.png" alt="Logo" />
-      </div>
+<div className="absolute m-7 z-10 h-6 w-auto">
+  <Logo img="src/assets/logos/logo_rosa.png" alt="Logo" />
+</div>
 
       {/* LADO ESQUERDO */}
       <div

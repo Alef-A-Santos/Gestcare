@@ -54,3 +54,13 @@ html {
   padding: 0.75rem 1.25rem !important;
   font-weight: 600 !important;
 }
+
+/* Esconde a barra de rolagem, mas mantém o scroll funcionando */
+* {
+  scrollbar-width: none; /* Firefox e Chrome recentes */
+  -ms-overflow-style: none; /* Edge antigo */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Edge */
+}
