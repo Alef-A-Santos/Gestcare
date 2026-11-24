@@ -137,11 +137,12 @@ function HistoricoGlicemico() {
     <>
       <Header
         titulo="Histórico glicêmico"
+        tituloClassName="whitespace-nowrap text-3xl sm:text-5xl"
         component={
-                 <VscSettingsCompact className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
+                 <VscSettingsCompact className="text-pink-400 text-4xl sm:text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
                }
         component2={
-          <button type="button" onClick={abrirFormulario} className="bg-teal-600 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl">
+          <button type="button" onClick={abrirFormulario} className="bg-teal-600 text-white rounded-2xl text-base sm:text-[18px] font-semibold p-3 sm:p-4 font-poppins flex gap-2 sm:gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-[90%] mx-auto sm:mx-0 sm:w-full md:w-80 focus:outline-none shadow-xl">
             <FiPlus size={22} aria-hidden="true" /> Registrar glicemia
           </button>
         }

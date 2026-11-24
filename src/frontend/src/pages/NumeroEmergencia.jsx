@@ -57,8 +57,9 @@ function NumeroEmergencia() {
     <section className="font-[Poppins] w-full max-w-5xl mx-auto px-4 pb-10 text-teal-800">
       <Header
         titulo="Números de Emergência"
+        tituloClassName="text-3xl sm:text-5xl"
         component={
-          <FiPhoneCall className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
+          <FiPhoneCall className="text-pink-400 text-3xl sm:text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
         }
       />
 
