@@ -5,6 +5,7 @@ import fundo from "../assets/imagem/fotoDireito.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestCare.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
+import logoRosa from "../assets/logos/logo_rosa.png";
 
 function Cadastro() {
   const navigate = useNavigate();
@@ -31,9 +32,9 @@ function Cadastro() {
   return (
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative overflow-x-hidden lg:overflow-hidden">
       {/* LOGO */}
-      <div className="absolute m-5 sm:m-7 z-10 h-6 w-auto">
-        <Logo img="src/assets/logos/logo_rosa.png" alt="Logo" />
-      </div>
+      <div className="m-7 flex w-25 absolute z-10 max-lg:brightness-0 max-lg:invert max-lg:drop-shadow-md">
+  <Logo img={logoRosa} />
+</div>
 
       {/* LADO ESQUERDO */}
       <div
