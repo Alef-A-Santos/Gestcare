@@ -6,7 +6,7 @@ function CardDica({ titulo, descricao, Icone, corIcone, imagem, aoAbrir }) {
       aria-label={`Abrir dica: ${titulo}`}
       className="relative w-full text-left rounded-3xl bg-white p-5 border-2 border-teal-200 transition-all cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-pink-200 hover:shadow-md"
     >
-      <span className="block font-[Playfair_Display] text-xl font-semibold text-teal-800 pr-6">
+      <span className="block font-[Playfair_Display] text-xl font-semibold text-pink-500 pr-6 sm:text-2xl">
         {titulo}
       </span>
 
@@ -21,7 +21,7 @@ function CardDica({ titulo, descricao, Icone, corIcone, imagem, aoAbrir }) {
             {Icone && <Icone />}
           </span>
         )}
-        <span className="text-sm font-medium text-teal-800/90">{descricao}</span>
+        <span className="text-base font-medium leading-relaxed text-teal-800/90 sm:text-lg">{descricao}</span>
       </span>
     </button>
   );

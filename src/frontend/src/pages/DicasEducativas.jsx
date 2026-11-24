@@ -64,7 +64,7 @@ const dicas = [
   {
     id: 6,
     titulo: "Consultas e exames",
-    descricao: "O que não pode faltar no pré-natal",
+    descricao: "O que não pode faltar nas consultas e exames",
     texto:
       "Compareça às consultas do pré-natal nas datas combinadas e pergunte como remarcar se não puder ir. Leve seu cartão de pré-natal, resultados de exames, lista de medicamentos e registro das medições de glicose, se houver.\n\nAnote dúvidas entre as consultas: alimentação, atividade física, sintomas, parto e amamentação são bons temas para conversar. Informe à equipe sobre mudanças na saúde, medicamentos que usa e qualquer dificuldade para seguir o plano de cuidado.\n\nOs exames e vacinas recomendados dependem da fase da gestação e do seu histórico. Peça à equipe para explicar para que serve cada exame e quando buscar o resultado; não deixe de procurar orientação se algo não estiver claro.",
     imagem:
@@ -102,7 +102,7 @@ function DicasEducativas() {
       />
 
       <div className="w-full">
-        <h3 className="font-poppins text-4xl font-semibold text-teal-600 mt-2 mb-8">
+        <h3 className="font-poppins text-4xl font-semibold text-teal-600 mt-2 mb-8 sm:text-5xl">
           Biblioteca de conteúdos
         </h3>
       </div>
@@ -150,19 +150,19 @@ function DicasEducativas() {
               />
             </div>
             <div className="p-6 sm:p-8">
-              <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-pink-500">
+              <p className="mb-2 text-base font-semibold uppercase tracking-wide text-pink-500 sm:text-lg">
                 Dica educativa
               </p>
               <h2
                 id="titulo-dica"
-                className="font-[Playfair_Display] text-2xl font-semibold text-teal-800 sm:text-3xl"
+                className="font-[Playfair_Display] text-2xl font-semibold text-pink-500 sm:text-3xl"
               >
                 {dicaAberta.titulo}
               </h2>
               {dicaAberta.id === 3 ? (
-                <div className="mt-5 space-y-5 text-teal-900/80">
+                <div className="mt-5 space-y-5 text-base leading-7 text-teal-900/80 sm:text-lg sm:leading-8">
                   <div>
-                    <h3 className="font-semibold text-teal-800">
+                    <h3 className="text-lg font-semibold text-teal-800 sm:text-xl">
                       Materiais necessários
                     </h3>
                     <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -174,7 +174,7 @@ function DicasEducativas() {
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-teal-800">
+                    <h3 className="text-lg font-semibold text-teal-800 sm:text-xl">
                       Procedimento
                     </h3>
                     <ol className="mt-2 list-decimal space-y-2 pl-5">
@@ -200,7 +200,7 @@ function DicasEducativas() {
                     </ol>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-teal-800">
+                    <h3 className="text-lg font-semibold text-teal-800 sm:text-xl">
                       Valores de referência
                     </h3>
                     <ul className="mt-2 space-y-1">
@@ -215,7 +215,7 @@ function DicasEducativas() {
                   </div>
                 </div>
               ) : (
-                <p className="mt-4 whitespace-pre-line leading-7 text-teal-900/80">
+                <p className="mt-4 whitespace-pre-line text-base leading-8 text-teal-900/80 sm:text-lg sm:leading-9">
                   {dicaAberta.texto}
                 </p>
               )}
