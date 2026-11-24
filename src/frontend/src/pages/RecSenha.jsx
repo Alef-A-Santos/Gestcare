@@ -1,17 +1,16 @@
-
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/FundoSenha.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import InputRec from "../components/InputRec";
-
+  
 import logoRosa from "../assets/logos/logo_rosa.png";
 
 function RecSenha() {
   return (
     <div className="min-h-screen w-full">
       <div className="min-h-screen w-full flex flex-col xl:flex-row">
-        <div className="m-7 flex w-25 absolute z-10">
+        <div className="m-7 flex w-25 absolute z-10 max-lg:brightness-0 max-lg:invert max-lg:drop-shadow-md">
           <Logo img={logoRosa} />
         </div>
 

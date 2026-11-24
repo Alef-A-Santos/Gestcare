@@ -7,7 +7,7 @@ import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
 import { Link, useNavigate } from "react-router-dom";
 
 import logoRosa from "../assets/logos/logo_rosa.png";
-
+  
 import Labels from "../components/Labels";
 
 import Inputs from "../components/Inputs";
@@ -152,7 +152,7 @@ function RedefinirSenha() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="m-7 flex w-25 absolute">
+        <div className="m-7 flex w-25 absolute z-10 max-lg:brightness-0 max-lg:invert max-lg:drop-shadow-md">
           <Logo img={logoRosa} />
         </div>
 
