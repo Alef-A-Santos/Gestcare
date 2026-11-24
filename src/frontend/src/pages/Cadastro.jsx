@@ -23,7 +23,6 @@ function Cadastro() {
     setEnviando(false);
 
     if (ok) {
-      // SALVA O FLUXO DA VERIFICAÇÃO
       localStorage.setItem("fluxoVerificacao", "cadastro");
       navigate("/Cadastro/Verificacao");
     }
@@ -31,11 +30,10 @@ function Cadastro() {
 
   return (
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative overflow-x-hidden lg:overflow-hidden">
-      
       {/* LOGO */}
-<div className="absolute m-7 z-10 h-6 w-auto">
-  <Logo img="src/assets/logos/logo_rosa.png" alt="Logo" />
-</div>
+      <div className="absolute m-5 sm:m-7 z-10 h-6 w-auto">
+        <Logo img="src/assets/logos/logo_rosa.png" alt="Logo" />
+      </div>
 
       {/* LADO ESQUERDO */}
       <div
@@ -45,30 +43,30 @@ function Cadastro() {
 
       {/* LADO DIREITO */}
       <main
-        className="w-full lg:w-2/5 min-h-screen lg:h-screen flex flex-col items-center justify-start pt-24 lg:pt-10 pb-8 px-6 sm:px-8 bg-cover lg:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="w-full lg:w-2/5 min-h-screen lg:h-screen flex flex-col items-center justify-start pt-20 lg:pt-10 pb-8 px-4 sm:px-8 bg-cover lg:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ backgroundImage: `url("${fundoForm}")` }}
       >
         <form
-          className="w-full max-w-md flex flex-col gap-3 items-center"
+          className="w-full max-w-sm sm:max-w-md flex flex-col gap-3 items-center"
           onSubmit={handleSubmit}
         >
-          <h2 className="font-playfair text-center text-3xl lg:text-4xl font-bold text-white">
+          <h2 className="font-playfair text-center text-4xl sm:text-5xl font-bold text-white leading-tight">
             Crie sua conta
           </h2>
 
-          <p className="font-playfair text-white text-center font-bold text-lg [@media(max-height:760px)]:hidden">
+          <p className="font-playfair text-white text-center mb-3 font-bold text-xl sm:text-2xl [@media(max-height:760px)]:hidden">
             Leva menos de um minuto
           </p>
 
           <InputCadastro ref={cadastroRef} />
 
           <Botao
-            className="font-poppins text-center bg-teal-500 hover:bg-teal-600 font-bold text-white rounded-lg py-3 px-4 w-full transition duration-300 cursor-pointer"
+            className="font-poppins text-center bg-teal-500 hover:bg-teal-600 font-bold mt-3 text-white rounded-lg py-3 px-4 w-full max-w-sm transition duration-300 cursor-pointer"
             tipoDado="submit"
             nome={enviando ? "Cadastrando..." : "Cadastrar"}
           />
 
-          <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-[16px]">
+          <div className="text-center font-poppins w-full flex justify-center items-center gap-2 text-base">
             <p className="text-white">Já tem conta ?</p>
             <Link className="underline text-white" to="/">
               <b className="font-bold">Entrar</b>

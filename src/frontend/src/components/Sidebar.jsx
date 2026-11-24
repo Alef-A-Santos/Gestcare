@@ -1,4 +1,3 @@
-
 import {
   IoHomeOutline,
   IoMenu,
@@ -19,22 +18,24 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useUsuario } from "../context/UsuarioContext";
 import { mensagemErro } from "../utils/mensagemErro";
+import { CiUser } from "react-icons/ci";
+import ThemeToggle from "./ThemeToggle";
 
 // Ajuste os caminhos (to) para os mesmos do seu App.jsx
 const itens = [
   { rotulo: "Início", icone: IoHomeOutline, to: "/home" },
-  { rotulo: "Histórico Glicêmico", icone: VscSettingsCompact, to: "/historico" },
+  {
+    rotulo: "Histórico Glicêmico",
+    icone: VscSettingsCompact,
+    to: "/historico",
+  },
   { rotulo: "Diário Alimentar", icone: LuSalad, to: "/diario" },
   { rotulo: "Lembretes", icone: FaRegBell, to: "/lembretes" },
   { rotulo: "Números de Emergência", icone: BsTelephone, to: "/emergencia" },
   { rotulo: "Dicas Educativas", icone: LuNotebookPen, to: "/dicas" },
 ];
 
-function Sidebar({
-  nome,
-  semanas,
-  caminhoFoto,
-}) {
+function Sidebar({ nome, semanas, caminhoFoto }) {
   const navigate = useNavigate();
   const usuario = useUsuario();
   const nomeExibido = nome ?? usuario?.nome ?? "";
@@ -52,9 +53,12 @@ function Sidebar({
     async function carregarSemanas() {
       if (semanas != null && semanas !== "") return;
       try {
-        const resposta = await fetch("http://localhost:3000/api/dashboard/resumo", {
-          credentials: "include",
-        });
+        const resposta = await fetch(
+          "http://localhost:3000/api/dashboard/resumo",
+          {
+            credentials: "include",
+          },
+        );
         if (!resposta.ok) return;
         const dados = await resposta.json();
         if (ativo) setSemanasResumo(dados?.resumo?.qtd_semanas ?? null);
@@ -64,7 +68,9 @@ function Sidebar({
     }
 
     carregarSemanas();
-    return () => { ativo = false; };
+    return () => {
+      ativo = false;
+    };
   }, [semanas]);
 
   const semanasExibidas = semanas ?? semanasResumo;
@@ -85,9 +91,7 @@ function Sidebar({
 
     const numeroSemanas = valor.match(/\d+/);
 
-    return numeroSemanas
-      ? `${Number(numeroSemanas[0])} semanas`
-      : valor;
+    return numeroSemanas ? `${Number(numeroSemanas[0])} semanas` : valor;
   })();
 
   // Abre no desktop e fecha no mobile quando a tela muda de tamanho
@@ -139,21 +143,17 @@ function Sidebar({
           method: "POST",
           credentials: "include",
           body: formData,
-        }
+        },
       );
 
       const dados = await resposta.json().catch(() => null);
 
       if (!resposta.ok) {
-        throw new Error(
-          dados?.erro || "Não foi possível enviar a foto."
-        );
+        throw new Error(dados?.erro || "Não foi possível enviar a foto.");
       }
 
       if (!dados?.caminho_foto) {
-        throw new Error(
-          "O servidor não retornou o caminho da foto."
-        );
+        throw new Error("O servidor não retornou o caminho da foto.");
       }
 
       const urlFoto = `http://localhost:3000/api/usuarios/buscar-foto?url=${encodeURIComponent(dados.caminho_foto)}`;
@@ -166,7 +166,6 @@ function Sidebar({
         icon: "success",
         confirmButtonColor: "#14b8a6",
       });
-
     } catch (error) {
       Swal.fire({
         title: "Erro ao enviar foto",
@@ -174,7 +173,6 @@ function Sidebar({
         icon: "error",
         confirmButtonColor: "#14b8a6",
       });
-
     } finally {
       setEnviandoFoto(false);
       event.target.value = "";
@@ -209,13 +207,10 @@ function Sidebar({
     if (!confirmacao.isConfirmed) return;
 
     try {
-      const resposta = await fetch(
-        "http://localhost:3000/api/auth/logout",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const resposta = await fetch("http://localhost:3000/api/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
 
       if (!resposta.ok) {
         throw new Error("Não foi possível encerrar a sessão.");
@@ -231,7 +226,6 @@ function Sidebar({
       // });
 
       navigate("/login", { replace: true });
-
     } catch (error) {
       Swal.fire({
         title: "Não foi possível sair",
@@ -245,7 +239,6 @@ function Sidebar({
 
   return (
     <div className="shrink-0">
-
       {/* Botão de abrir no mobile quando estiver fechado */}
       {!isOpen && (
         <button
@@ -273,7 +266,6 @@ function Sidebar({
             : "-translate-x-full md:translate-x-0 md:w-20"
         }`}
       >
-
         {/* Botão de expandir/recolher */}
         <div className="flex justify-between items-center mb-4">
           <button
@@ -281,20 +273,14 @@ function Sidebar({
             className="p-2 rounded-lg hover:bg-teal-600 transition cursor-pointer"
             aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
           >
-            {isOpen ? (
-              <IoClose size={30} />
-            ) : (
-              <IoMenu size={30} />
-            )}
+            {isOpen ? <IoClose size={30} /> : <IoMenu size={30} />}
           </button>
         </div>
 
         {/* Perfil e boas-vindas */}
         {isOpen && (
           <div className="flex flex-col items-center justify-center gap-2 mb-6">
-
             <label className="rounded-full w-24 h-24 bg-white overflow-hidden cursor-pointer flex items-center justify-center border-4 border-pink-300 shadow">
-
               {foto ? (
                 <img
                   src={foto}
@@ -312,7 +298,6 @@ function Sidebar({
                 onChange={enviarFoto}
                 disabled={enviandoFoto}
               />
-
             </label>
 
             <UserName
@@ -322,22 +307,17 @@ function Sidebar({
 
             <h4 className="text-xl mt-2 text-center font-poppins">
               Sua Gestação:{" "}
-
               {gestacaoFormatada && (
-                <span className="font-bold">
-                  {gestacaoFormatada}
-                </span>
+                <span className="font-bold">{gestacaoFormatada}</span>
               )}
             </h4>
 
             <hr className="w-3/4 border-white/40 mt-2" />
-
           </div>
         )}
 
         {/* Lista de itens do menu */}
         <nav className="flex-1 flex flex-col gap-5">
-
           {itens.map((item) => (
             <SidebarItens
               key={item.to}
@@ -346,25 +326,34 @@ function Sidebar({
               aoClicar={fecharNoMobile}
             />
           ))}
-
         </nav>
+          {/* Seletor de tema (visual) */}
+        <div className="pt-1 pb-2">
+          <ThemeToggle aberto={isOpen} />
+        </div>
 
-        {/* Botão sair no rodapé */}
+        {/* Botão Acompanhante  no rodapé */}
         <div className="mt-auto pt-4">
+          <button
+            type="button"
+            title="Cadastrar acompanhante"
+            //onClick={/*handleLogout*/}
+            className="w-full flex justify-center items-center gap-2 p-3 mb-3 rounded-2xl text-xl font-bold font-poppins text-white bg-teal-300 hover:scale-102 transition cursor-pointer"
+          >
+            {isOpen ? "Cadastrar acompanhante" : <CiUser size={26} />}
+          </button>
+        </div>
+      
+        <div className="mt-1">
           <button
             type="button"
             title="Sair"
             onClick={handleLogout}
             className="w-full flex justify-center items-center gap-2 p-3 mb-4 rounded-2xl text-xl font-bold font-poppins text-white bg-pink-300 hover:scale-102 transition cursor-pointer"
           >
-            {isOpen ? (
-              "Sair"
-            ) : (
-              <IoLogOutOutline size={26} />
-            )}
+            {isOpen ? "Sair" : <IoLogOutOutline size={26} />}
           </button>
         </div>
-
       </aside>
     </div>
   );
