@@ -2,6 +2,11 @@
 
 @import "tailwindcss";
 
+.botao-fechar-dica:hover {
+  background-color: #5eead4 !important;
+  color: #115e59 !important;
+}
+
 @theme {
   --font-poppins: "Poppins", sans-serif;
   --font-playfair: "Playfair Display", serif;
@@ -61,6 +66,12 @@ html {
 .tema-escuro .dicas-educativas .text-teal-900\/80,
 .tema-escuro .dicas-educativas .text-teal-600,
 .tema-escuro .dicas-educativas .text-teal-700 { color: #fff !important; }
+.tema-escuro .dicas-educativas h3.text-teal-600 { color: #5eead4 !important; }
+.tema-escuro .dicas-educativas button.border-teal-200 { border-color: #14b8a6 !important; }
+.tema-escuro .botao-fechar-dica:hover {
+  background-color: #5eead4 !important;
+  color: #115e59 !important;
+}
 .tema-escuro .bg-pink-50 { background-color: #312536 !important; }
 .tema-escuro .text-gray-700,
 .tema-escuro .text-gray-600,

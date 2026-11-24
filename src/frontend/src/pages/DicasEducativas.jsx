@@ -90,9 +90,11 @@ function DicasEducativas() {
     <section className="dicas-educativas font-[Poppins] w-full max-w-5xl mx-auto px-4 pb-10 text-teal-800">
       <Header
         titulo="Dicas Educativas"
+        tituloClassName="text-4xl sm:text-5xl"
+        tituloContainerClassName="mt-5 mb-0 sm:my-5"
         component={
           <LuNotebookPen
-            className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 "
+            className="text-pink-400 text-4xl sm:text-5xl transition-transform duration-500 hover:scale-105 "
             aria-hidden="true"
           />
         }
@@ -102,7 +104,7 @@ function DicasEducativas() {
       />
 
       <div className="w-full">
-        <h3 className="font-poppins text-4xl font-semibold text-teal-600 mt-2 mb-8 sm:text-5xl">
+        <h3 className="font-poppins text-3xl font-semibold text-teal-600 mt-0 sm:mt-2 mb-8 sm:text-5xl">
           Biblioteca de conteúdos
         </h3>
       </div>
@@ -138,7 +140,7 @@ function DicasEducativas() {
               type="button"
               onClick={() => setDicaAberta(null)}
               aria-label="Fechar dica"
-              className="absolute right-4 top-4 z-10 rounded-full bg-white/95 px-3 py-2 text-xl text-teal-800 shadow hover:bg-teal-50"
+              className="botao-fechar-dica absolute right-4 top-4 z-10 rounded-full bg-white/95 px-3 py-2 text-xl text-teal-800 shadow"
             >
               ×
             </button>
