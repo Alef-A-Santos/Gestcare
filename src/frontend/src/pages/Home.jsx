@@ -296,7 +296,7 @@ function Home() {
 
   const lembretesExibidos = (lembretesInicio.length
     ? lembretesInicio
-    : (resumo?.proximos_lembretes || [])).slice(0, 5);
+    : (resumo?.proximos_lembretes || [])).slice(0, 3);
 
   return (
     <div className="min-h-screen flex bg-pink-100">
@@ -460,7 +460,7 @@ function Home() {
           </div>
 
           {/* Linha 3: lembretes */}
-          <div className="max-w-md w-full mx-auto">
+          <div className="mx-auto w-full min-w-0 max-w-md lg:max-w-full">
             <CardLembrete
               lembretes={lembretesExibidos}
               aoCriar={() => navigate("/lembretes")}
