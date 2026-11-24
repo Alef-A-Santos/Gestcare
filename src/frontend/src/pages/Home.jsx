@@ -300,7 +300,7 @@ function Home() {
 
   return (
     <div className="min-h-screen flex bg-pink-100">
-      <main className="flex-1 min-w-0 p-3 sm:p-3 pt-20 md:pt-3">
+      <main className="flex-1 min-w-0 p-3 sm:p-3 pt-0 md:pt-3">
         <Header
           titulo={"Olá"}
           component={
@@ -330,7 +330,7 @@ function Home() {
           }
         />
 
-        <div className="max-w-6xl mx-auto mt-6 flex flex-col gap-4 sm:gap-6">
+        <div className="max-w-6xl mx-auto mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-6">
 
           {/* Modal de seleção do período do relatório */}
           {mostrarPeriodo && (

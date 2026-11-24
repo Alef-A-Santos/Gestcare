@@ -1,17 +1,15 @@
-
 import Logo from "../Components/Logo";
 import fundo from "../assets/imagem/Fundo1.png";
 import fundoForm from "../assets/imagem/fotoMelhoradaGestcare.png";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import InputHome from "../components/InputHome";
-
 import logoRosa from "../assets/logos/logo_rosa.png";
 
 function Login() {
   return (
     <div>
       <div className="min-h-screen flex flex-col md:flex-row md:max-lg:flex-col">
-        <div className="m-7 flex w-25 absolute">
+        <div className="m-7 flex w-25 absolute z-10 max-lg:brightness-0 max-lg:invert max-lg:drop-shadow-md">
           <Logo img={logoRosa} />
         </div>
 
@@ -25,12 +23,12 @@ function Login() {
         {/* LADO DIREITO */}
 
         <main
-          className="w-full md:w-2/5 md:max-lg:w-full min-h-screen flex items-center justify-center px-6 rounded-lg"
+          className="w-full md:w-2/5 md:max-lg:w-full min-h-screen flex items-center justify-center px-6"
           style={{ backgroundImage: `url("${fundoForm}")` }}
         >
           <div className="w-full h-full flex flex-col justify-center gap-5">
             <h2 className="font-playfair text-center text-3xl text-white mt-12">
-              <b>Olá! Que bom ter você com a gente.</b>
+              <b>Olá! Que bom ter <br /> você com a gente.</b>
             </h2>
 
             <InputHome />
