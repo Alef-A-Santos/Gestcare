@@ -11,7 +11,7 @@ const CATEGORIAS = {
   hidratacao: { nome: "Hidratação", Icone: FaTint },
 };
  
-function CardLembrete({ lembretes = [], lembrete, aoCriar }) {
+function CardLembrete({ lembretes = [], lembrete, aoCriar, somenteLeitura = false }) {
   const lista = Array.isArray(lembretes) ? lembretes : (lembrete ? [lembrete] : []);
   return (
     <Card titulo="Próximos lembretes">
@@ -39,12 +39,12 @@ function CardLembrete({ lembretes = [], lembrete, aoCriar }) {
           <p className="text-xl font-poppins text-zinc-400 mb-4 text-center">
             Sem nenhum lembrete agendado
           </p>
-          <Botao
+          {!somenteLeitura && <Botao
             nome="Criar lembrete"
             tipo="button"
             clickHandler={aoCriar}
             className="rounded-full bg-pink-300 hover:bg-pink-400 transition text-white font-poppins font-medium px-6 py-2 cursor-pointer"
-          />
+          />}
         </>
       )}
     </Card>

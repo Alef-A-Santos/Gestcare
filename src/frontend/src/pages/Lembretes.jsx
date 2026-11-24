@@ -95,7 +95,7 @@ function Toggle({ ligado, onChange, rotulo }) {
   );
 }
 
-function CartaoLembrete({ lembrete, onToggle, onRemover, onEditar }) {
+function CartaoLembrete({ lembrete, onToggle, onRemover, onEditar, somenteLeitura }) {
   const categoriaNome = CATEGORIAS_POR_CHAVE[normalizarCategoria(lembrete.categoria || lembrete.tipo)] || "Glicemia";
   const cat = CATEGORIAS[categoriaNome];
   const Icone = cat.icone;
@@ -126,29 +126,31 @@ function CartaoLembrete({ lembrete, onToggle, onRemover, onEditar }) {
         {categoriaNome}
       </span>
 
-      <button
+      {!somenteLeitura && <button
         type="button"
         onClick={onEditar}
         aria-label={`Editar lembrete ${lembrete.titulo}`}
         className="cursor-pointer rounded-full p-2 text-gray-400 transition hover:bg-emerald-50 hover:text-[#1f9d8e]"
       >
         <FaPen size={14} />
-      </button>
+      </button>}
 
-      <button
+      {!somenteLeitura && <button
         type="button"
         onClick={onRemover}
         aria-label={`Excluir lembrete ${lembrete.titulo}`}
         className="cursor-pointer rounded-full p-2 text-gray-400 transition hover:bg-red-50 hover:text-red-400 focus:opacity-100 sm:text-gray-300 sm:opacity-0 sm:group-hover:opacity-100"
       >
         <FaTrash size={14} />
-      </button>
+      </button>}
 
-      <Toggle
+      {somenteLeitura ? (
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600">{lembrete.ativo ? "Ativo" : "Inativo"}</span>
+      ) : <Toggle
         ligado={lembrete.ativo}
         onChange={onToggle}
         rotulo={`${lembrete.ativo ? "Desativar" : "Ativar"} lembrete ${lembrete.titulo}`}
-      />
+      />}
     </li>
   );
 }
@@ -290,6 +292,7 @@ function ModalNovoLembrete({ aberto, lembrete, onFechar, onSalvar }) {
 /* ---------- página ---------- */
 function Lembretes() {
   const usuario = useUsuario();
+  const somenteLeitura = String(usuario?.perfil || "").toLowerCase() !== "gestante";
   const [lembretes, setLembretes] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [lembreteEmEdicao, setLembreteEmEdicao] = useState(null);
@@ -348,18 +351,24 @@ function Lembretes() {
     };
   };
   async function carregarLembretes() {
-    const dados = await requisitar("/lembretes/listar-lembretes-usuario");
+    const caminho = somenteLeitura
+      ? `/lembretes/listar-lembretes-acompanhante/${encodeURIComponent(usuario?.id_gestante)}`
+      : "/lembretes/listar-lembretes-usuario";
+    const dados = await requisitar(caminho);
     setLembretes((dados?.lembretes || []).map(normalizar));
   }
   useEffect(() => {
     if (!usuario) return;
     let ativo = true;
-    requisitar("/lembretes/listar-lembretes-usuario")
+    const caminho = somenteLeitura
+      ? `/lembretes/listar-lembretes-acompanhante/${encodeURIComponent(usuario?.id_gestante)}`
+      : "/lembretes/listar-lembretes-usuario";
+    requisitar(caminho)
       .then((dados) => { if (ativo) setLembretes((dados?.lembretes || []).map(normalizar)); })
       .catch((e) => { if (ativo) setErro(mensagemErro(e)); })
       .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
-  }, [usuario]);
+  }, [usuario, somenteLeitura]);
   const ordenados = useMemo(
     () => [...lembretes].sort((a, b) => a.hora.localeCompare(b.hora)),
     [lembretes]
@@ -478,7 +487,7 @@ function Lembretes() {
            component={
           <FaRegBell className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
         }
-        component2={
+        component2={somenteLeitura ? null : (
           <Botao
             nome="Novo Lembrete"
             tipoDado="button"
@@ -486,7 +495,7 @@ function Lembretes() {
             Component={IconeMais}
             className="bg-pink-400 text-white rounded-2xl text-[18px] font-semibold p-5 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
           />
-        }
+        )}
       />
 
       <div className="grid gap-4 sm:gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
@@ -508,6 +517,7 @@ function Lembretes() {
                   onToggle={() => alternar(l.id)}
                   onRemover={() => remover(l.id)}
                   onEditar={() => { setLembreteEmEdicao(l); setModalAberto(true); }}
+                  somenteLeitura={somenteLeitura}
                 />
               ))}
             </ul>
@@ -563,17 +573,17 @@ function Lembretes() {
 
           <aside className="rounded-2xl border border-[#f0a9c4] bg-[#fce7f3] p-4 text-sm text-[#9a3f69] sm:p-5 sm:text-base">
             Dica: manter horários regulares para medir a glicemia ajuda no controle do diabetes gestacional.
-            <button type="button" onClick={() => ativarNotificacoes().catch(() => {})} className="ml-1 cursor-pointer font-semibold underline">{notificacoesAtivas ? "Notificações ativadas" : "Ative as notificações para não esquecer"}</button>
+            {!somenteLeitura && <button type="button" onClick={() => ativarNotificacoes().catch(() => {})} className="ml-1 cursor-pointer font-semibold underline">{notificacoesAtivas ? "Notificações ativadas" : "Ative as notificações para não esquecer"}</button>}
           </aside>
         </div>
       </div>
 
-      <ModalNovoLembrete
+      {!somenteLeitura && <ModalNovoLembrete
         aberto={modalAberto}
         lembrete={lembreteEmEdicao}
         onFechar={() => { setModalAberto(false); setLembreteEmEdicao(null); }}
         onSalvar={salvarEdicao}
-      />
+      />}
     </main>
   );
 }

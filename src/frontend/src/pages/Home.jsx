@@ -38,6 +38,7 @@ function formatarDataParto(valor) {
 function Home() {
   const navigate = useNavigate();
   const usuario = useUsuario();
+  const ehGestante = String(usuario?.perfil || "").trim().toLowerCase() === "gestante";
   const [resumo, setResumo] = useState(null);
   const [lembretesInicio, setLembretesInicio] = useState([]);
   const [refeicoes, setRefeicoes] = useState([]);
@@ -182,7 +183,34 @@ function Home() {
       // Aguarda o contexto de autenticação. A rota de resumo do backend só
       // atende gestantes, portanto os demais perfis não devem consultá-la.
       if (!usuario) return;
-      if (String(usuario.perfil || "").trim().toLowerCase() !== "gestante") return;
+      if (!ehGestante) {
+        if (!usuario.id_gestante) {
+          setErro("Sua conta ainda não está vinculada a uma gestante.");
+          return;
+        }
+        try {
+          const idGestante = encodeURIComponent(usuario.id_gestante);
+          const [resumoResp, diarioResp, lembretesResp] = await Promise.all([
+            fetch(`${API}/dashboard/resumo/${idGestante}`, { credentials: "include" }),
+            fetch(`${API}/diario/listar-refeicoes-acompanhante/${idGestante}?limit=3&offset=0`, { credentials: "include" }),
+            fetch(`${API}/lembretes/listar-lembretes-acompanhante/${idGestante}`, { credentials: "include" }),
+          ]);
+          const [resumoDados, diarioDados, lembretesDados] = await Promise.all([
+            resumoResp.json().catch(() => null), diarioResp.json().catch(() => null), lembretesResp.json().catch(() => null),
+          ]);
+          if (!resumoResp.ok || !diarioResp.ok || !lembretesResp.ok) {
+            throw new Error(resumoDados?.erro || diarioDados?.erro || lembretesDados?.erro || "Não foi possível carregar os dados da gestante.");
+          }
+          if (ativo) {
+            setResumo(resumoDados?.resumo ?? null);
+            setRefeicoes(diarioDados?.diario ?? []);
+            setLembretesInicio((lembretesDados?.lembretes ?? []).filter((item) => Number(item.ativo) === 1 || item.ativo === true));
+          }
+        } catch (error) {
+          if (ativo) setErro(mensagemErro(error, "Falha ao carregar os dados da gestante."));
+        }
+        return;
+      }
 
       // As duas fontes são independentes: falha no diário não pode impedir
       // que glicemia, gestação e lembretes sejam carregados.
@@ -261,7 +289,7 @@ function Home() {
     return () => {
       ativo = false;
     };
-  }, [usuario]);
+  }, [usuario, ehGestante]);
 
   // Dados formatados para os cards
   const ultimaMedicao = resumo?.ultima_medicao;
@@ -309,7 +337,7 @@ function Home() {
               nome={usuario?.nome || ""}
             />
           }
-          component2={
+          component2={ehGestante ? (
             <Botao
               className="bg-white rounded-2xl p-3 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
               imgClassName="w-8 h-8 sm:w-10 sm:h-10"
@@ -327,7 +355,7 @@ function Home() {
               }}
               tipoDado="button"
             />
-          }
+          ) : null}
         />
 
         <div className="max-w-6xl mx-auto mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-6">
@@ -464,6 +492,7 @@ function Home() {
             <CardLembrete
               lembretes={lembretesExibidos}
               aoCriar={() => navigate("/lembretes")}
+              somenteLeitura={!ehGestante}
             />
           </div>
 

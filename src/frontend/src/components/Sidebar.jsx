@@ -41,6 +41,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
   const nomeExibido = nome ?? usuario?.nome ?? "";
   // /api/auth/me returns the database field as `url_foto`.
   const fotoUrl = caminhoFoto ?? usuario?.url_foto;
+  const ehGestante = String(usuario?.perfil || "").trim().toLowerCase() === "gestante";
 
   const [fotoEnviada, setFotoEnviada] = useState(null);
   const [enviandoFoto, setEnviandoFoto] = useState(false);
@@ -52,9 +53,13 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
 
     async function carregarSemanas() {
       if (semanas != null && semanas !== "") return;
+      if (!ehGestante && !usuario?.id_gestante) return;
       try {
+        const urlResumo = ehGestante
+          ? "http://localhost:3000/api/dashboard/resumo"
+          : `http://localhost:3000/api/dashboard/resumo/${encodeURIComponent(usuario.id_gestante)}`;
         const resposta = await fetch(
-          "http://localhost:3000/api/dashboard/resumo",
+          urlResumo,
           {
             credentials: "include",
           },
@@ -71,7 +76,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
     return () => {
       ativo = false;
     };
-  }, [semanas]);
+  }, [semanas, ehGestante, usuario?.id_gestante]);
 
   const semanasExibidas = semanas ?? semanasResumo;
 
@@ -237,6 +242,83 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
     }
   };
 
+  const cadastrarAcompanhante = async () => {
+    const formulario = await Swal.fire({
+      title: "Cadastrar acompanhante",
+      text: "Informe o e-mail da conta já cadastrada do acompanhante.",
+      input: "email",
+      inputPlaceholder: "E-mail do acompanhante",
+      inputAttributes: { "aria-label": "E-mail do acompanhante", autocomplete: "email" },
+      showCancelButton: true,
+      confirmButtonText: "Cadastrar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#14b8a6",
+      cancelButtonColor: "#f9a8d4",
+      reverseButtons: true,
+      preConfirm: async (emailInformado) => {
+        const email = String(emailInformado || "").trim();
+        if (!email) {
+          Swal.showValidationMessage("Informe o e-mail do acompanhante.");
+          return false;
+        }
+        try {
+          const resposta = await fetch(
+            `http://localhost:3000/api/usuarios/listar-usuario-acompanhante?email=${encodeURIComponent(email)}`,
+            { credentials: "include" },
+          );
+          const candidatos = await resposta.json().catch(() => null);
+          if (!resposta.ok) {
+            throw new Error(candidatos?.erro || "Não foi possível localizar o acompanhante.");
+          }
+          const encontrados = Array.isArray(candidatos) ? candidatos : [];
+          if (encontrados.length === 0) {
+            Swal.showValidationMessage("Não encontramos uma conta de acompanhante com esse e-mail.");
+            return false;
+          }
+          if (encontrados.length > 1) {
+            Swal.showValidationMessage("Esse e-mail encontrou mais de uma conta. Confira o endereço informado.");
+            return false;
+          }
+          const acompanhante = encontrados[0];
+          return { id_usuario: acompanhante.id_usuario, email };
+        } catch (error) {
+          Swal.showValidationMessage(mensagemErro(error, "Não foi possível localizar o acompanhante."));
+          return false;
+        }
+      },
+    });
+
+    if (!formulario.isConfirmed) return;
+
+    try {
+      const resposta = await fetch(
+        "http://localhost:3000/api/acompanhantes/cadastrar-acompanhante",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ dados: formulario.value }),
+        },
+      );
+      const dados = await resposta.json().catch(() => null);
+      if (!resposta.ok) throw new Error(dados?.erro || "Não foi possível cadastrar o acompanhante.");
+
+      await Swal.fire({
+        title: "Acompanhante cadastrado!",
+        text: dados?.mensagem || "O vínculo foi realizado com sucesso.",
+        icon: "success",
+        confirmButtonColor: "#14b8a6",
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Erro ao cadastrar",
+        text: mensagemErro(error, "Tente novamente."),
+        icon: "error",
+        confirmButtonColor: "#14b8a6",
+      });
+    }
+  };
+
   return (
     <div className="shrink-0">
       {/* Botão de abrir no mobile quando estiver fechado */}
@@ -280,7 +362,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
         {/* Perfil e boas-vindas */}
         {isOpen && (
           <div className="flex flex-col items-center justify-center gap-2 mb-6">
-            <label className="rounded-full w-24 h-24 bg-white overflow-hidden cursor-pointer flex items-center justify-center border-4 border-pink-300 shadow">
+            <label className={`rounded-full w-24 h-24 bg-white overflow-hidden ${ehGestante ? "cursor-pointer" : "cursor-default"} flex items-center justify-center border-4 border-pink-300 shadow`}>
               {foto ? (
                 <img
                   src={foto}
@@ -291,13 +373,13 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
                 <IoPerson className="text-5xl text-zinc-400" />
               )}
 
-              <input
+              {ehGestante && <input
                 type="file"
                 accept="image/*"
                 className="hidden"
                 onChange={enviarFoto}
                 disabled={enviandoFoto}
-              />
+              />}
             </label>
 
             <UserName
@@ -333,16 +415,16 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
         </div>
 
         {/* Botão Acompanhante  no rodapé */}
-        <div className="mt-auto pt-4">
+        {ehGestante && <div className="mt-auto pt-4">
           <button
             type="button"
             title="Cadastrar acompanhante"
-            //onClick={/*handleLogout*/}
+            onClick={cadastrarAcompanhante}
             className="w-full flex justify-center items-center gap-2 p-3 mb-3 rounded-2xl text-xl font-bold font-poppins text-white bg-teal-300 hover:scale-102 transition cursor-pointer"
           >
             {isOpen ? "Cadastrar acompanhante" : <CiUser size={26} />}
           </button>
-        </div>
+        </div>}
       
         <div className="mt-1">
           <button

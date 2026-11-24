@@ -142,6 +142,42 @@ html {
   font-weight: 600 !important;
 }
 
+/* Alertas e formulário SweetAlert2 acompanham o tema do layout autenticado,
+   mesmo quando o diálogo é renderizado diretamente no body. */
+body:has(.tema-escuro) .swal2-popup {
+  border-color: #374151;
+  background: #1f2937;
+  color: #f3f4f6;
+}
+
+body:has(.tema-escuro) .swal2-title,
+body:has(.tema-escuro) .swal2-html-container {
+  color: #f3f4f6;
+}
+
+body:has(.tema-escuro) .swal2-input,
+body:has(.tema-escuro) .swal2-textarea,
+body:has(.tema-escuro) .swal2-select {
+  color-scheme: dark;
+  border-color: #4b5563;
+  background: #111827;
+  color: #f3f4f6;
+}
+
+body:has(.tema-escuro) .swal2-input::placeholder,
+body:has(.tema-escuro) .swal2-textarea::placeholder {
+  color: #9ca3af;
+}
+
+body:has(.tema-escuro) .swal2-validation-message {
+  background: #3b2026;
+  color: #fecaca;
+}
+
+body:has(.tema-escuro) .swal2-cancel {
+  color: #f3f4f6 !important;
+}
+
 /* Esconde a barra de rolagem, mas mantém o scroll funcionando */
 * {
   scrollbar-width: none; /* Firefox e Chrome recentes */

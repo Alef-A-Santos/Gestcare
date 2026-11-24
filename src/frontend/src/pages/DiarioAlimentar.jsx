@@ -75,6 +75,7 @@ async function lerResposta(resposta) {
 function DiarioAlimentar() {
   const usuario = useUsuario();
   const idUsuario = usuario?.id_usuario;
+  const ehGestante = String(usuario?.perfil || "").toLowerCase() === "gestante";
 
   const [refeicoes, setRefeicoes] = useState([]);
   const [pagina, setPagina] = useState(1);
@@ -111,17 +112,19 @@ function DiarioAlimentar() {
     }
 
     const resposta = await fetch(
-      `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(idUsuario)}?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`,
+      ehGestante
+        ? `${API}/diario/listar-refeicoes/usuario/${encodeURIComponent(idUsuario)}?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`
+        : `${API}/diario/listar-refeicoes-acompanhante/${encodeURIComponent(usuario?.id_gestante)}?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`,
       { credentials: "include" },
     );
 
     const dados = await lerResposta(resposta);
 
     return {
-      refeicoes: dados?.refeicoes ?? [],
+      refeicoes: ehGestante ? (dados?.refeicoes ?? []) : (dados?.diario ?? []),
       totalPaginas: Math.max(1, dados?.paginacao?.total_paginas ?? 1),
     };
-  }, [idUsuario, pagina]);
+  }, [idUsuario, usuario?.id_gestante, ehGestante, pagina]);
 
   // Carregar refeições quando a página ou usuário mudar
   useEffect(() => {
@@ -271,10 +274,11 @@ function DiarioAlimentar() {
     <>
       <Header
         titulo="Diário Alimentar"
+        tituloClassName={"text-4xl sm:text-5xl"}
         component={
-          <LuSalad className="text-pink-400 text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
+          <LuSalad className="text-pink-400 text-5xl  transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
         }
-        component2={
+        component2={ehGestante ? (
           <button
             type="button"
             onClick={abrirNovo}
@@ -282,7 +286,7 @@ function DiarioAlimentar() {
           >
             <FiPlus aria-hidden="true" /> Adicionar refeição
           </button>
-        }
+        ) : null}
       />
 
       <section className="mx-auto mt-8 w-full max-w-4xl rounded-3xl border border-gray-300 bg-gray-50 px-6 py-6 shadow-sm sm:px-10">
@@ -299,7 +303,7 @@ function DiarioAlimentar() {
           </p>
         )}
 
-        {formularioAberto && (
+        {ehGestante && formularioAberto && (
           <form
             ref={formularioRef}
             onSubmit={salvarRefeicao}
@@ -485,7 +489,7 @@ function DiarioAlimentar() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 self-end sm:self-start">
+                {ehGestante && <div className="flex items-center gap-2 self-end sm:self-start">
                   <button
                     type="button"
                     onClick={() => abrirEdicao(refeicao)}
@@ -503,7 +507,7 @@ function DiarioAlimentar() {
                   >
                     <FiTrash2 />
                   </button>
-                </div>
+                </div>}
               </li>
             ))}
           </ul>

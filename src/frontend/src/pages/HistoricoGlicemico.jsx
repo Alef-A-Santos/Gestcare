@@ -50,6 +50,7 @@ async function lerResposta(resposta) {
 function HistoricoGlicemico() {
   const usuario = useUsuario();
   const idUsuario = usuario?.id_usuario;
+  const ehGestante = String(usuario?.perfil || "").toLowerCase() === "gestante";
   const [registros, setRegistros] = useState([]);
   const [pagina, setPagina] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
@@ -68,9 +69,13 @@ function HistoricoGlicemico() {
     setCarregando(true);
     setErro("");
     try {
-      const resposta = await fetch(`${API}/glicemia/listar-glicemia?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`, { credentials: "include" });
+      const rota = ehGestante
+        ? `${API}/glicemia/listar-glicemia?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`
+        : `${API}/glicemia/listar-glicemia/${encodeURIComponent(usuario.id_gestante)}?limit=${ITENS_POR_PAGINA}&offset=${(pagina - 1) * ITENS_POR_PAGINA}`;
+      const resposta = await fetch(rota, { credentials: "include" });
       const dados = await lerResposta(resposta);
-      setRegistros((dados?.glicemias || []).map((item) => ({
+      const lista = ehGestante ? (dados?.glicemias || []) : (dados?.registros || []);
+      setRegistros(lista.map((item) => ({
         ...item,
         id: item.id_glicemia,
         dataHora: formatarDataHora(item.data_hora),
@@ -81,7 +86,7 @@ function HistoricoGlicemico() {
     } finally {
       setCarregando(false);
     }
-  }, [idUsuario, pagina]);
+  }, [idUsuario, usuario?.id_gestante, ehGestante, pagina]);
 
   useEffect(() =>  {const func = () => { carregarRegistros() }; func()  }, [carregarRegistros]);
 
@@ -141,11 +146,11 @@ function HistoricoGlicemico() {
         component={
                  <VscSettingsCompact className="text-pink-400 text-4xl sm:text-5xl transition-transform duration-500 hover:scale-105 " aria-hidden="true" />
                }
-        component2={
+        component2={ehGestante ? (
           <button type="button" onClick={abrirFormulario} className="bg-teal-600 text-white rounded-2xl text-base sm:text-[18px] font-semibold p-3 sm:p-4 font-poppins flex gap-2 sm:gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-[90%] mx-auto sm:mx-0 sm:w-full md:w-80 focus:outline-none shadow-xl">
             <FiPlus size={22} aria-hidden="true" /> Registrar glicemia
           </button>
-        }
+        ) : null}
       />
 
       <Card titulo="Registros" className="historico-glicemico mt-6 sm:mt-10 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px] ">
@@ -180,11 +185,11 @@ function HistoricoGlicemico() {
             colunas={colunas}
             dados={registros}
             mensagemVazia="Registre uma glicemia para ela aparecer nesta lista."
-            acoes={(registro) => (
+            acoes={ehGestante ? (registro) => (
               <button type="button" onClick={() => excluirGlicemia(registro)} aria-label={`Excluir glicemia de ${registro.dataHora}`} className="rounded-lg p-2 text-red-700 hover:bg-red-50">
                 <FiTrash2 aria-hidden="true" />
               </button>
-            )}
+            ) : undefined}
           />
         )}
         {!carregando && registros.length > 0 && <Paginacao pagina={paginaAtual} totalPaginas={totalPaginas} aoMudar={setPagina} />}
