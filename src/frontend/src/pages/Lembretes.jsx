@@ -495,7 +495,7 @@ function Lembretes() {
           <h2 className="mb-6 font-playfair text-3xl  font-semibold sm:text-3xl text-pink-400 ">Sua rotina</h2>
 
           {erro && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">{erro}</p>}
-          {carregando ? <p className="rounded-2xl bg-white p-8 text-center text-gray-500">Carregando lembretes...</p> : ordenados.length === 0 ? (
+          {carregando ? <p className="rounded-2xl bg-white p-8 text-center mt-3 text-gray-500">Carregando lembretes...</p> : ordenados.length === 0 ? (
             <p className="rounded-2xl bg-white p-8 text-center text-gray-500">
               Você ainda não tem lembretes. Toque em Novo Lembrete para começar.
             </p>
