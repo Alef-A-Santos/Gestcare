@@ -87,7 +87,7 @@ function DicasEducativas() {
   }, [dicaAberta]);
 
   return (
-    <section className="font-[Poppins] w-full max-w-5xl mx-auto px-4 pb-10 text-teal-800">
+    <section className="dicas-educativas font-[Poppins] w-full max-w-5xl mx-auto px-4 pb-10 text-teal-800">
       <Header
         titulo="Dicas Educativas"
         component={

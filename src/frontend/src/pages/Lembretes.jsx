@@ -102,7 +102,7 @@ function CartaoLembrete({ lembrete, onToggle, onRemover, onEditar }) {
 
   return (
     <li
-      className={`group flex items-center gap-3 rounded-2xl border-2 bg-white px-3 py-3 transition-all duration-200 hover:shadow-md sm:gap-4 sm:px-4 ${
+      className={`lembrete-card group flex items-center gap-3 rounded-2xl border-2 bg-white px-3 py-3 transition-all duration-200 hover:shadow-md sm:gap-4 sm:px-4 ${
         lembrete.ativo ? "border-[#1f9d8e]" : "border-[#d9e6e4] opacity-80"
       }`}
     >
@@ -471,7 +471,7 @@ function Lembretes() {
     } catch (e) { setErro(mensagemErro(e)); throw e; }
   }
   return (
-    <main className="min-h-screen w-full min-w-0 flex-1 p-4 font-poppins sm:p-3 lg:p-3">
+    <main className="lembretes-page min-h-screen w-full min-w-0 flex-1 p-4 font-poppins sm:p-3 lg:p-3">
       {/* topo */}
       <Header
         titulo="Lembretes"
@@ -561,7 +561,7 @@ function Lembretes() {
             </div>
           </section>
 
-          <aside className="rounded-2xl border border-[#f0a9c4] bg-[#fbcfe3]/60 p-4 text-sm text-[#9a3f69] sm:p-5 sm:text-base">
+          <aside className="rounded-2xl border border-[#f0a9c4] bg-[#fce7f3] p-4 text-sm text-[#9a3f69] sm:p-5 sm:text-base">
             Dica: manter horários regulares para medir a glicemia ajuda no controle do diabetes gestacional.
             <button type="button" onClick={() => ativarNotificacoes().catch(() => {})} className="ml-1 cursor-pointer font-semibold underline">{notificacoesAtivas ? "Notificações ativadas" : "Ative as notificações para não esquecer"}</button>
           </aside>

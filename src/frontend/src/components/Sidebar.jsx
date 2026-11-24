@@ -35,7 +35,7 @@ const itens = [
   { rotulo: "Dicas Educativas", icone: LuNotebookPen, to: "/dicas" },
 ];
 
-function Sidebar({ nome, semanas, caminhoFoto }) {
+function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
   const navigate = useNavigate();
   const usuario = useUsuario();
   const nomeExibido = nome ?? usuario?.nome ?? "";
@@ -329,7 +329,7 @@ function Sidebar({ nome, semanas, caminhoFoto }) {
         </nav>
           {/* Seletor de tema (visual) */}
         <div className="pt-1 pb-2">
-          <ThemeToggle aberto={isOpen} />
+          <ThemeToggle aberto={isOpen} tema={tema} aoTrocar={aoTrocarTema} />
         </div>
 
         {/* Botão Acompanhante  no rodapé */}

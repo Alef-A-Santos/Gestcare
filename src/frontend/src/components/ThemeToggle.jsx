@@ -18,6 +18,8 @@ function ThemeToggle({ aberto, tema = "light", aoTrocar }) {
         type="button"
         title={atual.rotulo}
         aria-label={atual.rotulo}
+        aria-pressed={tema === "dark"}
+        onClick={() => aoTrocar?.(tema === "dark" ? "light" : "dark")}
         className="w-full flex justify-center items-center p-3 rounded-2xl bg-teal-600/60 hover:bg-teal-600 transition cursor-pointer"
       >
         <Icone size={20} />

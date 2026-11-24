@@ -32,6 +32,82 @@ html {
   font-size: 87.5%;
 }
 
+/* Modo escuro restrito ao layout autenticado. */
+.tema-escuro {
+  color-scheme: dark;
+  background-color: #111827 !important;
+  color: #e5e7eb;
+}
+
+.tema-escuro .bg-pink-100 { background-color: #111827 !important; }
+.tema-escuro .bg-gray-50,
+.tema-escuro .bg-gray-100,
+.tema-escuro .bg-white,
+.tema-escuro .bg-white\/70,
+.tema-escuro .bg-white\/60,
+.tema-escuro .bg-white\/80,
+.tema-escuro .bg-white\/95 { background-color: #1f2937 !important; }
+.tema-escuro .bg-rose-50 { background-color: #1f2937 !important; }
+.tema-escuro .bg-\[\#e0efee\] { background-color: #1f2937 !important; }
+.tema-escuro .lembrete-card { background-color: #1f2937 !important; }
+.tema-escuro .bg-\[\#f5f5f5\] { background-color: #1f2937 !important; }
+.tema-escuro .lembrete-card .text-gray-500,
+.tema-escuro .lembretes-page .text-gray-500,
+.tema-escuro .lembretes-page .text-zinc-500,
+.tema-escuro .lembretes-page .text-zinc-700 { color: #fff !important; }
+.tema-escuro .lembrete-card .text-black { color: #fff !important; }
+.tema-escuro .dicas-educativas .text-teal-800,
+.tema-escuro .dicas-educativas .text-teal-800\/90,
+.tema-escuro .dicas-educativas .text-teal-900\/80,
+.tema-escuro .dicas-educativas .text-teal-600,
+.tema-escuro .dicas-educativas .text-teal-700 { color: #fff !important; }
+.tema-escuro .bg-pink-50 { background-color: #312536 !important; }
+.tema-escuro .text-gray-700,
+.tema-escuro .text-gray-600,
+.tema-escuro .text-gray-500,
+.tema-escuro .text-teal-900\/80,
+.tema-escuro .text-teal-800,
+.tema-escuro .text-teal-700 { color: #d1d5db !important; }
+.tema-escuro .border-gray-300,
+.tema-escuro .border-teal-200,
+.tema-escuro .border-pink-200,
+.tema-escuro .border-teal-100 { border-color: #374151 !important; }
+.tema-escuro input:not([type="checkbox"]):not([type="radio"]),
+.tema-escuro select,
+.tema-escuro textarea {
+  color-scheme: dark;
+  background-color: #111827;
+  color: #f3f4f6;
+  border-color: #4b5563;
+}
+.tema-escuro input::placeholder,
+.tema-escuro textarea::placeholder { color: #9ca3af; }
+.tema-escuro .hover\:bg-gray-100:hover { background-color: #374151 !important; }
+.tema-escuro .bg-red-50 { background-color: #3b2026 !important; }
+.tema-escuro .text-red-700 { color: #fca5a5 !important; }
+.tema-escuro .bg-teal-50 { background-color: #17343b !important; }
+.tema-escuro .bg-teal-100 { background-color: #17343b !important; }
+.tema-escuro .bg-pink-100\/60 { background-color: #312536 !important; }
+.tema-escuro .text-teal-600 { color: #5eead4 !important; }
+.tema-escuro .text-teal-700\/80 { color: #99f6e4 !important; }
+.tema-escuro .bg-slate-950\/60 { background-color: rgb(2 6 23 / 80%) !important; }
+.tema-escuro .text-zinc-700,
+.tema-escuro .text-zinc-800 { color: #d1d5db !important; }
+.tema-escuro .historico-glicemico .text-gray-800,
+.tema-escuro .historico-glicemico .text-gray-700,
+.tema-escuro .historico-glicemico .text-gray-600,
+.tema-escuro .historico-glicemico .text-gray-500,
+.tema-escuro .historico-glicemico .text-teal-800,
+.tema-escuro .historico-glicemico table,
+.tema-escuro .historico-glicemico ul { color: #fff !important; }
+.tema-escuro main .text-zinc-400,
+.tema-escuro main .text-zinc-500,
+.tema-escuro main .text-gray-500,
+.tema-escuro main .text-gray-600,
+.tema-escuro main .text-gray-700 { color: #fff !important; }
+.tema-escuro table th,
+.tema-escuro table td { border-color: #374151; }
+
 /* Identidade visual Gestcare nos diálogos SweetAlert2. */
 .gestcare-swal-popup {
   border: 1px solid #ccfbf1;

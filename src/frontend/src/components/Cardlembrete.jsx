@@ -22,7 +22,7 @@ function CardLembrete({ lembretes = [], lembrete, aoCriar }) {
               const categoriaKey = String(item?.categoria || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
               const categoria = CATEGORIAS[categoriaKey];
               const Icone = categoria?.Icone || FaCalendarCheck;
-              return <li key={item.id_lembrete || item.id || `${item.titulo}-${indice}`} className="flex items-center gap-3 rounded-xl bg-white/70 p-2.5">
+              return <li key={item.id_lembrete || item.id || `${item.titulo}-${indice}`} className="flex items-center gap-3 rounded-xl border border-white/40 bg-white/70 p-2.5">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e0efee] text-[#1f9d8e]" aria-hidden="true"><Icone size={20} /></span>
                 <div className="min-w-0">
                   <p className="truncate text-lg font-medium font-poppins text-zinc-700">{item.titulo}</p>
