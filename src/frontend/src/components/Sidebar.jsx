@@ -10,7 +10,7 @@ import { VscSettingsCompact } from "react-icons/vsc";
 import { LuSalad, LuNotebookPen } from "react-icons/lu";
 import { FaRegBell } from "react-icons/fa";
 import { BsTelephone } from "react-icons/bs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import UserName from "./UserName";
 import SidebarItens from "./SidebarItens";
@@ -47,6 +47,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
   const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
   const [semanasResumo, setSemanasResumo] = useState(null);
+  const [acompanhantes, setAcompanhantes] = useState([]);
 
   useEffect(() => {
     let ativo = true;
@@ -79,6 +80,19 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
   }, [semanas, ehGestante, usuario?.id_gestante]);
 
   const semanasExibidas = semanas ?? semanasResumo;
+
+  const carregarAcompanhantes = useCallback(async () => {
+    if (!ehGestante) return;
+    const resposta = await fetch("http://localhost:3000/api/acompanhantes/listar-acompanhantes", { credentials: "include" });
+    const dados = await resposta.json().catch(() => null);
+    if (!resposta.ok) throw new Error(dados?.erro || "Não foi possível carregar os acompanhantes.");
+    const lista = Array.isArray(dados) ? dados : [];
+    setAcompanhantes(lista.filter((item) => String(item.id_gestante) === String(usuario?.id_usuario)));
+  }, [ehGestante, usuario?.id_usuario]);
+
+  useEffect(() => {
+    carregarAcompanhantes().catch(() => {});
+  }, [carregarAcompanhantes]);
 
   // Formatar semanas de gestação
   const gestacaoFormatada = (() => {
@@ -309,6 +323,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
         icon: "success",
         confirmButtonColor: "#14b8a6",
       });
+      await carregarAcompanhantes().catch(() => {});
     } catch (error) {
       Swal.fire({
         title: "Erro ao cadastrar",
@@ -316,6 +331,53 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
         icon: "error",
         confirmButtonColor: "#14b8a6",
       });
+    }
+  };
+
+  const removerAcompanhante = async () => {
+    if (!acompanhantes.length) return;
+    const opcoes = Object.fromEntries(acompanhantes.map((item) => [
+      String(item.id_acompanhante), `${item.nome || item.nome_acompanhante || "Acompanhante"} (${item.email || item.email_acompanhante || ""})`,
+    ]));
+    const escolha = await Swal.fire({
+      title: "Remover acompanhante",
+      text: "Escolha qual acompanhante deseja remover.",
+      input: "select",
+      inputOptions: opcoes,
+      inputPlaceholder: "Selecione um acompanhante",
+      showCancelButton: true,
+      confirmButtonText: "Continuar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#e879a9",
+      cancelButtonColor: "#14b8a6",
+      reverseButtons: true,
+      inputValidator: (valor) => valor ? undefined : "Selecione um acompanhante.",
+    });
+    if (!escolha.isConfirmed) return;
+    const acompanhante = acompanhantes.find((item) => String(item.id_acompanhante) === escolha.value);
+    const confirmacao = await Swal.fire({
+      title: "Confirmar remoção?",
+      text: `O acesso de ${acompanhante?.nome || acompanhante?.nome_acompanhante || "este acompanhante"} à gestação será removido.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Remover",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#e11d48",
+      cancelButtonColor: "#14b8a6",
+      reverseButtons: true,
+    });
+    if (!confirmacao.isConfirmed) return;
+    try {
+      const resposta = await fetch(`http://localhost:3000/api/acompanhantes/remover-acompanhante/${encodeURIComponent(escolha.value)}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const dados = await resposta.json().catch(() => null);
+      if (!resposta.ok) throw new Error(dados?.erro || "Não foi possível remover o acompanhante.");
+      await carregarAcompanhantes();
+      await Swal.fire({ title: "Acompanhante removido", text: dados?.response?.mensagem || "O vínculo foi removido com sucesso.", icon: "success", confirmButtonColor: "#14b8a6" });
+    } catch (error) {
+      Swal.fire({ title: "Erro ao remover", text: mensagemErro(error, "Tente novamente."), icon: "error", confirmButtonColor: "#14b8a6" });
     }
   };
 
@@ -416,14 +478,22 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
 
         {/* Botão Acompanhante  no rodapé */}
         {ehGestante && <div className="mt-auto pt-4">
-          <button
+          {acompanhantes.length < 2 && <button
             type="button"
             title="Cadastrar acompanhante"
             onClick={cadastrarAcompanhante}
             className="w-full flex justify-center items-center gap-2 p-3 mb-3 rounded-2xl text-xl font-bold font-poppins text-white bg-teal-300 hover:scale-102 transition cursor-pointer"
           >
             {isOpen ? "Cadastrar acompanhante" : <CiUser size={26} />}
-          </button>
+          </button>}
+          {acompanhantes.length > 0 && <button
+            type="button"
+            title="Remover acompanhante"
+            onClick={removerAcompanhante}
+            className="w-full flex justify-center items-center gap-2 p-3 mb-3 rounded-2xl text-xl font-bold font-poppins text-white bg-teal-300 hover:scale-102 transition cursor-pointer"
+          >
+            {isOpen ? "Remover acompanhante" : <CiUser size={26} />}
+          </button>}
         </div>}
       
         <div className="mt-1">

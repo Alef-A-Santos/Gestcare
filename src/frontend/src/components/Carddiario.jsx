@@ -4,7 +4,7 @@ function CardDiario({ refeicoes = [] }) {
   return (
     <Card titulo="Diário alimentar de hoje:" className="[&>h2]:text-teal-600">
       {refeicoes.length === 0 ? (
-        <p className="font-poppins text-white">Nenhuma refeição registrada hoje.</p>
+        <p className="font-poppins text-zinc-700 texto-vazio-diario">Nenhuma refeição registrada hoje.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {refeicoes.map((refeicao) => (

@@ -102,6 +102,7 @@ html {
 .tema-escuro .text-teal-600 { color: #5eead4 !important; }
 .tema-escuro .text-teal-700\/80 { color: #99f6e4 !important; }
 .tema-escuro .bg-slate-950\/60 { background-color: rgb(2 6 23 / 80%) !important; }
+.tema-escuro .texto-vazio-diario { color: #fff !important; }
 .tema-escuro .text-zinc-700,
 .tema-escuro .text-zinc-800 { color: #d1d5db !important; }
 .tema-escuro .historico-glicemico .text-gray-800,

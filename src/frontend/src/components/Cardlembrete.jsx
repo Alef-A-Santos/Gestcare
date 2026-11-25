@@ -2,14 +2,34 @@ import Card from "./Card";
 import Botao from "./Botao";
 import { FaCalendarCheck, FaPills, FaSyringe, FaTint, FaUtensils } from "react-icons/fa";
 
+const CHAVE_CATEGORIAS_LEMBRETES = "gestcare_categorias_lembretes";
 const CATEGORIAS = {
-  glicemia: { nome: "Glicemia", Icone: FaSyringe },
-  medicao: { nome: "Medicação", Icone: FaPills },
-  medicacao: { nome: "Medicação", Icone: FaPills },
-  alimentacao: { nome: "Alimentação", Icone: FaUtensils },
-  consulta: { nome: "Consulta", Icone: FaCalendarCheck },
-  hidratacao: { nome: "Hidratação", Icone: FaTint },
+  glicemia: { nome: "Glicemia", Icone: FaSyringe, iconClass: "bg-[#e0efee] text-[#1f9d8e]" },
+  medicao: { nome: "Medicação", Icone: FaPills, iconClass: "bg-[#f3e6ec] text-[#b03a6a]" },
+  medicacao: { nome: "Medicação", Icone: FaPills, iconClass: "bg-[#f3e6ec] text-[#b03a6a]" },
+  alimentacao: { nome: "Alimentação", Icone: FaUtensils, iconClass: "bg-[#e0efee] text-[#1f9d8e]" },
+  consulta: { nome: "Consulta", Icone: FaCalendarCheck, iconClass: "bg-[#e0efee] text-[#1f9d8e]" },
+  hidratacao: { nome: "Hidratação", Icone: FaTint, iconClass: "bg-[#f3e6ec] text-[#d46a9a]" },
 };
+
+function normalizarCategoria(valor) {
+  return String(valor || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+function categoriaSalva(item) {
+  try {
+    const categorias = JSON.parse(localStorage.getItem(CHAVE_CATEGORIAS_LEMBRETES) || "{}");
+    const recorrencia = Array.isArray(item.recorrencia)
+      ? item.recorrencia.join(",")
+      : String(item.recorrencia || "");
+    const chave = [item.titulo, String(item.horario || item.hora || "").slice(0, 5), recorrencia]
+      .map((parte) => String(parte || "").trim().toLowerCase())
+      .join("|");
+    return categorias[chave];
+  } catch {
+    return "";
+  }
+}
  
 function CardLembrete({ lembretes = [], lembrete, aoCriar, somenteLeitura = false }) {
   const lista = Array.isArray(lembretes) ? lembretes : (lembrete ? [lembrete] : []);
@@ -19,14 +39,14 @@ function CardLembrete({ lembretes = [], lembrete, aoCriar, somenteLeitura = fals
         <>
           <ul className="space-y-1.5">
             {lista.map((item, indice) => {
-              const categoriaKey = String(item?.categoria || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-              const categoria = CATEGORIAS[categoriaKey];
-              const Icone = categoria?.Icone || FaCalendarCheck;
+              const categoriaKey = normalizarCategoria(item?.categoria || item?.tipo || categoriaSalva(item));
+              const categoria = CATEGORIAS[categoriaKey] || CATEGORIAS.glicemia;
+              const Icone = categoria.Icone;
               return <li key={item.id_lembrete || item.id || `${item.titulo}-${indice}`} className="flex items-center gap-3 rounded-xl border border-white/40 bg-white/70 p-2.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e0efee] text-[#1f9d8e]" aria-hidden="true"><Icone size={20} /></span>
+                <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-white text-xl shadow-md ring-2 ring-black/5 ${categoria.iconClass}`} aria-hidden="true"><Icone /></span>
                 <div className="min-w-0">
                   <p className="truncate text-lg font-medium font-poppins text-zinc-700">{item.titulo}</p>
-                  <p className="text-sm font-poppins text-zinc-500">{String(item.horario || item.hora || "").slice(0, 5)}{categoria ? ` · ${categoria.nome}` : item.categoria ? ` · ${item.categoria}` : ""}</p>
+                  <p className="text-sm font-poppins text-zinc-500">{String(item.horario || item.hora || "").slice(0, 5)} · {categoria.nome}</p>
                 </div>
               </li>;
             })}

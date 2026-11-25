@@ -35,6 +35,17 @@ function formatarDataParto(valor) {
   return Number.isNaN(data.getTime()) ? texto : data.toLocaleDateString("pt-BR");
 }
 
+function escaparHtml(valor) {
+  return String(valor ?? "").replace(/[&<>\"']/g, (caractere) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;", "'": "&#39;",
+  })[caractere]);
+}
+
+function dataRelatorio(valor) {
+  const data = new Date(String(valor || "").replace(" ", "T"));
+  return Number.isNaN(data.getTime()) ? String(valor || "") : data.toLocaleString("pt-BR");
+}
+
 function Home() {
   const navigate = useNavigate();
   const usuario = useUsuario();
@@ -98,9 +109,50 @@ function Home() {
       return;
     }
 
+    const janelaImpressao = !ehGestante ? window.open("", "_blank") : null;
+    if (!ehGestante && !janelaImpressao) {
+      setErroPdf("Permita a abertura de uma nova janela para preparar o relatório.");
+      return;
+    }
+
     setGerandoPdf(true);
 
     try {
+      if (!ehGestante) {
+        if (!usuario?.id_gestante) throw new Error("Sua conta ainda não está vinculada a uma gestante.");
+        const registros = [];
+        let offset = 0;
+        let total = Infinity;
+        const limite = 100;
+        while (registros.length < total) {
+          const resposta = await fetch(`${API}/glicemia/listar-glicemia/${encodeURIComponent(usuario.id_gestante)}?limit=${limite}&offset=${offset}`, { credentials: "include" });
+          const dados = await resposta.json().catch(() => null);
+          if (!resposta.ok) throw new Error(dados?.erro || "Não foi possível consultar as medições.");
+          const paginaRegistros = dados?.registros || [];
+          registros.push(...paginaRegistros);
+          total = dados?.paginacao?.total ?? registros.length;
+          if (!paginaRegistros.length) break;
+          offset += paginaRegistros.length;
+        }
+        const filtrados = registros.filter((registro) => {
+          const dia = String(registro.data_hora || "").slice(0, 10);
+          return dia >= dataInicio && dia <= dataFim;
+        });
+        if (!filtrados.length) {
+          janelaImpressao.close();
+          setErroPdf("Não há medições para gerar o relatório no período selecionado.");
+          return;
+        }
+        const valores = filtrados.map((registro) => Number(registro.valor)).filter(Number.isFinite);
+        const media = valores.length ? (valores.reduce((soma, valor) => soma + valor, 0) / valores.length).toFixed(2) : "—";
+        const classificacoes = { A: "Alta", B: "Baixa", N: "Normal" };
+        const linhas = filtrados.map((registro) => `<tr><td>${escaparHtml(dataRelatorio(registro.data_hora))}</td><td>${escaparHtml(classificacoes[registro.classificacao] || "Sem classificação")}</td><td>${escaparHtml(registro.valor)} mg/dL</td></tr>`).join("");
+        janelaImpressao.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Relatório glicêmico</title><style>body{font:14px Arial,sans-serif;color:#333;margin:32px}h1{color:#be185d}header{border-bottom:2px solid #f9a8d4;padding-bottom:16px;margin-bottom:24px}.resumo{display:flex;gap:24px;margin:20px 0}.resumo div{background:#fdf2f8;padding:14px;border-radius:8px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;border-bottom:1px solid #ddd}th{background:#dbeafe}@media print{body{margin:15mm}}</style></head><body><header><h1>Relatório de medições</h1><div>Gerado por ${escaparHtml(usuario?.nome || "acompanhante")} para a gestante vinculada</div><div>Período: ${escaparHtml(dataInicio)} – ${escaparHtml(dataFim)}</div></header><div class="resumo"><div><b>Quantidade de registros</b><br>${filtrados.length}</div><div><b>Média do período</b><br>${media} mg/dL</div></div><table><thead><tr><th>Data e hora</th><th>Classificação</th><th>Valor</th></tr></thead><tbody>${linhas}</tbody></table><script>window.onload=()=>window.print()</script></body></html>`);
+        janelaImpressao.document.close();
+        setMostrarPeriodo(false);
+        return;
+      }
+
       const resposta = await fetch(
         `${API}/relatorio/gerar-relatorio`,
         {
@@ -167,6 +219,7 @@ function Home() {
 
       setMostrarPeriodo(false);
     } catch (error) {
+      if (janelaImpressao && !janelaImpressao.closed) janelaImpressao.close();
       setErroPdf(
         mensagemErro(error, "Falha ao conectar com o servidor.")
       );
@@ -190,20 +243,19 @@ function Home() {
         }
         try {
           const idGestante = encodeURIComponent(usuario.id_gestante);
-          const [resumoResp, diarioResp, lembretesResp] = await Promise.all([
+          const [resumoResp, lembretesResp] = await Promise.all([
             fetch(`${API}/dashboard/resumo/${idGestante}`, { credentials: "include" }),
-            fetch(`${API}/diario/listar-refeicoes-acompanhante/${idGestante}?limit=3&offset=0`, { credentials: "include" }),
             fetch(`${API}/lembretes/listar-lembretes-acompanhante/${idGestante}`, { credentials: "include" }),
           ]);
-          const [resumoDados, diarioDados, lembretesDados] = await Promise.all([
-            resumoResp.json().catch(() => null), diarioResp.json().catch(() => null), lembretesResp.json().catch(() => null),
+          const [resumoDados, lembretesDados] = await Promise.all([
+            resumoResp.json().catch(() => null), lembretesResp.json().catch(() => null),
           ]);
-          if (!resumoResp.ok || !diarioResp.ok || !lembretesResp.ok) {
-            throw new Error(resumoDados?.erro || diarioDados?.erro || lembretesDados?.erro || "Não foi possível carregar os dados da gestante.");
+          if (!resumoResp.ok || !lembretesResp.ok) {
+            throw new Error(resumoDados?.erro || lembretesDados?.erro || "Não foi possível carregar os dados da gestante.");
           }
           if (ativo) {
             setResumo(resumoDados?.resumo ?? null);
-            setRefeicoes(diarioDados?.diario ?? []);
+            setRefeicoes(resumoDados?.resumo?.refeicoes ?? []);
             setLembretesInicio((lembretesDados?.lembretes ?? []).filter((item) => Number(item.ativo) === 1 || item.ativo === true));
           }
         } catch (error) {
@@ -337,7 +389,7 @@ function Home() {
               nome={usuario?.nome || ""}
             />
           }
-          component2={ehGestante ? (
+          component2={(
             <Botao
               className="bg-white rounded-2xl p-3 sm:p-4 font-poppins flex gap-3 justify-center items-center cursor-pointer transition-transform duration-500 hover:scale-105 w-full md:w-80 focus:outline-none shadow-xl"
               imgClassName="w-8 h-8 sm:w-10 sm:h-10"
@@ -355,7 +407,7 @@ function Home() {
               }}
               tipoDado="button"
             />
-          ) : null}
+          )}
         />
 
         <div className="max-w-6xl mx-auto mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-6">

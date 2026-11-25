@@ -106,8 +106,8 @@ function CartaoLembrete({ lembrete, onToggle, onRemover, onEditar, somenteLeitur
         lembrete.ativo ? "border-[#1f9d8e]" : "border-[#d9e6e4] opacity-80"
       }`}
     >
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg sm:h-12 sm:w-12 sm:text-xl ${cat.icon}`}>
-        <Icone />
+      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-white text-xl shadow-md ring-2 ring-black/5 transition-transform duration-200 group-hover:scale-105 sm:h-14 sm:w-14 sm:text-2xl ${cat.icon}`}>
+        <Icone aria-hidden="true" />
       </div>
 
       <div className="min-w-0 flex-1">
