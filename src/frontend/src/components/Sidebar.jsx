@@ -275,6 +275,14 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
           Swal.showValidationMessage("Informe o e-mail do acompanhante.");
           return false;
         }
+        const emailNormalizado = email.toLocaleLowerCase();
+        const jaCadastrado = acompanhantes.some((item) =>
+          String(item.email || item.email_acompanhante || "").trim().toLocaleLowerCase() === emailNormalizado,
+        );
+        if (jaCadastrado) {
+          Swal.showValidationMessage("Esse acompanhante já foi registrado por você. Não é possível cadastrar o mesmo e-mail novamente.");
+          return false;
+        }
         try {
           const resposta = await fetch(
             `http://localhost:3000/api/usuarios/listar-usuario-acompanhante?email=${encodeURIComponent(email)}`,
