@@ -18,7 +18,7 @@ export default class LembretesRepository {
     try {
       db = await connectDB();
       const [lembretes]  = await db.query(`
-        SELECT l.titulo, l.horario, l.recorrencia, l.categoria 
+        SELECT l.id_lembrete, l.titulo, l.horario, l.recorrencia, l.categoria, l.ativo 
         FROM lembretes l 
           INNER JOIN usuarios u ON l.id_usuario = u.id_usuario 
           INNER JOIN acompanhantes a ON a.id_gestante = u.id_usuario

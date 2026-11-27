@@ -307,7 +307,8 @@ export function gerarTemplateRelatorio(dados) {
       <div class="content-header">
         <h1>Relatório de medições</h1>
         <div class="nome-paciente">${dados.nome_gestante}</div>
-        <div class="periodo-relatorio">${dados.periodo}</div>
+        <div class="periodo-relatorio">Período: ${dados.periodo}</div>
+        <div class="periodo-relatorio">Data geração do relatório: ${Intl.DateTimeFormat("pt-Br", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(new Date())}</div>
       </div>
     </header>
 
@@ -360,21 +361,20 @@ export function gerarTemplateRelatorio(dados) {
               </tr>
             </thead>
             <tbody>
-              ${
-                dados.registros_periodo.length
-                  ? dados.registros_periodo
-                      .map(
-                        (registro) => `
+              ${dados.registros_periodo.length
+      ? dados.registros_periodo
+        .map(
+          (registro) => `
                   <tr>
                     <td>${formatarData(registro.data_hora)}</td>
                     <td>${classificacoes[registro.classificacao]}</td>
                     <td>${registro.valor}</td>
                   </tr>
                   `,
-                      )
-                      .join("")
-                  : templateTrSemRegistro
-              }
+        )
+        .join("")
+      : templateTrSemRegistro
+    }
               <tr class="resumo_registros">
                 <td>Registro mais alto</td>
                 <td>${formatarData(dados.registro_mais_alto.data_hora)}</td>
@@ -409,11 +409,10 @@ export function gerarTemplateRelatorio(dados) {
                 </tr>
               </thead>
               <tbody>
-                ${
-                  Object.keys(dados.medias_semanais).length
-                    ? Object.keys(dados.medias_semanais)
-                        .map(
-                          (key) => `
+                ${Object.keys(dados.medias_semanais).length
+      ? Object.keys(dados.medias_semanais)
+        .map(
+          (key) => `
                       <tr>
                         <td>
                           ${key.replace("_", " ").replace(key[0], key[0].toLocaleUpperCase())}
@@ -432,10 +431,10 @@ export function gerarTemplateRelatorio(dados) {
                         </td>
                       </tr>
                       `,
-                        )
-                        .join("")
-                    : templateTrSemRegistro
-                }
+        )
+        .join("")
+      : templateTrSemRegistro
+    }
               </tbody>
             </table>
           </div>
@@ -453,12 +452,11 @@ export function gerarTemplateRelatorio(dados) {
                 </tr>
               </thead>
               <tbody>
-                ${
-                  Object.keys(dados.medias_mensais).length
-                    ? Object.keys(dados.medias_mensais)
-                        .map(
-                          (key) =>
-                            `<tr>
+                ${Object.keys(dados.medias_mensais).length
+      ? Object.keys(dados.medias_mensais)
+        .map(
+          (key) =>
+            `<tr>
                           <td>
                             ${meses[key.split("_")[2]]}
                           </td>
@@ -470,10 +468,10 @@ export function gerarTemplateRelatorio(dados) {
                           </td>
                         </tr>
                       `,
-                        )
-                        .join("")
-                    : `<tr><td colspan="3" style="text-align: center;">Sem registros</td></tr>`
-                }
+        )
+        .join("")
+      : `<tr><td colspan="3" style="text-align: center;">Sem registros</td></tr>`
+    }
               </tbody>
             </table>
           </div>
