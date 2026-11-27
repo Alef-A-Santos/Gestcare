@@ -432,7 +432,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
         {/* Perfil e boas-vindas */}
         {isOpen && (
           <div className="flex flex-col items-center justify-center gap-2 mb-6">
-            <label className={`rounded-full w-24 h-24 bg-white overflow-hidden ${ehGestante ? "cursor-pointer" : "cursor-default"} flex items-center justify-center border-4 border-pink-300 shadow`}>
+            <label className={`rounded-full w-24 h-24 bg-white overflow-hidden ${enviandoFoto ? "cursor-wait" : "cursor-pointer"} flex items-center justify-center border-4 border-pink-300 shadow`}>
               {foto ? (
                 <img
                   src={foto}
@@ -443,13 +443,13 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
                 <IoPerson className="text-5xl text-zinc-400" />
               )}
 
-              {ehGestante && <input
+              <input
                 type="file"
                 accept="image/*"
                 className="hidden"
                 onChange={enviarFoto}
                 disabled={enviandoFoto}
-              />}
+              />
             </label>
 
             <UserName
@@ -458,7 +458,7 @@ function Sidebar({ nome, semanas, caminhoFoto, tema, aoTrocarTema }) {
             />
 
             <h4 className="text-xl mt-2 text-center font-poppins">
-              Sua Gestação:{" "}
+              {ehGestante ? "Sua Gestação:" : "Gestação acompanhada:"}{" "}
               {gestacaoFormatada && (
                 <span className="font-bold">{gestacaoFormatada}</span>
               )}
