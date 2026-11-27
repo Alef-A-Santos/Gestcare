@@ -112,6 +112,7 @@ html {
 .tema-escuro .historico-glicemico .text-teal-800,
 .tema-escuro .historico-glicemico table,
 .tema-escuro .historico-glicemico ul { color: #fff !important; }
+.tema-escuro .mensagem-vazia-tabela { color: #e5e7eb !important; }
 .tema-escuro main .text-zinc-400,
 .tema-escuro main .text-zinc-500,
 .tema-escuro main .text-gray-500,

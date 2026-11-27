@@ -11,7 +11,7 @@ import { Fragment } from "react";
 function Tabela({ colunas, dados, acoes, mensagemVazia = "Nenhum registro ainda." }) {
   if (dados.length === 0) {
     return (
-      <p className="font-poppins text-gray-500 text-center py-10">{mensagemVazia}</p>
+      <p className="mensagem-vazia-tabela font-poppins text-gray-600 text-center py-10">{mensagemVazia}</p>
     );
   }
 

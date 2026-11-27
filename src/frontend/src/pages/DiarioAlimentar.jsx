@@ -76,6 +76,7 @@ function DiarioAlimentar() {
   const usuario = useUsuario();
   const idUsuario = usuario?.id_usuario;
   const ehGestante = String(usuario?.perfil || "").toLowerCase() === "gestante";
+  const acompanhanteSemVinculo = String(usuario?.perfil || "").trim().toLowerCase() === "acompanhante" && !usuario?.id_gestante;
 
   const [refeicoes, setRefeicoes] = useState([]);
   const [pagina, setPagina] = useState(1);
@@ -104,6 +105,9 @@ function DiarioAlimentar() {
 
   // Buscar refeições na API
   const buscarRefeicoes = useCallback(async () => {
+    if (!ehGestante && !usuario?.id_gestante) {
+      return { refeicoes: [], totalPaginas: 1 };
+    }
     if (!idUsuario) {
       return {
         refeicoes: [],
@@ -289,7 +293,11 @@ function DiarioAlimentar() {
         ) : null}
       />
 
-      <section className="mx-auto mt-8 w-full max-w-4xl rounded-3xl border border-gray-300 bg-gray-50 px-6 py-6 shadow-sm sm:px-10">
+      {acompanhanteSemVinculo ? (
+        <section className="mx-auto mt-10 flex min-h-[40vh] w-full max-w-3xl items-center justify-center rounded-3xl border-2 border-pink-300 bg-white px-6 py-12 text-center shadow-xl" role="status">
+          <p className="text-2xl font-bold leading-relaxed text-pink-600 sm:text-4xl">Você ainda não está vinculado a uma gestante.</p>
+        </section>
+      ) : <section className="mx-auto mt-8 w-full max-w-4xl rounded-3xl border border-gray-300 bg-gray-50 px-6 py-6 shadow-sm sm:px-10">
         <h3 className="mb-6 text-center font-playfair text-4xl font-bold text-pink-400">
           Refeições registradas
         </h3>
@@ -543,7 +551,7 @@ function DiarioAlimentar() {
             </button>
           </nav>
         )}
-      </section>
+      </section>}
     </>
   );
 }

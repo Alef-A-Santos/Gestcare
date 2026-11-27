@@ -62,7 +62,7 @@ function InputHome() {
         return;
       }
 
-      navigate("/Home");
+      navigate("/home");
     } catch (error) {
       console.log(error);
 

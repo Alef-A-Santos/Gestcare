@@ -12,13 +12,14 @@ import DiarioAlimentar from "./pages/DiarioAlimentar";
 import Lembretes from "./pages/Lembretes";
 import NumeroEmergencia from "./pages/NumeroEmergencia";
 import DicasEducativas from "./pages/DicasEducativas";
+import RedirecionarUsuarioAutenticado from "./components/RedirecionarUsuarioAutenticado";
 
 function App() {
   return (
     <Routes>
       {/* Rotas públicas (sem sidebar) */}
-      <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<RedirecionarUsuarioAutenticado><Login /></RedirecionarUsuarioAutenticado>} />
+      <Route path="/login" element={<RedirecionarUsuarioAutenticado><Login /></RedirecionarUsuarioAutenticado>} />
       <Route path="/Cadastro" element={<Cadastro />} />
       <Route path="/Cadastro/Verificacao" element={<Verificacao />} />
       <Route path="/recSenha" element={<RecSenha />} />

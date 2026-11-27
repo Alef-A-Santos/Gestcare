@@ -50,6 +50,7 @@ function Home() {
   const navigate = useNavigate();
   const usuario = useUsuario();
   const ehGestante = String(usuario?.perfil || "").trim().toLowerCase() === "gestante";
+  const acompanhanteSemVinculo = String(usuario?.perfil || "").trim().toLowerCase() === "acompanhante" && !usuario?.id_gestante;
   const [resumo, setResumo] = useState(null);
   const [lembretesInicio, setLembretesInicio] = useState([]);
   const [refeicoes, setRefeicoes] = useState([]);
@@ -410,7 +411,13 @@ function Home() {
           )}
         />
 
-        <div className="max-w-6xl mx-auto mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-6">
+        {acompanhanteSemVinculo ? (
+          <section className="mx-auto mt-10 flex min-h-[50vh] w-full max-w-3xl items-center justify-center rounded-3xl border-2 border-pink-300 bg-white px-6 py-12 text-center shadow-xl sm:mt-16 sm:px-12" role="status">
+            <p className="text-2xl font-bold leading-relaxed text-pink-600 sm:text-4xl">
+              Você ainda não está vinculado a uma gestante.
+            </p>
+          </section>
+        ) : <div className="max-w-6xl mx-auto mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-6">
 
           {/* Modal de seleção do período do relatório */}
           {mostrarPeriodo && (
@@ -558,7 +565,7 @@ function Home() {
             </p>
           )}
 
-        </div>
+        </div>}
       </main>
     </div>
   );

@@ -51,6 +51,7 @@ function HistoricoGlicemico() {
   const usuario = useUsuario();
   const idUsuario = usuario?.id_usuario;
   const ehGestante = String(usuario?.perfil || "").toLowerCase() === "gestante";
+  const acompanhanteSemVinculo = String(usuario?.perfil || "").trim().toLowerCase() === "acompanhante" && !usuario?.id_gestante;
   const [registros, setRegistros] = useState([]);
   const [pagina, setPagina] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
@@ -62,6 +63,10 @@ function HistoricoGlicemico() {
   const [erro, setErro] = useState("");
 
   const carregarRegistros = useCallback(async () => {
+    if (!ehGestante && !usuario?.id_gestante) {
+      setCarregando(false);
+      return;
+    }
     if (!idUsuario) {
       setCarregando(false);
       return;
@@ -153,7 +158,11 @@ function HistoricoGlicemico() {
         ) : null}
       />
 
-      <Card titulo="Registros" className="historico-glicemico mt-6 sm:mt-10 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px] ">
+      {acompanhanteSemVinculo ? (
+        <section className="mx-auto mt-10 flex min-h-[40vh] w-full max-w-3xl items-center justify-center rounded-3xl border-2 border-pink-300 bg-white px-6 py-12 text-center shadow-xl" role="status">
+          <p className="text-2xl font-bold leading-relaxed text-pink-600 sm:text-4xl">Você ainda não está vinculado a uma gestante.</p>
+        </section>
+      ) : <Card titulo="Registros" className="historico-glicemico mt-6 sm:mt-10 max-w-3xl mx-auto min-h-72 text-base sm:text-[18px] ">
         {erro && !formularioAberto && <p role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-center text-red-700">{erro}</p>}
         {formularioAberto && (
           <form onSubmit={registrarGlicemia} className="mb-7 rounded-2xl border border-teal-200 bg-white p-5">
@@ -193,7 +202,7 @@ function HistoricoGlicemico() {
           />
         )}
         {!carregando && registros.length > 0 && <Paginacao pagina={paginaAtual} totalPaginas={totalPaginas} aoMudar={setPagina} />}
-      </Card>
+      </Card>}
     </>
   );
 }

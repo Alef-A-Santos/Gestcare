@@ -293,6 +293,7 @@ function ModalNovoLembrete({ aberto, lembrete, onFechar, onSalvar }) {
 function Lembretes() {
   const usuario = useUsuario();
   const somenteLeitura = String(usuario?.perfil || "").toLowerCase() !== "gestante";
+  const acompanhanteSemVinculo = String(usuario?.perfil || "").trim().toLowerCase() === "acompanhante" && !usuario?.id_gestante;
   const [lembretes, setLembretes] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [lembreteEmEdicao, setLembreteEmEdicao] = useState(null);
@@ -359,6 +360,7 @@ function Lembretes() {
   }
   useEffect(() => {
     if (!usuario) return;
+    if (acompanhanteSemVinculo) { setCarregando(false); return; }
     let ativo = true;
     const caminho = somenteLeitura
       ? `/lembretes/listar-lembretes-acompanhante/${encodeURIComponent(usuario?.id_gestante)}`
@@ -368,7 +370,7 @@ function Lembretes() {
       .catch((e) => { if (ativo) setErro(mensagemErro(e)); })
       .finally(() => { if (ativo) setCarregando(false); });
     return () => { ativo = false; };
-  }, [usuario, somenteLeitura]);
+  }, [usuario, somenteLeitura, acompanhanteSemVinculo]);
   const ordenados = useMemo(
     () => [...lembretes].sort((a, b) => a.hora.localeCompare(b.hora)),
     [lembretes]
@@ -498,6 +500,11 @@ function Lembretes() {
         )}
       />
 
+      {acompanhanteSemVinculo ? (
+        <section className="mx-auto mt-10 flex min-h-[40vh] w-full max-w-3xl items-center justify-center rounded-3xl border-2 border-pink-300 bg-white px-6 py-12 text-center shadow-xl" role="status">
+          <p className="text-2xl font-bold leading-relaxed text-pink-600 sm:text-4xl">Você ainda não está vinculado a uma gestante.</p>
+        </section>
+      ) : <>
       <div className="grid gap-4 sm:gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         {/* Sua rotina */}
         <section className="rounded-3xl bg-[#f5f5f5] p-4 shadow-md sm:p-6 mt-6">
@@ -584,6 +591,7 @@ function Lembretes() {
         onFechar={() => { setModalAberto(false); setLembreteEmEdicao(null); }}
         onSalvar={salvarEdicao}
       />}
+      </>}
     </main>
   );
 }
